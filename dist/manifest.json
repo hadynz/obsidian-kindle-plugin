@@ -1,8 +1,8 @@
 {
   "id": "kindle-obsidian-plugin",
   "name": "Kindle Highlights",
-  "version": "1.0.0",
-  "minAppVersion": "0.11.13",
+  "version": "0.0.1",
+  "minAppVersion": "0.9.12",
   "description": "An Obsidian plugin for fetching Kindle highlights",
   "author": "Hady Osman",
   "authorUrl": "https://hady.geek.nz",

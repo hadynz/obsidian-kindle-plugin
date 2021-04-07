@@ -8,15 +8,9 @@
     "allowJs": true,
     "noImplicitAny": true,
     "moduleResolution": "node",
+    "esModuleInterop": true,
     "importHelpers": true,
-    "lib": [
-      "dom",
-      "es5",
-      "scripthost",
-      "es2015"
-    ]
+    "lib": ["dom", "es5", "scripthost", "es2015"]
   },
-  "include": [
-    "**/*.ts"
-  ]
+  "include": ["src/**/*.ts"]
 }
