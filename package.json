@@ -2,8 +2,8 @@
   "name": "obsidian-kindle-highlights",
   "private": true,
   "scripts": {
-    "build:plugin": "cd packages/kindle-plugin && npm install",
-    "build:server": "cd packages/kindle-server && npm install",
+    "build:plugin": "cd packages/kindle-plugin && npm run build",
+    "build:server": "cd packages/kindle-server && npm run build",
     "build": "npm-run-all build:*"
   },
   "devDependencies": {
