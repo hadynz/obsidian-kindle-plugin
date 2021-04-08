@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import * as passport from 'passport';
 import { createExpressServer } from 'routing-controllers';
+import { Request, Response } from 'express';
 
 import { KindleController } from './controllers/KindleController';
 import GoodreadsStrategy from './passport/GoodreadsStrategy';
@@ -15,7 +16,7 @@ const app = createExpressServer({
 passport.use(GoodreadsStrategy);
 
 // define a route handler for the default home page
-app.get('/', (_req, res) => {
+app.get('/', (_req: Request, res: Response) => {
   res.send('Hello world!');
 });
 

@@ -3,7 +3,7 @@
   "name": "Kindle Highlights",
   "version": "1.0.0",
   "minAppVersion": "0.11.13",
-  "description": "An Obsidian plugin for fetching Kindle highlights",
+  "description": "An Obsidian plugin for fetching Kindle highlights using your Goodreads credentials",
   "author": "Hady Osman",
   "authorUrl": "https://hady.geek.nz",
   "isDesktopOnly": true

@@ -4,7 +4,7 @@ import { PuppeteerGoodreads } from 'puppeteer-goodreads';
 export default class RequestContext {
   static _bindings = new WeakMap<Request, RequestContext>();
 
-  public goodreads: PuppeteerGoodreads;
+  public goodreads!: PuppeteerGoodreads;
 
   constructor() {}
 

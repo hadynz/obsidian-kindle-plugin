@@ -1,16 +1,16 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "inlineSourceMap": true,
-    "inlineSources": true,
-    "module": "ESNext",
-    "target": "es6",
-    "allowJs": true,
-    "noImplicitAny": true,
+    "incremental": true,
+    "target": "es2019",
+    "module": "commonjs",
+    "declaration": true,
+    "sourceMap": true,
+    "composite": true,
+    "strict": true,
     "moduleResolution": "node",
+    "baseUrl": "./packages",
     "esModuleInterop": true,
-    "importHelpers": true,
-    "lib": ["dom", "es5", "scripthost", "es2015"]
-  },
-  "include": ["src/**/*.ts"]
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
 }

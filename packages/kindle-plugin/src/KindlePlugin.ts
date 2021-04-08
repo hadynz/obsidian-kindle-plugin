@@ -6,14 +6,17 @@ import { PluginSettings } from './models';
 import { StatusBar } from './StatusBar';
 
 const DEFAULT_SETTINGS: PluginSettings = {
-  goodreadsCredentials: {},
+  goodreadsCredentials: {
+    username: '',
+    password: '',
+  },
   highlightsFolderLocation: '/',
   synchedBookAsins: [],
   lastSyncDate: null,
 };
 
 export default class KindlePlugin extends Plugin {
-  settings: PluginSettings;
+  settings!: PluginSettings;
 
   async onload() {
     console.log('loading plugin', new Date().toLocaleString());

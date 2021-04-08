@@ -1,11 +1,11 @@
 export type Credentials = {
-  username?: string;
-  password?: string;
+  username: string;
+  password: string;
 };
 
 export interface PluginSettings {
   goodreadsCredentials: Credentials;
   highlightsFolderLocation: string;
   synchedBookAsins: string[];
-  lastSyncDate: Date;
+  lastSyncDate: Date | null;
 }

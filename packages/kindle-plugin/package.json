@@ -1,0 +1,36 @@
+{
+  "name": "kindle-obsidian-plugin",
+  "version": "0.0.1",
+  "description": "An Obsidian plugin for fetching Kindle highlights",
+  "main": "src/main.ts",
+  "scripts": {
+    "dev": "rollup --config rollup.config.js -w",
+    "build": "rollup --config rollup.config.js",
+    "clean": "rimraf main.js dist",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch"
+  },
+  "dependencies": {
+    "date-fns": "^2.19.0",
+    "lodash.pickby": "^4.6.0",
+    "sanitize-filename": "^1.6.3"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^15.1.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^9.0.0",
+    "@rollup/plugin-typescript": "^6.0.0",
+    "@types/jest": "^26.0.22",
+    "@types/lodash.pickby": "^4.6.6",
+    "@types/node": "^14.14.2",
+    "electron": "^12.0.2",
+    "jest": "^26.6.3",
+    "obsidian": "https://github.com/obsidianmd/obsidian-api/tarball/master",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.32.1",
+    "rollup-plugin-copy": "^3.4.0",
+    "ts-jest": "^26.5.4",
+    "tslib": "^2.0.3",
+    "typescript": "^4.2.3"
+  }
+}

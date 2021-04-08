@@ -4,7 +4,7 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import copy from 'rollup-plugin-copy';
 import json from '@rollup/plugin-json';
 
-const TEST_VAULT = '.';
+const DIST_DIR = '../../dist/';
 
 export default {
   input: 'src/main.ts',
@@ -18,15 +18,15 @@ export default {
   external: ['obsidian'],
   plugins: [
     nodeResolve({ browser: true, preferBuiltins: true }),
-    typescript({ sourceMap: true }),
-    commonjs({ sourceMap: true }),
+    typescript({ sourceMap: false }),
+    commonjs({ sourceMap: false }),
     json(),
     copy({
       targets: [
-        { src: 'dist/main.js', dest: TEST_VAULT },
+        { src: './dist/main.js', dest: DIST_DIR },
         {
           src: 'manifest.json',
-          dest: 'dist/',
+          dest: DIST_DIR,
         },
       ],
       flatten: true,

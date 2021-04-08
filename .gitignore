@@ -4,7 +4,6 @@
 
 # npm
 node_modules
-package-lock.json
 
 # build
 main.js
@@ -12,3 +11,4 @@ main.js
 
 coverage
 dist
+tsconfig.tsbuildinfo

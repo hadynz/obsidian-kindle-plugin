@@ -5,7 +5,7 @@ import { PuppeteerGoodreads } from 'puppeteer-goodreads';
 import RequestContext from '../RequestContext';
 
 export class GoodreadsMiddleware implements ExpressMiddlewareInterface {
-  use(request: Request, response: any, next?: (err?: any) => any): any {
+  use(request: Request, response: any, next: (err?: any) => any): any {
     const ctx = RequestContext.get(request);
 
     // At the start of every request
