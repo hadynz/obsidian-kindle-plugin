@@ -1,8 +1,13 @@
 {
   "name": "obsidian-kindle-highlights",
   "private": true,
-  "scripts": {},
+  "scripts": {
+    "build:plugin": "cd packages/kindle-plugin && npm install",
+    "build:server": "cd packages/kindle-server && npm install",
+    "build": "npm-run-all build:*"
+  },
   "devDependencies": {
+    "npm-run-all": "^4.1.5",
     "rimraf": "~3.0.0"
   },
   "workspaces": [
