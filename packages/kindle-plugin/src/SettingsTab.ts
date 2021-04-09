@@ -38,7 +38,8 @@ export class SettingsTab extends PluginSettingTab {
         .setValue(this.plugin.settings.goodreadsCredentials.password)
         .onChange(async (value) => {
           this.plugin.settings.goodreadsCredentials.password = value;
-        }),
+        })
+        .inputEl.setAttribute('type', 'password'),
     );
 
     new Setting(containerEl).addButton((button) => {
