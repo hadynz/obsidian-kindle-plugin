@@ -21,6 +21,7 @@ jobs:
         id: build
         run: |
           npm install
+          npm run test
           npm --prefix ./packages/kindle-plugin install ./packages/kindle-plugin
           npm --prefix ./packages/kindle-server install ./packages/kindle-server
           npm run build
