@@ -5,9 +5,9 @@
 # npm
 node_modules
 
-# build
+# obsidian plugin files
 main.js
-*.js.map
+data.json
 
 coverage
 dist

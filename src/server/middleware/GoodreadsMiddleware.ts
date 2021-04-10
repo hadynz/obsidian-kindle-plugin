@@ -10,7 +10,11 @@ export class GoodreadsMiddleware implements ExpressMiddlewareInterface {
 
     // At the start of every request
     ctx.goodreads = new PuppeteerGoodreads({
-      puppeteer: { headless: true },
+      puppeteer: {
+        headless: true,
+        executablePath:
+          '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+      },
     });
 
     // At the end of every request

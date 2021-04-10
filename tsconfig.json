@@ -8,9 +8,10 @@
     "composite": true,
     "strict": true,
     "moduleResolution": "node",
-    "baseUrl": "./packages",
+    "baseUrl": ".",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true
   }
 }
