@@ -6,7 +6,7 @@ on:
       - '*'
 
 env:
-  PLUGIN_NAME: obsidian-kindle-highlights
+  PLUGIN_NAME: obsidian-kindle-plugin
 
 jobs:
   build:
@@ -43,16 +43,6 @@ jobs:
           asset_path: ./dist/main.js
           asset_name: main.js
           asset_content_type: text/javascript
-      - name: Upload kindle-server.js
-        id: upload-kindle-server
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./dist/kindle-server.js
-          asset_name: kindle-server.js
-          asset_content_type: text/javascript
       - name: Upload manifest.json
         id: upload-manifest
         uses: actions/upload-release-asset@v1
@@ -73,4 +63,3 @@ jobs:
           asset_path: ./${{ env.PLUGIN_NAME }}.zip
           asset_name: ${{ env.PLUGIN_NAME }}-${{ steps.build.outputs.tag_name }}.zip
           asset_content_type: application/zip
-
