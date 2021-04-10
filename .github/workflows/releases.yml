@@ -1,9 +1,8 @@
 name: Build obsidian plugin
 
 on:
-  push:
-    tags:
-      - '*'
+  release:
+    types: [published]
 
 env:
   PLUGIN_NAME: obsidian-kindle-plugin
