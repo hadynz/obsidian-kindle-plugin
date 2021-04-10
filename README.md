@@ -1,1 +1,1 @@
-## Kindle Obsidian Plugin
+## Obsidian Kindle Plugin

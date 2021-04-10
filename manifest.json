@@ -1,9 +1,9 @@
 {
-  "id": "kindle-obsidian-plugin",
+  "id": "obsidian-kindle-plugin",
   "name": "Kindle Highlights",
-  "version": "1.0.0",
-  "minAppVersion": "0.11.13",
-  "description": "An Obsidian plugin for fetching Kindle highlights using your Goodreads credentials",
+  "version": "0.0.1",
+  "minAppVersion": "0.10.2",
+  "description": "An Obsidian plugin for syncing your Kindle book highlights using your Goodreads credentials",
   "author": "Hady Osman",
   "authorUrl": "https://hady.geek.nz",
   "isDesktopOnly": true

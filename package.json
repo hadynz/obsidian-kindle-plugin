@@ -1,7 +1,18 @@
 {
-  "name": "obsidian-kindle-highlights",
+  "name": "obsidian-kindle-plugin",
+  "version": "0.0.1",
+  "description": "An Obsidian plugin for syncing your Kindle book highlights using your Goodreads credentials",
+  "main": "src/index.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hadynz/obsidian-kindle-highlights.git"
+  },
+  "keywords": [],
+  "author": "Hady Osman",
+  "license": "MIT",
   "scripts": {
     "clean": "rimraf dist main.js",
+    "test": "jest",
     "build": "webpack",
     "build:watch": "nodemon --watch . --delay 250ms --exec 'node ./node_modules/.bin/webpack'"
   },
