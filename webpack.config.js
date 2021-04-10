@@ -25,6 +25,7 @@ module.exports = {
   plugins: [
     new CopyPlugin({
       patterns: [{ from: './manifest.json', to: '.' }],
+      //patterns: [{ from: './dist/main.js', to: '..' }],
     }),
   ],
   resolve: {
