@@ -12,6 +12,9 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "experimentalDecorators": true
-  }
+    "experimentalDecorators": true,
+    "types": ["node", "svelte"]
+  },
+  "include": ["src/**/*", "tests/**/*"],
+  "exclude": ["node_modules/*"]
 }

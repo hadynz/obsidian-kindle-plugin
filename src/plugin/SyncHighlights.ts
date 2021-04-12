@@ -6,6 +6,7 @@ import { PluginSettings } from './models';
 import { santizeTitle } from './util/santizeTitle';
 import { StatusBar } from './StatusBar';
 import KindlePlugin from './KindlePlugin';
+import GoodreadsModal from './modals/goodreadsLogin/goodreadsModal';
 
 export default class SyncHighlights {
   vault: Vault;
@@ -25,6 +26,11 @@ export default class SyncHighlights {
   }
 
   async sync(): Promise<void> {
+    //const tokenModal = new GoodreadsModal(this.plugin.app);
+    //await tokenModal.waitForClose;
+    console.log('sync??');
+    return;
+
     new Notice('Starting sync...');
     await this.kindleServer.start();
 
