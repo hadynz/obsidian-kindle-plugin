@@ -1,7 +1,8 @@
 import { Notice, Vault } from 'obsidian';
 
-import KindleService from './KindleService';
-import { KindleServer } from './KindleServer';
+import CredentialsManager from './CredentialsManager';
+import KindleRepository from './KindleRepository';
+import KindleServer from './KindleServer';
 import { PluginSettings } from './models';
 import { santizeTitle } from './util/santizeTitle';
 import { StatusBar } from './StatusBar';
@@ -13,21 +14,30 @@ export default class SyncHighlights {
   statusBar: StatusBar;
   plugin: KindlePlugin;
   settings: PluginSettings;
-  kindle: KindleService;
+  kindle: KindleRepository;
   kindleServer: KindleServer;
+  credentialsManager: CredentialsManager;
 
-  constructor(plugin: KindlePlugin, statusBar: StatusBar) {
+  constructor(
+    plugin: KindlePlugin,
+    statusBar: StatusBar,
+    credentialsManager: CredentialsManager,
+  ) {
     this.plugin = plugin;
     this.settings = plugin.settings;
     this.vault = plugin.app.vault;
     this.statusBar = statusBar;
-    this.kindle = new KindleService(this.settings.goodreadsCredentials);
     this.kindleServer = new KindleServer();
+    this.credentialsManager = credentialsManager;
+    this.kindle = new KindleRepository();
   }
 
   async sync(): Promise<void> {
-    //const tokenModal = new GoodreadsModal(this.plugin.app);
-    //await tokenModal.waitForClose;
+    const tokenModal = new GoodreadsModal(
+      this.plugin.app,
+      this.credentialsManager,
+    );
+    await tokenModal.waitForClose;
     console.log('sync??');
     return;
 

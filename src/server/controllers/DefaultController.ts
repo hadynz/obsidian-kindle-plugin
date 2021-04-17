@@ -6,6 +6,6 @@ import { Get, Res, JsonController } from 'routing-controllers';
 export class DefaultController {
   @Get('/')
   async default(@Res() response: Response) {
-    response.send('Hello world!');
+    return response.send('Kindle server for Obsidian is running...');
   }
 }

@@ -1,26 +1,44 @@
-<script lang="ts">
-    export let onSubmit: (value: string) => void;
-    let tokenInput: HTMLInputElement;
+<script>
+  import { onMount } from 'svelte';
+
+  export let onSubmit, submitting;
+  let emailInput, passwordInput;
+
+  onMount(() => {
+    setTimeout(() => {
+      emailInput.focus();
+    }, 0);
+  });
 </script>
 
 <div class="setting-item">
-    <div class="setting-item-info">
-        <div class="setting-item-name">Readwise Token</div>
-        <div class="setting-item-description">
-            <span
-                >You can find the token
-                <a href="https://readwise.io/access_token"> here!</a></span
-            >
-        </div>
-    </div>
-    <div class="setting-item-control">
-        <input bind:this={tokenInput} type="text" placeholder="API token" />
-    </div>
+  <div class="setting-item-info">
+    <div class="setting-item-name">Email address</div>
+  </div>
+  <div class="setting-item-control">
+    <input bind:this={emailInput} type="text" placeholder="you@yours.com" />
+  </div>
 </div>
-<button
-    class="mod-cta"
-    style="float: right"
-    on:click={() => onSubmit(tokenInput.value)}
->
-    Submit
-</button>
+
+<div class="setting-item">
+  <div class="setting-item-info">
+    <div class="setting-item-name">Password</div>
+  </div>
+  <div class="setting-item-control">
+    <input bind:this={passwordInput} type="password" />
+  </div>
+</div>
+
+<div style="float: right">
+  {#if submitting}
+    <button class="mod-muted" disabled>Signing in...</button>
+  {/if}
+  {#if !submitting}
+    <button
+      class="mod-cta"
+      on:click={() => onSubmit(emailInput.value, passwordInput.value)}
+    >
+      Sign in
+    </button>
+  {/if}
+</div>

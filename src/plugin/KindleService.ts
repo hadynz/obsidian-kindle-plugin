@@ -1,61 +1,24 @@
-import { Credentials } from './models';
+import KindleRepository from './KindleRepository';
+import KindleServer from './KindleServer';
 
 export default class KindleService {
-  token: string;
+  private kindleRepository: KindleRepository;
+  private kindleServer: KindleServer;
 
-  constructor(credentials: Credentials) {
-    this.token =
-      'Basic ' +
-      Buffer.from(`${credentials.username}:${credentials.password}`).toString(
-        'base64',
-      );
+  constructor() {
+    this.kindleRepository = new KindleRepository();
+    this.kindleServer = new KindleServer();
   }
 
   async login(): Promise<boolean> {
-    try {
-      await fetch('http://localhost:8080/kindle/login', {
-        method: 'GET',
-        headers: new Headers({
-          Authorization: this.token,
-          'Content-Type': 'application/json',
-        }),
-      });
+    await this.kindleServer.start();
 
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
+    //const success = await this.kindleRepository.login();
 
-  async getBooks(): Promise<any[]> {
-    const response = await fetch('http://localhost:8080/kindle/books', {
-      method: 'GET',
-      headers: new Headers({
-        Authorization: this.token,
-        'Content-Type': 'application/json',
-      }),
-    });
+    //await this.kindleServer.stop();
 
-    const data = await response.json();
-    return data as any[];
-  }
+    return false;
 
-  async getBookHighlights(bookUrl: string): Promise<any[]> {
-    const response = await fetch(
-      'http://localhost:8080/kindle/books/highlights',
-      {
-        method: 'POST',
-        headers: new Headers({
-          Authorization: this.token,
-          'Content-Type': 'application/json',
-        }),
-        body: JSON.stringify({
-          bookUrl,
-        }),
-      },
-    );
-
-    const data = await response.json();
-    return data as any[];
+    //return success;
   }
 }

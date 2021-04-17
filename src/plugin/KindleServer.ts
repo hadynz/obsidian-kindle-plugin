@@ -1,6 +1,6 @@
 import server from '../server';
 
-export class KindleServer {
+export default class KindleServer {
   async start() {
     server.listen(8080, () => {
       console.log('Kindle server started on port 8080...');

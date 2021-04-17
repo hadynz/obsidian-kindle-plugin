@@ -25,22 +25,13 @@ module.exports = {
       },
       {
         test: /\.(html|svelte)$/,
-        use: [
-          { loader: 'babel-loader' },
-          {
-            loader: 'svelte-loader',
-            options: {
-              emitCss: true,
-              preprocess: sveltePreprocess({}),
-            },
+        exclude: /node_modules/,
+        use: {
+          loader: 'svelte-loader',
+          options: {
+            emitCss: true,
+            preprocess: require('svelte-preprocess')({}),
           },
-        ],
-      },
-      {
-        // required to prevent errors from Svelte on Webpack 5+, omit on Webpack 4
-        test: /node_modules\/svelte\/.*\.mjs$/,
-        resolve: {
-          fullySpecified: false,
         },
       },
     ],
