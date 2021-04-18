@@ -8,6 +8,8 @@ import { santizeTitle } from './util/santizeTitle';
 import { StatusBar } from './StatusBar';
 import KindlePlugin from './KindlePlugin';
 import GoodreadsModal from './modals/goodreadsLogin/goodreadsModal';
+import scrapingModal from './modals/goodreadsScraper/scrapingModal';
+import AmazonLoginModal from './modals/amazonLoginModal';
 
 export default class SyncHighlights {
   vault: Vault;
@@ -33,12 +35,10 @@ export default class SyncHighlights {
   }
 
   async sync(): Promise<void> {
-    const tokenModal = new GoodreadsModal(
-      this.plugin.app,
-      this.credentialsManager,
-    );
-    await tokenModal.waitForClose;
-    console.log('sync??');
+    const modal = new AmazonLoginModal();
+    await modal.waitForSignIn;
+
+    //await scrapingModal(this.plugin);
     return;
 
     new Notice('Starting sync...');
