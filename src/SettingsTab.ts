@@ -1,7 +1,7 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import pickBy from 'lodash.pickby';
 
-import KindlePlugin from './KindlePlugin';
+import KindlePlugin from '.';
 
 export class SettingsTab extends PluginSettingTab {
   plugin: KindlePlugin;
