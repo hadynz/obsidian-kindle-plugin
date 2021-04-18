@@ -7,9 +7,8 @@ import { PluginSettings } from './models';
 import { santizeTitle } from './util/santizeTitle';
 import { StatusBar } from './StatusBar';
 import KindlePlugin from './KindlePlugin';
-import GoodreadsModal from './modals/goodreadsLogin/goodreadsModal';
-import scrapingModal from './modals/goodreadsScraper/scrapingModal';
 import AmazonLoginModal from './modals/amazonLoginModal';
+import { getListofBooks } from './scraper';
 
 export default class SyncHighlights {
   vault: Vault;
@@ -38,7 +37,9 @@ export default class SyncHighlights {
     const modal = new AmazonLoginModal();
     await modal.waitForSignIn;
 
-    //await scrapingModal(this.plugin);
+    const books2 = await getListofBooks();
+    console.log('books2', books2);
+
     return;
 
     new Notice('Starting sync...');

@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "body-parser": "^1.19.0",
+    "cheerio": "*",
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
     "cors": "^2.8.5",
@@ -44,6 +45,7 @@
     "@types/puppeteer": "^2.0.0",
     "babel-loader": "^8.2.2",
     "copy-webpack-plugin": "^8.1.1",
+    "electron": "^12.0.4",
     "jest": "^26.6.3",
     "nodemon": "^2.0.7",
     "obsidian": "https://github.com/obsidianmd/obsidian-api/tarball/master",

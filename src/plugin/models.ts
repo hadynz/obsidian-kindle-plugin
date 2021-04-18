@@ -8,3 +8,11 @@ export interface PluginSettings {
   synchedBookAsins: string[];
   lastSyncDate: Date | null;
 }
+
+export type Book = {
+  asin: string;
+  title: string;
+  author: string;
+  imageUrl: string;
+  lastAccessedDate: string;
+};
