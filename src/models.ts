@@ -1,8 +1,3 @@
-export type Credentials = {
-  email: string;
-  password: string;
-};
-
 export interface PluginSettings {
   highlightsFolderLocation: string;
   synchedBookAsins: string[];
@@ -15,4 +10,11 @@ export type Book = {
   author: string;
   imageUrl: string;
   lastAccessedDate: string;
+};
+
+export type Highlight = {
+  id: string;
+  text: string;
+  location: number;
+  pageLocation: number;
 };

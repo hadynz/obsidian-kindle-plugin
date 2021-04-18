@@ -1,7 +1,6 @@
 import { Plugin } from 'obsidian';
 
 import SyncHighlights from './SyncHighlights';
-import CredentialsManager from './CredentialsManager';
 import { SettingsTab } from './SettingsTab';
 import { PluginSettings } from './models';
 import { StatusBar } from './StatusBar';
@@ -14,21 +13,15 @@ const DEFAULT_SETTINGS: PluginSettings = {
 
 export default class KindlePlugin extends Plugin {
   settings!: PluginSettings;
-  private credentialsManager!: CredentialsManager;
 
   async onload() {
     console.log('loading plugin', new Date().toLocaleString());
-    this.credentialsManager = new CredentialsManager();
 
     await this.loadSettings();
 
     const statusBar = new StatusBar(this.addStatusBarItem(), this.settings);
 
-    const syncHighlights = new SyncHighlights(
-      this,
-      statusBar,
-      this.credentialsManager,
-    );
+    const syncHighlights = new SyncHighlights(this, statusBar);
 
     this.addRibbonIcon(
       'dice',

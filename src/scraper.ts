@@ -1,8 +1,8 @@
 import { remote } from 'electron';
-import cheerio, { Root } from 'cheerio';
+import cheerio from 'cheerio';
 
-import { Book } from './models';
-import { parseBooks } from './parser';
+import { Book, Highlight } from './models';
+import { parseBooks, parseHighlights } from './parser';
 
 const { BrowserWindow, ipcMain } = remote;
 
@@ -15,7 +15,7 @@ export const getListofBooks = async (): Promise<Book[]> => {
         webSecurity: false,
         nodeIntegration: true,
       },
-      show: true,
+      show: false,
     });
 
     /**
@@ -40,10 +40,52 @@ export const getListofBooks = async (): Promise<Book[]> => {
 
       const books = parseBooks($);
 
-      window.close();
       window.destroy();
 
       resolve(books);
+    });
+  });
+};
+
+export const getBookHighlights = async (book: Book): Promise<Highlight[]> => {
+  return new Promise<Highlight[]>((resolve) => {
+    const window = new BrowserWindow({
+      width: 1000,
+      height: 600,
+      webPreferences: {
+        webSecurity: false,
+        nodeIntegration: true,
+      },
+      show: false,
+    });
+
+    /**
+     * Everytime page finishes loading, select entire DOM and send to
+     * main process for scraping
+     */
+    window.webContents.on('did-finish-load', () => {
+      window.webContents.executeJavaScript(
+        `require('electron').ipcRenderer.send('pageloaded', document.querySelector('body').innerHTML);`,
+      );
+    });
+
+    window.webContents.openDevTools();
+
+    window.loadURL(
+      `https://read.amazon.com/notebook?asin=${book.asin}&contentLimitState=&`,
+    );
+
+    /**
+     * Listens for the `pageloaded` event to parse and scrape HTML
+     */
+    ipcMain.on('pageloaded', (_event, html) => {
+      const $ = cheerio.load(html);
+
+      const highlights = parseHighlights($);
+
+      window.destroy();
+
+      resolve(highlights);
     });
   });
 };
