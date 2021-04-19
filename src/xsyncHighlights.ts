@@ -2,7 +2,7 @@ import { Notice, Vault } from 'obsidian';
 
 import { Highlight, PluginSettings } from './models';
 import { santizeTitle } from './util/santizeTitle';
-import { StatusBar } from './statusBar';
+import { StatusBar } from './xstatusBar';
 import KindlePlugin from '.';
 import AmazonLoginModal from './modals/amazonLoginModal';
 import { getListofBooks, getBookHighlights } from './scraper';
