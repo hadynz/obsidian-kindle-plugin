@@ -1,6 +1,6 @@
 import { Root } from 'cheerio';
 
-import { Book, Highlight } from './models';
+import { Book, Highlight } from '../models';
 
 export const parseBooks = ($: Root): Book[] => {
   const booksEl = $('.kp-notebook-library-each-book').toArray();

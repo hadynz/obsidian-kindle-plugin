@@ -5,7 +5,7 @@ import { santizeTitle } from './util/santizeTitle';
 import { StatusBar } from './statusBar';
 import KindlePlugin from '.';
 import AmazonLoginModal from './modals/amazonLoginModal';
-import { getListofBooks, getBookHighlights } from './scraper';
+import { getBookHighlights, getListofBooks } from './scraper';
 
 export default class SyncHighlights {
   vault: Vault;
