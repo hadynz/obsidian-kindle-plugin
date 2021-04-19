@@ -18,7 +18,6 @@
   },
   "dependencies": {
     "cheerio": "*",
-    "date-fns": "^2.19.0",
     "lodash.pickby": "^4.6.0",
     "sanitize-filename": "^1.6.3"
   },

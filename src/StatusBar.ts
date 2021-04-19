@@ -1,6 +1,6 @@
-import { formatDistanceToNow } from 'date-fns';
-
 import { PluginSettings } from './models';
+
+const moment = (window as any).moment;
 
 export class StatusBar {
   el: HTMLElement;
@@ -13,11 +13,9 @@ export class StatusBar {
       this.el.setText('Kindle sync has never run');
     } else {
       this.el.setText(
-        `${
-          settings.synchedBookAsins.length
-        } books synced. Last sync ${formatDistanceToNow(settings.lastSyncDate, {
-          addSuffix: true,
-        })}`,
+        `${settings.synchedBookAsins.length} books synced. Last sync ${moment(
+          settings.lastSyncDate,
+        ).fromNow()}`,
       );
     }
   }

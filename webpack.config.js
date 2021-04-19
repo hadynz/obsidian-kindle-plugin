@@ -49,7 +49,7 @@ module.exports = {
     mainFields: ['svelte', 'browser', 'module', 'main'],
   },
   externals: {
-    obsidian: 'commonjs2 obsidian',
     electron: 'commonjs2 electron',
+    obsidian: 'commonjs2 obsidian',
   },
 };
