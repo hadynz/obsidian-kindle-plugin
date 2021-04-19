@@ -1,9 +1,9 @@
 import { Plugin } from 'obsidian';
 
-import SyncHighlights from './xsyncHighlights';
-import { SettingsTab } from './xsettingsTab';
+import SyncHighlights from './syncHighlights';
+import { SettingsTab } from './settingsTab';
 import { PluginSettings } from './models';
-import { StatusBar } from './xstatusBar';
+import { StatusBar } from './statusBar';
 
 const DEFAULT_SETTINGS: PluginSettings = {
   highlightsFolderLocation: '/',
