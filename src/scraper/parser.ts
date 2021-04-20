@@ -41,3 +41,13 @@ export const parseHighlights = ($: Root): Highlight[] => {
     } as Highlight;
   });
 };
+
+export const parseSignoutLink = ($: Root): string => {
+  const signoutLinkEl = $('#kp-notebook-head tr:last-child a').attr('href');
+
+  if (signoutLinkEl) {
+    return signoutLinkEl;
+  }
+
+  throw new Error('Could not parse logout link');
+};

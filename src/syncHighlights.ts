@@ -26,7 +26,7 @@ export default class SyncHighlights {
   }
 
   async sync(): Promise<void> {
-    const modal = new AmazonLoginModal();
+    const modal = new AmazonLoginModal(this.settings);
     await modal.doLogin();
 
     new Notice('Starting sync...');

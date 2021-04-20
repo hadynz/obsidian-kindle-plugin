@@ -4,6 +4,7 @@ interface PluginSettingsData {
   highlightsFolderLocation: string;
   synchedBookAsins: string[];
   lastSyncDate: string | null;
+  isLoggedIn: boolean;
   noteTemplate: string;
 }
 
@@ -11,10 +12,12 @@ export interface PluginSettings {
   readonly highlightsFolderLocation: string;
   readonly synchedBookAsins: string[];
   readonly lastSyncDate: Date | null;
+  readonly isLoggedIn: boolean;
   readonly noteTemplate: string;
   setHighlightsFolderLocation: (value: string) => Promise<void>;
   addSynchedBookAsins: (value: string) => Promise<void>;
   setSyncDate: (value: Date) => Promise<void>;
+  setIsLoggedIn: (value: boolean) => Promise<void>;
   setNoteTemplate: (value: string) => Promise<void>;
 }
 
@@ -22,6 +25,7 @@ const DEFAULT_SETTINGS: PluginSettingsData = {
   highlightsFolderLocation: '/',
   synchedBookAsins: [],
   lastSyncDate: null,
+  isLoggedIn: false,
   noteTemplate: `# {{title}}
 * By [[{{author}}]]
 
@@ -57,6 +61,10 @@ export default (plugin: KindlePlugin, data: any): PluginSettings => {
         : new Date(settings.lastSyncDate);
     },
 
+    get isLoggedIn() {
+      return settings.isLoggedIn;
+    },
+
     get noteTemplate(): string {
       return settings.noteTemplate;
     },
@@ -73,6 +81,11 @@ export default (plugin: KindlePlugin, data: any): PluginSettings => {
 
     async setSyncDate(value: Date) {
       settings.lastSyncDate = value.toString();
+      await saveData();
+    },
+
+    async setIsLoggedIn(value: boolean) {
+      settings.isLoggedIn = value;
       await saveData();
     },
 

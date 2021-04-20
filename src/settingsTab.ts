@@ -2,7 +2,9 @@ import { App, PluginSettingTab, Setting } from 'obsidian';
 import pickBy from 'lodash.pickby';
 
 import KindlePlugin from '.';
+import AmazonLogoutModal from './modals/amazonLogoutModal';
 import { PluginSettings } from './settings';
+import { getLogoutLink } from './scraper';
 
 export class SettingsTab extends PluginSettingTab {
   public app: App;
@@ -20,8 +22,30 @@ export class SettingsTab extends PluginSettingTab {
 
     containerEl.empty();
 
+    if (this.settings.isLoggedIn) {
+      this.logout();
+    }
+
     this.highlightsFolder();
     this.noteTemplate();
+  }
+
+  logout(): void {
+    new Setting(this.containerEl).setName('Logout').addButton((button) => {
+      return button
+        .setCta()
+        .setButtonText('Sign out')
+        .onClick(async () => {
+          button.removeCta().setButtonText('Signing out...').setDisabled(true);
+
+          const signoutLink = await getLogoutLink();
+
+          const modal = new AmazonLogoutModal(signoutLink, this.settings);
+          await modal.doLogout();
+
+          this.display(); // rerender
+        });
+    });
   }
 
   highlightsFolder(): void {
