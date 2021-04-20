@@ -7,7 +7,7 @@ import { SettingsTab } from './settingsTab';
 import { StatusBar } from './statusBar';
 
 export default class KindlePlugin extends Plugin {
-  async onload() {
+  async onload(): Promise<void> {
     console.log('loading plugin', new Date().toLocaleString());
 
     const settings = loadSettings(this, await this.loadData());
@@ -27,7 +27,7 @@ export default class KindlePlugin extends Plugin {
     this.addSettingTab(new SettingsTab(this.app, this, settings));
   }
 
-  async onunload() {
+  async onunload(): Promise<void> {
     console.log('unloading plugin', new Date().toLocaleString());
   }
 }
