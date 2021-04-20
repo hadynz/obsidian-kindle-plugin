@@ -1,24 +1,24 @@
-const path = require('path');
-const CopyPlugin = require('copy-webpack-plugin');
-const sveltePreprocess = require('svelte-preprocess');
+const path = require("path");
+const CopyPlugin = require("copy-webpack-plugin");
+const sveltePreprocess = require("svelte-preprocess");
 
-const isDevMode = process.env.NODE_ENV === 'development';
+const isDevMode = process.env.NODE_ENV === "development";
 
 module.exports = {
-  entry: './src/index.ts',
+  entry: "./src/index.ts",
   output: {
-    path: path.resolve(__dirname, './dist'),
-    filename: 'main.js',
-    libraryTarget: 'commonjs',
+    path: path.resolve(__dirname, "./dist"),
+    filename: "main.js",
+    libraryTarget: "commonjs",
   },
-  target: 'node',
-  mode: isDevMode ? 'development' : 'production',
-  devtool: isDevMode ? 'eval' : 'none',
+  target: "node",
+  mode: isDevMode ? "development" : "production",
+  ...(isDevMode ? { devtool: "eval" } : {}),
   module: {
     rules: [
       {
         test: /\.tsx?$/,
-        loader: 'ts-loader',
+        loader: "ts-loader",
         options: {
           transpileOnly: true,
         },
@@ -27,10 +27,10 @@ module.exports = {
         test: /\.(html|svelte)$/,
         exclude: /node_modules/,
         use: {
-          loader: 'svelte-loader',
+          loader: "svelte-loader",
           options: {
             emitCss: true,
-            preprocess: require('svelte-preprocess')({}),
+            preprocess: require("svelte-preprocess")({}),
           },
         },
       },
@@ -38,18 +38,18 @@ module.exports = {
   },
   plugins: [
     new CopyPlugin({
-      patterns: [{ from: './manifest.json', to: '.' }],
+      patterns: [{ from: "./manifest.json", to: "." }],
     }),
   ],
   resolve: {
     alias: {
-      svelte: path.resolve('node_modules', 'svelte'),
+      svelte: path.resolve("node_modules", "svelte"),
     },
-    extensions: ['.ts', '.tsx', '.js', '.svelte'],
-    mainFields: ['svelte', 'browser', 'module', 'main'],
+    extensions: [".ts", ".tsx", ".js", ".svelte"],
+    mainFields: ["svelte", "browser", "module", "main"],
   },
   externals: {
-    electron: 'commonjs2 electron',
-    obsidian: 'commonjs2 obsidian',
+    electron: "commonjs2 electron",
+    obsidian: "commonjs2 obsidian",
   },
 };
