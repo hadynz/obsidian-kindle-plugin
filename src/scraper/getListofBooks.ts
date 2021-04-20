@@ -7,7 +7,7 @@ import { parseBooks } from './parser';
 const { BrowserWindow, ipcMain } = remote;
 
 export default function getListofBooks(): Promise<Book[]> {
-  return new Promise<Book[]>((resolve) => {
+  return new Promise<Book[]>(async (resolve) => {
     const window = new BrowserWindow({
       width: 1000,
       height: 600,
@@ -22,15 +22,15 @@ export default function getListofBooks(): Promise<Book[]> {
      * Everytime page finishes loading, select entire DOM and send to
      * main process for scraping
      */
-    window.webContents.on('did-finish-load', () => {
-      window.webContents.executeJavaScript(
+    window.webContents.on('did-finish-load', async () => {
+      await window.webContents.executeJavaScript(
         `require('electron').ipcRenderer.send('pageloaded', document.querySelector('body').innerHTML);`,
       );
     });
 
     window.webContents.openDevTools();
 
-    window.loadURL('https://read.amazon.com/notebook');
+    await window.loadURL('https://read.amazon.com/notebook');
 
     /**
      * Listens for the `pageloaded` event to parse and scrape HTML

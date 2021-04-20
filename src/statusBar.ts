@@ -1,4 +1,4 @@
-import { PluginSettings } from './models';
+import { PluginSettings } from './settings';
 
 const moment = (window as any).moment;
 

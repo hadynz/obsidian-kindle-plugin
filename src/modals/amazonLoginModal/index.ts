@@ -1,15 +1,15 @@
-import { remote } from 'electron';
+import { remote, Event } from 'electron';
 
 const { BrowserWindow } = remote;
 
 export default class AmazonLoginModal {
   private modal;
-  public waitForSignIn: Promise<void>;
+  private waitForSignIn: Promise<void>;
   private resolvePromise!: () => void;
 
   constructor() {
     this.waitForSignIn = new Promise(
-      (resolve) => (this.resolvePromise = resolve),
+      (resolve: () => void) => (this.resolvePromise = resolve),
     );
 
     this.modal = new BrowserWindow({
@@ -19,8 +19,6 @@ export default class AmazonLoginModal {
       show: false,
     });
 
-    this.modal.loadURL('https://read.amazon.com/notebook');
-
     // We can only change title after page is loaded since HTML page has its own title
     this.modal.once('ready-to-show', () => {
       this.modal.setTitle('Connect your Amazon account to Obsidian');
@@ -28,11 +26,16 @@ export default class AmazonLoginModal {
     });
 
     // If user is on the read.amazon.com url, we can safely assume they are logged in
-    this.modal.webContents.on('did-navigate', (event, url) => {
+    this.modal.webContents.on('did-navigate', (_event: Event, url: string) => {
       if (url.startsWith('https://read.amazon.com')) {
         this.modal.close();
         this.resolvePromise();
       }
     });
+  }
+
+  async doLogin() {
+    this.modal.loadURL('https://read.amazon.com/notebook');
+    return this.waitForSignIn;
   }
 }

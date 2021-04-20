@@ -7,7 +7,7 @@ import { parseHighlights } from './parser';
 const { BrowserWindow, ipcMain } = remote;
 
 export default function getBookHighlights(book: Book): Promise<Highlight[]> {
-  return new Promise<Highlight[]>((resolve) => {
+  return new Promise<Highlight[]>(async (resolve) => {
     const window = new BrowserWindow({
       width: 1000,
       height: 600,
@@ -22,15 +22,15 @@ export default function getBookHighlights(book: Book): Promise<Highlight[]> {
      * Everytime page finishes loading, select entire DOM and send to
      * main process for scraping
      */
-    window.webContents.on('did-finish-load', () => {
-      window.webContents.executeJavaScript(
+    window.webContents.on('did-finish-load', async () => {
+      await window.webContents.executeJavaScript(
         `require('electron').ipcRenderer.send('pageloaded', document.querySelector('body').innerHTML);`,
       );
     });
 
     window.webContents.openDevTools();
 
-    window.loadURL(
+    await window.loadURL(
       `https://read.amazon.com/notebook?asin=${book.asin}&contentLimitState=&`,
     );
 

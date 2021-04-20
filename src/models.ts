@@ -1,9 +1,3 @@
-export interface PluginSettings {
-  highlightsFolderLocation: string;
-  synchedBookAsins: string[];
-  lastSyncDate: Date | null;
-}
-
 export type Book = {
   asin: string;
   title: string;

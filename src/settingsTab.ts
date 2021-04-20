@@ -2,19 +2,21 @@ import { App, PluginSettingTab, Setting } from 'obsidian';
 import pickBy from 'lodash.pickby';
 
 import KindlePlugin from '.';
+import { PluginSettings } from './settings';
 
 export class SettingsTab extends PluginSettingTab {
-  plugin: KindlePlugin;
-  app: App;
+  public app: App;
+  private settings: PluginSettings;
 
-  constructor(app: App, plugin: KindlePlugin) {
+  constructor(app: App, plugin: KindlePlugin, settings: PluginSettings) {
     super(app, plugin);
-    this.plugin = plugin;
+
     this.app = app;
+    this.settings = settings;
   }
 
   async display(): Promise<void> {
-    let { containerEl } = this;
+    const { containerEl } = this;
 
     containerEl.empty();
 
@@ -30,10 +32,9 @@ export class SettingsTab extends PluginSettingTab {
           dropdown.addOption(val, val);
         });
         return dropdown
-          .setValue(this.plugin.settings.highlightsFolderLocation)
+          .setValue(this.settings.highlightsFolderLocation)
           .onChange(async (value) => {
-            this.plugin.settings.highlightsFolderLocation = value;
-            await this.plugin.saveData(this.plugin.settings);
+            await this.settings.setHighlightsFolderLocation(value);
           });
       });
   }

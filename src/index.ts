@@ -1,27 +1,22 @@
 import { Plugin } from 'obsidian';
 
+import loadSettings from './settings';
+import FileManager from './fileManager';
 import SyncHighlights from './syncHighlights';
 import { SettingsTab } from './settingsTab';
-import { PluginSettings } from './models';
 import { StatusBar } from './statusBar';
 
-const DEFAULT_SETTINGS: PluginSettings = {
-  highlightsFolderLocation: '/',
-  synchedBookAsins: [],
-  lastSyncDate: null,
-};
-
 export default class KindlePlugin extends Plugin {
-  settings!: PluginSettings;
-
   async onload() {
     console.log('loading plugin', new Date().toLocaleString());
 
-    await this.loadSettings();
+    const settings = loadSettings(this, await this.loadData());
 
-    const statusBar = new StatusBar(this.addStatusBarItem(), this.settings);
+    const fileManager = new FileManager(this.app.vault, settings);
 
-    const syncHighlights = new SyncHighlights(this, statusBar);
+    const statusBar = new StatusBar(this.addStatusBarItem(), settings);
+
+    const syncHighlights = new SyncHighlights(statusBar, fileManager, settings);
 
     this.addRibbonIcon(
       'dice',
@@ -29,21 +24,10 @@ export default class KindlePlugin extends Plugin {
       async () => await syncHighlights.sync(),
     );
 
-    this.addSettingTab(new SettingsTab(this.app, this));
+    this.addSettingTab(new SettingsTab(this.app, this, settings));
   }
 
   async onunload() {
     console.log('unloading plugin', new Date().toLocaleString());
-  }
-
-  async loadSettings() {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-    if (this.settings.lastSyncDate) {
-      this.settings.lastSyncDate = new Date(this.settings.lastSyncDate);
-    }
-  }
-
-  async saveSettings() {
-    await this.saveData(this.settings);
   }
 }
