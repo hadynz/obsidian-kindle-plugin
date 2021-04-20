@@ -13,7 +13,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
-    "types": ["node", "svelte"]
+    "types": ["node", "svelte", "jest"]
   },
   "include": ["src/**/*", "tests/**/*"],
   "exclude": ["node_modules/*"]
