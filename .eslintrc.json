@@ -13,8 +13,6 @@
   "plugins": ["@typescript-eslint", "jest"],
   "extends": [
     "eslint:recommended",
-    "prettier",
-    "prettier/@typescript-eslint",
     "plugin:@typescript-eslint/recommended",
     "plugin:jest/recommended"
   ],

@@ -1,3 +1,4 @@
+import nunjucks from 'nunjucks';
 import { Notice } from 'obsidian';
 
 import AmazonLoginModal from './modals/amazonLoginModal';
@@ -80,11 +81,14 @@ export default class SyncHighlights {
   }
 
   async writeBook(book: Book, highlights: Highlight[]): Promise<void> {
-    const highlightsContent = highlights
-      .map((h) => `- > ${h.text} (location ${h.location})`)
-      .join('\n\n');
+    nunjucks.configure({ autoescape: true });
 
-    const content = `# ${book.title}\n\n${highlightsContent}`;
+    const content = nunjucks.renderString(this.settings.noteTemplate, {
+      title: book.title,
+      author: book.author,
+      highlights,
+    });
+
     await this.fileManager.writeNote(book.title, content);
   }
 }
