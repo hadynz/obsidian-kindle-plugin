@@ -1,17 +1,18 @@
-import nunjucks from 'nunjucks';
 import { Notice } from 'obsidian';
 
 import AmazonLoginModal from './modals/amazonLoginModal';
 import FileManager, { santizeTitle } from './fileManager';
-import { Book, Highlight } from './models';
+import { Book } from './models';
 import { PluginSettings } from './settings';
 import { StatusBar } from './statusBar';
 import { getBookHighlights, getListofBooks } from './scraper';
+import { Renderer } from './renderer';
 
 export default class SyncHighlights {
-  statusBar: StatusBar;
-  fileManager: FileManager;
-  settings: PluginSettings;
+  private statusBar: StatusBar;
+  private fileManager: FileManager;
+  private settings: PluginSettings;
+  private renderer: Renderer;
 
   constructor(
     statusBar: StatusBar,
@@ -21,6 +22,7 @@ export default class SyncHighlights {
     this.statusBar = statusBar;
     this.fileManager = fileManager;
     this.settings = settings;
+    this.renderer = new Renderer(settings);
   }
 
   async sync(): Promise<void> {
@@ -55,6 +57,8 @@ export default class SyncHighlights {
 
         await this.syncBook(book);
 
+        await this.settings.setSyncDate(new Date());
+
         console.log(
           `Finished syncing of ${book.title}`,
           new Date().toLocaleString(),
@@ -75,20 +79,8 @@ export default class SyncHighlights {
     this.statusBar.setText(`Syncing "${santizeTitle(book.title)}"...`);
 
     const highlights = await getBookHighlights(book);
-    await this.writeBook(book, highlights);
 
-    await this.settings.setSyncDate(new Date());
-  }
-
-  async writeBook(book: Book, highlights: Highlight[]): Promise<void> {
-    nunjucks.configure({ autoescape: true });
-
-    const content = nunjucks.renderString(this.settings.noteTemplate, {
-      title: book.title,
-      author: book.author,
-      highlights,
-    });
-
+    const content = this.renderer.render(book, highlights);
     await this.fileManager.writeNote(book.title, content);
   }
 }

@@ -1,4 +1,4 @@
-import KindlePlugin from ".";
+import KindlePlugin from '.';
 
 interface PluginSettingsData {
   highlightsFolderLocation: string;
@@ -19,11 +19,11 @@ export interface PluginSettings {
 }
 
 const DEFAULT_SETTINGS: PluginSettingsData = {
-  highlightsFolderLocation: "/",
+  highlightsFolderLocation: '/',
   synchedBookAsins: [],
   lastSyncDate: null,
   noteTemplate: `# {{title}}
-* By {{author}}
+* By [[{{author}}]]
 
 {% for highlight in highlights %}
   - > {{highlight.text}} (location: {{highlight.location}})
@@ -31,11 +31,11 @@ const DEFAULT_SETTINGS: PluginSettingsData = {
 `,
 };
 
-const loadSettings = (data: object): PluginSettingsData => {
+const loadSettings = (data: any): PluginSettingsData => {
   return Object.assign({}, DEFAULT_SETTINGS, data);
 };
 
-export default (plugin: KindlePlugin, data: object): PluginSettings => {
+export default (plugin: KindlePlugin, data: any): PluginSettings => {
   const settings = loadSettings(data);
 
   const saveData = async () => {
