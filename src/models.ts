@@ -10,5 +10,5 @@ export type Highlight = {
   id: string;
   text: string;
   location: number;
-  pageLocation: number;
+  page: number;
 };

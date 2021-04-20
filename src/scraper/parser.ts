@@ -37,7 +37,7 @@ export const parseHighlights = ($: Root): Highlight[] => {
       id: highlight.id,
       text: highlight.text,
       location: Number(highlight.locationString),
-      pageLocation: Number(highlight.pageLocationString![0]),
+      page: Number(highlight.pageLocationString![0]),
     } as Highlight;
   });
 };
