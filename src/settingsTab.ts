@@ -6,6 +6,8 @@ import AmazonLogoutModal from './modals/amazonLogoutModal';
 import { PluginSettings } from './settings';
 import { getLogoutLink } from './scraper';
 
+const moment = (window as any).moment;
+
 export class SettingsTab extends PluginSettingTab {
   public app: App;
   private settings: PluginSettings;
@@ -31,21 +33,32 @@ export class SettingsTab extends PluginSettingTab {
   }
 
   logout(): void {
-    new Setting(this.containerEl).setName('Logout').addButton((button) => {
-      return button
-        .setCta()
-        .setButtonText('Sign out')
-        .onClick(async () => {
-          button.removeCta().setButtonText('Signing out...').setDisabled(true);
+    const descFragment = document.createRange().createContextualFragment(`
+      ${this.settings.synchedBookAsins.length} book(s) synced<br/>
+      Last sync ${moment(this.settings.lastSyncDate).fromNow()}
+    `);
 
-          const signoutLink = await getLogoutLink();
+    new Setting(this.containerEl)
+      .setName(`Logged in as ${this.settings.loggedInEmail}`)
+      .setDesc(descFragment)
+      .addButton((button) => {
+        return button
+          .setButtonText('Sign out')
+          .setCta()
+          .onClick(async () => {
+            button
+              .removeCta()
+              .setButtonText('Signing out...')
+              .setDisabled(true);
 
-          const modal = new AmazonLogoutModal(signoutLink, this.settings);
-          await modal.doLogout();
+            const signoutLink = await getLogoutLink();
 
-          this.display(); // rerender
-        });
-    });
+            const modal = new AmazonLogoutModal(signoutLink, this.settings);
+            await modal.doLogout();
+
+            this.display(); // rerender
+          });
+      });
   }
 
   highlightsFolder(): void {

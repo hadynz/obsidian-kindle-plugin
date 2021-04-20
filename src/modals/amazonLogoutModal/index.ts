@@ -32,7 +32,7 @@ export default class AmazonLogoutModal {
     this.modal.webContents.on('did-navigate', async (_event, url) => {
       if (url.contains('signin')) {
         this.modal.close();
-        await settings.setIsLoggedIn(false);
+        await settings.logout();
         this.resolvePromise();
       }
     });

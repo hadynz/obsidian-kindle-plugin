@@ -21,6 +21,7 @@
     "cheerio": "*",
     "lodash.pickby": "^4.6.0",
     "nunjucks": "^3.2.3",
+    "query-string": "^7.0.0",
     "sanitize-filename": "^1.6.3"
   },
   "devDependencies": {
