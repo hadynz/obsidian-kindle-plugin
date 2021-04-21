@@ -15,6 +15,9 @@ export default class KindlePlugin extends Plugin {
     const fileManager = new FileManager(this.app.vault, settings);
 
     const statusBar = new StatusBar(this.addStatusBarItem(), settings);
+    statusBar.onClick(() => {
+      console.log('click');
+    });
 
     const syncHighlights = new SyncHighlights(statusBar, fileManager, settings);
 

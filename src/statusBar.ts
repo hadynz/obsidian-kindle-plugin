@@ -1,26 +1,31 @@
+import StatusBarContent from './statusBarContent.svelte';
+
 import { PluginSettings } from './settings';
 
-const moment = (window as any).moment;
-
 export class StatusBar {
-  el: HTMLElement;
+  private el: HTMLElement;
+  private cmp: StatusBarContent;
 
   constructor(el: HTMLElement, settings: PluginSettings) {
     this.el = el;
     this.el.addClass('mod-clickable');
 
-    if (settings.lastSyncDate === null) {
-      this.el.setText('Kindle sync has never run');
-    } else {
-      this.el.setText(
-        `${settings.synchedBookAsins.length} books synced. Last sync ${moment(
-          settings.lastSyncDate,
-        ).fromNow()}`,
-      );
-    }
+    this.cmp = new StatusBarContent({
+      target: this.el,
+      props: {
+        text: 'Hello there?',
+        isSyncing: true,
+        booksSyncCount: settings.synchedBookAsins.length,
+        lastSyncDate: settings.lastSyncDate,
+      },
+    });
   }
 
   setText(text: string): void {
-    this.el.setText(text);
+    this.cmp.$set({ text });
+  }
+
+  onClick(callback: () => void): void {
+    this.el.onClickEvent(callback);
   }
 }

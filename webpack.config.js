@@ -25,12 +25,10 @@ module.exports = {
       },
       {
         test: /\.(html|svelte)$/,
-        exclude: /node_modules/,
         use: {
           loader: 'svelte-loader',
           options: {
-            emitCss: true,
-            preprocess: require('svelte-preprocess')({}),
+            preprocess: sveltePreprocess({}),
           },
         },
       },

@@ -15,14 +15,15 @@
     "test": "jest",
     "build": "webpack",
     "lint": "tslint --project tsconfig.json",
-    "dev": "NODE_ENV=development webpack && cp ./dist/main.js ."
+    "dev": "NODE_ENV=development webpack && cp ./dist/main.js* ."
   },
   "dependencies": {
     "cheerio": "*",
     "lodash.pickby": "^4.6.0",
     "nunjucks": "^3.2.3",
     "query-string": "^7.0.0",
-    "sanitize-filename": "^1.6.3"
+    "sanitize-filename": "^1.6.3",
+    "svelte-loading-spinners": "^0.1.4"
   },
   "devDependencies": {
     "@tsconfig/svelte": "^1.0.10",

@@ -7,6 +7,7 @@ node_modules
 
 # obsidian plugin files
 main.js
+main.js.map
 data.json
 
 coverage
