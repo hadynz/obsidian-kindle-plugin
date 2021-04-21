@@ -92,6 +92,7 @@ export class SettingsTab extends PluginSettingTab {
       <ul>
         <li><span class="u-pop">{{title}}</span> - Book title</li>
         <li><span class="u-pop">{{author}}</span> - Book author</li>
+        <li><span class="u-pop">{{url}}</span> - Book url (Amazon)</li>
         <li><span class="u-pop">{{highlights}}</span> - List of your Kindle highlights for this book</li>
       </ul>
       <br/>

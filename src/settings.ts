@@ -29,7 +29,8 @@ const DEFAULT_SETTINGS: PluginSettingsData = {
   synchedBookAsins: [],
   isLoggedIn: false,
   noteTemplate: `# {{title}}
-* By [[{{author}}]]
+* Author: [[{{author}}]]
+* Reference: {{url}}
 
 {% for highlight in highlights %}
   - > {{highlight.text}} (location: {{highlight.location}})
