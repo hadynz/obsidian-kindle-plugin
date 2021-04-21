@@ -1,4 +1,4 @@
-import StatusBarContent from './statusBarContent.svelte';
+import StatusBarContent from './components/StatusBar.svelte';
 
 import { PluginSettings } from './settings';
 

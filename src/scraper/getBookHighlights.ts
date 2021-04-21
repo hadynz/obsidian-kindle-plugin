@@ -7,7 +7,7 @@ import { parseHighlights } from './parser';
 const { BrowserWindow, ipcMain } = remote;
 
 export default function getBookHighlights(book: Book): Promise<Highlight[]> {
-  return new Promise<Highlight[]>(async (resolve) => {
+  return new Promise<Highlight[]>((resolve) => {
     const window = new BrowserWindow({
       width: 1000,
       height: 600,
@@ -30,7 +30,7 @@ export default function getBookHighlights(book: Book): Promise<Highlight[]> {
 
     window.webContents.openDevTools();
 
-    await window.loadURL(
+    window.loadURL(
       `https://read.amazon.com/notebook?asin=${book.asin}&contentLimitState=&`,
     );
 

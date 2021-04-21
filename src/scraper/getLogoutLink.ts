@@ -6,7 +6,7 @@ import { parseSignoutLink } from './parser';
 const { BrowserWindow, ipcMain } = remote;
 
 export default function getLogoutLink(): Promise<string> {
-  return new Promise<string>(async (resolve) => {
+  return new Promise<string>((resolve) => {
     const window = new BrowserWindow({
       width: 1000,
       height: 600,
@@ -29,7 +29,7 @@ export default function getLogoutLink(): Promise<string> {
 
     window.webContents.openDevTools();
 
-    await window.loadURL('https://read.amazon.com/notebook');
+    window.loadURL('https://read.amazon.com/notebook');
 
     /**
      * Listens for the `pageloaded` event to parse and scrape HTML
