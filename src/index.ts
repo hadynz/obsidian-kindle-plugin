@@ -17,14 +17,11 @@ export default class KindlePlugin extends Plugin {
     const settings = loadSettings(this, await this.loadData());
     store.initialize(settings);
 
-    const fileManager = new FileManager(this.app.vault, settings);
-
-    const statusBar = new StatusBar(this.addStatusBarItem());
-
-    statusBar.onClick(() => {
+    new StatusBar(this.addStatusBarItem(), () => {
       new SyncModal(this.app, () => this.startSync());
     });
 
+    const fileManager = new FileManager(this.app.vault, settings);
     this.syncHighlights = new SyncHighlights(fileManager, settings);
 
     this.addCommand({

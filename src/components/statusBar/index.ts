@@ -1,18 +1,12 @@
 import StatusBarContent from './StatusBar.svelte';
 
 export class StatusBar {
-  private el: HTMLElement;
-
-  constructor(el: HTMLElement) {
-    this.el = el;
-    this.el.addClass('mod-clickable');
+  constructor(el: HTMLElement, onClick: () => void) {
+    el.addClass('mod-clickable');
+    el.onClickEvent(onClick);
 
     new StatusBarContent({
-      target: this.el,
+      target: el,
     });
-  }
-
-  public onClick(callback: () => void): void {
-    this.el.onClickEvent(callback);
   }
 }
