@@ -37,6 +37,14 @@ export default class KindlePlugin extends Plugin {
       this.emitter,
     );
 
+    this.addCommand({
+      id: 'kindle-sync',
+      name: 'Sync highlights',
+      callback: async () => {
+        this.emitter.emit('start-sync');
+      },
+    });
+
     this.addSettingTab(new SettingsTab(this.app, this, settings));
 
     this.setupListeners();
