@@ -3,6 +3,7 @@ import { Plugin } from 'obsidian';
 import loadSettings from './settings';
 import FileManager from './fileManager';
 import SyncHighlights from './syncHighlights';
+import SyncModal from './modals/syncModal';
 import { SettingsTab } from './settingsTab';
 import { StatusBar } from './statusBar';
 
@@ -16,7 +17,7 @@ export default class KindlePlugin extends Plugin {
 
     const statusBar = new StatusBar(this.addStatusBarItem(), settings);
     statusBar.onClick(() => {
-      console.log('click');
+      new SyncModal(this.app, settings);
     });
 
     const syncHighlights = new SyncHighlights(statusBar, fileManager, settings);
