@@ -1,4 +1,3 @@
-import { TinyEmitter } from 'tiny-emitter';
 import { Plugin } from 'obsidian';
 
 import loadSettings from './settings';
@@ -7,53 +6,40 @@ import SyncHighlights from './syncHighlights';
 import SyncModal from './modals/syncModal';
 import { SettingsTab } from './settingsTab';
 import { StatusBar } from './statusBar';
+import store from './store';
 
 export default class KindlePlugin extends Plugin {
-  private emitter!: TinyEmitter;
   private syncHighlights!: SyncHighlights;
 
   async onload(): Promise<void> {
     console.log('loading plugin', new Date().toLocaleString());
 
-    this.emitter = new TinyEmitter();
-
     const settings = loadSettings(this, await this.loadData());
+    store.initialize(settings);
 
     const fileManager = new FileManager(this.app.vault, settings);
 
-    const statusBar = new StatusBar(
-      this.addStatusBarItem(),
-      settings,
-      this.emitter,
-    );
+    const statusBar = new StatusBar(this.addStatusBarItem());
 
     statusBar.onClick(() => {
-      new SyncModal(this.app, settings, this.emitter);
+      new SyncModal(this.app, () => this.startSync());
     });
 
-    this.syncHighlights = new SyncHighlights(
-      fileManager,
-      settings,
-      this.emitter,
-    );
+    this.syncHighlights = new SyncHighlights(fileManager, settings);
 
     this.addCommand({
       id: 'kindle-sync',
       name: 'Sync highlights',
-      callback: async () => {
-        this.emitter.emit('start-sync');
+      callback: () => {
+        this.startSync();
       },
     });
 
     this.addSettingTab(new SettingsTab(this.app, this, settings));
-
-    this.setupListeners();
   }
 
-  setupListeners(): void {
-    this.emitter.on('start-sync', () => {
-      this.syncHighlights.startSync();
-    });
+  startSync(): void {
+    this.syncHighlights.startSync();
   }
 
   async onunload(): Promise<void> {

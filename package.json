@@ -24,8 +24,7 @@
     "nunjucks": "^3.2.3",
     "query-string": "^7.0.0",
     "sanitize-filename": "^1.6.3",
-    "svelte-loading-spinners": "^0.1.4",
-    "tiny-emitter": "^2.1.0"
+    "svelte-loading-spinners": "^0.1.4"
   },
   "devDependencies": {
     "@tsconfig/svelte": "^1.0.10",

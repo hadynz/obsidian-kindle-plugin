@@ -1,8 +1,11 @@
 <script>
   import { Jumper } from 'svelte-loading-spinners';
+
+  import store from '../store';
+
   const moment = window.moment;
 
-  export let isSyncing, startSync, booksSyncCount, lastSyncDate, currentBookTitle;
+  export let startSync;
 </script>
 
 <style>
@@ -23,33 +26,34 @@
     font-size: 1.6em;
   }
 </style>
-{#if isSyncing}
-Downloading your Kindle highlights from Amazon.
 
-<div class="kp-syncmodal--sync-content">
-  <Jumper color="#7f6df2" size="90" duration="1.6s" />
-  <div class="setting-item-name kp-syncmodal--progress">86%</div>
-  <div class="setting-item-description kp-syncmodal--file">Downloading <b>{currentBookTitle}</b></div>
-</div>
-
-<div class="setting-item">
-  <div class="setting-item-control">
-    <button class="mod-muted" disabled>Syncing...</button>
+{#if $store.status === 'idle'}
+  <div class="kp-syncmodal--nosync-content">
+    {#if $store.lastSyncDate}
+      {$store.synchedBookAsins.length} book(s) synced<br/>
+      Last sync {moment($store.lastSyncDate).fromNow()}
+    {:else}
+      Kindle sync has never run
+    {/if}
   </div>
-</div>
+
+  <div class="setting-item">
+    <div class="setting-item-control">
+      <button class="mod-cta" on:click={startSync}>Sync now</button>
+    </div>
+  </div>
 {:else}
-<div class="kp-syncmodal--nosync-content">
-  {#if lastSyncDate}
-    {booksSyncCount} book(s) synced<br/>
-    Last sync {moment(lastSyncDate).fromNow()}
-  {:else}
-    Kindle sync has never run
-  {/if}
-</div>
+  Downloading your Kindle highlights from Amazon.
 
-<div class="setting-item">
-  <div class="setting-item-control">
-    <button class="mod-cta" on:click={startSync}>Sync now</button>
+  <div class="kp-syncmodal--sync-content">
+    <Jumper color="#7f6df2" size="90" duration="1.6s" />
+    <div class="setting-item-name kp-syncmodal--progress">{($store.done.length/$store.jobs.length * 100).toFixed(0)}%</div>
+    <div class="setting-item-description kp-syncmodal--file">Downloading <b>{$store.inProgress?.title}</b></div>
   </div>
-</div>
+
+  <div class="setting-item">
+    <div class="setting-item-control">
+      <button class="mod-muted" disabled>Syncing...</button>
+    </div>
+  </div>
 {/if}
