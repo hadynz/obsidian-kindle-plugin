@@ -33,6 +33,10 @@ export default class KindlePlugin extends Plugin {
     });
 
     this.addSettingTab(new SettingsTab(this.app, this, settings));
+
+    if (settings.syncOnBoot) {
+      await this.startSync();
+    }
   }
 
   startSync(): void {

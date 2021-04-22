@@ -19,7 +19,7 @@ export class SettingsTab extends PluginSettingTab {
     this.settings = settings;
   }
 
-  async display(): Promise<void> {
+  public async display(): Promise<void> {
     const { containerEl } = this;
 
     containerEl.empty();
@@ -30,10 +30,11 @@ export class SettingsTab extends PluginSettingTab {
 
     this.highlightsFolder();
     this.noteTemplate();
+    this.syncOnBoot();
     this.resetSyncHistory();
   }
 
-  logout(): void {
+  private logout(): void {
     const syncMessage = this.settings.lastSyncDate
       ? `Last sync ${moment(this.settings.lastSyncDate).fromNow()}`
       : 'Sync has never run';
@@ -66,7 +67,7 @@ export class SettingsTab extends PluginSettingTab {
       });
   }
 
-  highlightsFolder(): void {
+  private highlightsFolder(): void {
     new Setting(this.containerEl)
       .setName('Highlights folder location')
       .setDesc('Vault folder to use for writing book highlight notes')
@@ -87,7 +88,7 @@ export class SettingsTab extends PluginSettingTab {
       });
   }
 
-  noteTemplate(): void {
+  private noteTemplate(): void {
     const descFragment = document.createRange().createContextualFragment(`
       Template (<a href="https://mozilla.github.io/nunjucks/">Nunjucks</a>) for rendering every synced Kindle note highlights.
       <br/><br/>
@@ -123,7 +124,18 @@ export class SettingsTab extends PluginSettingTab {
       });
   }
 
-  resetSyncHistory(): void {
+  private syncOnBoot(): void {
+    new Setting(this.containerEl)
+      .setName('Sync on Startup')
+      .setDesc('Automatically sync new Kindle highlights when Obsidian starts')
+      .addToggle((toggle) =>
+        toggle.setValue(this.settings.syncOnBoot).onChange(async (value) => {
+          await this.settings.setSyncOnBoot(value);
+        }),
+      );
+  }
+
+  private resetSyncHistory(): void {
     new Setting(this.containerEl)
       .setName('Reset sync')
       .setDesc('Wipe sync history to allow for resync')

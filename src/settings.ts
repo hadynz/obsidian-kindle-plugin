@@ -7,6 +7,7 @@ interface PluginSettingsData {
   loggedInEmail?: string;
   isLoggedIn: boolean;
   noteTemplate: string;
+  syncOnBoot: boolean;
 }
 
 export interface PluginSettings {
@@ -16,6 +17,7 @@ export interface PluginSettings {
   readonly loggedInEmail: string;
   readonly isLoggedIn: boolean;
   readonly noteTemplate: string;
+  readonly syncOnBoot: boolean;
   setHighlightsFolderLocation: (value: string) => Promise<void>;
   addSynchedBookAsins: (value: string) => Promise<void>;
   resetSyncHistory: () => Promise<void>;
@@ -23,6 +25,7 @@ export interface PluginSettings {
   login: (email: string) => Promise<void>;
   logout: () => Promise<void>;
   setNoteTemplate: (value: string) => Promise<void>;
+  setSyncOnBoot: (value: boolean) => Promise<void>;
 }
 
 const DEFAULT_SETTINGS: PluginSettingsData = {
@@ -37,6 +40,7 @@ const DEFAULT_SETTINGS: PluginSettingsData = {
   - > {{highlight.text}} (location: {{highlight.location}})
 {% endfor %}
 `,
+  syncOnBoot: true,
 };
 
 const loadSettings = (data: any): PluginSettingsData => {
@@ -77,6 +81,10 @@ export default (plugin: KindlePlugin, data: any): PluginSettings => {
       return settings.noteTemplate;
     },
 
+    get syncOnBoot(): boolean {
+      return settings.syncOnBoot;
+    },
+
     async setHighlightsFolderLocation(value: string) {
       settings.highlightsFolderLocation = value;
       await saveData();
@@ -111,6 +119,11 @@ export default (plugin: KindlePlugin, data: any): PluginSettings => {
 
     async setNoteTemplate(value: string) {
       settings.noteTemplate = value;
+      await saveData();
+    },
+
+    async setSyncOnBoot(value: boolean) {
+      settings.syncOnBoot = value;
       await saveData();
     },
   };
