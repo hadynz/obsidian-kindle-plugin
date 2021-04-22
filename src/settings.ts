@@ -18,6 +18,7 @@ export interface PluginSettings {
   readonly noteTemplate: string;
   setHighlightsFolderLocation: (value: string) => Promise<void>;
   addSynchedBookAsins: (value: string) => Promise<void>;
+  resetSyncHistory: () => Promise<void>;
   setSyncDate: (value: Date) => Promise<void>;
   login: (email: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -83,6 +84,12 @@ export default (plugin: KindlePlugin, data: any): PluginSettings => {
 
     async addSynchedBookAsins(value: string) {
       settings.synchedBookAsins.push(value);
+      await saveData();
+    },
+
+    async resetSyncHistory() {
+      settings.synchedBookAsins = [];
+      settings.lastSyncDate = undefined;
       await saveData();
     },
 

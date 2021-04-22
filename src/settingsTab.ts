@@ -30,12 +30,17 @@ export class SettingsTab extends PluginSettingTab {
 
     this.highlightsFolder();
     this.noteTemplate();
+    this.resetSyncHistory();
   }
 
   logout(): void {
+    const syncMessage = this.settings.lastSyncDate
+      ? `Last sync ${moment(this.settings.lastSyncDate).fromNow()}`
+      : 'Sync has never run';
+
     const descFragment = document.createRange().createContextualFragment(`
       ${this.settings.synchedBookAsins.length} book(s) synced<br/>
-      Last sync ${moment(this.settings.lastSyncDate).fromNow()}
+      ${syncMessage}
     `);
 
     new Setting(this.containerEl)
@@ -115,6 +120,21 @@ export class SettingsTab extends PluginSettingTab {
           await this.settings.setNoteTemplate(value);
         });
         return text;
+      });
+  }
+
+  resetSyncHistory(): void {
+    new Setting(this.containerEl)
+      .setName('Reset sync')
+      .setDesc('Wipe sync history to allow for resync')
+      .addButton((button) => {
+        return button
+          .setButtonText('Reset')
+          .setWarning()
+          .onClick(async () => {
+            await this.settings.resetSyncHistory();
+            this.display(); // rerender
+          });
       });
   }
 }
