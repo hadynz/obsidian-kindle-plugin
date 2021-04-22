@@ -39,9 +39,6 @@ export default class SyncModal extends Modal {
         startSync: () => {
           this.startSync();
         },
-        stopSync: () => {
-          this.stopSync();
-        },
       },
     });
 
@@ -74,10 +71,6 @@ export default class SyncModal extends Modal {
 
   startSync(): void {
     this.emitter.emit('start-sync');
-  }
-
-  stopSync(): void {
-    this.emitter.emit('stop-sync');
   }
 
   onClose(): void {
