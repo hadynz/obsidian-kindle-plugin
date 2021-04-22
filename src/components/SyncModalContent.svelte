@@ -2,7 +2,7 @@
   import { Jumper } from 'svelte-loading-spinners';
   const moment = window.moment;
 
-  export let isSyncing, sync, cancelSync, booksSyncCount, lastSyncDate;
+  export let isSyncing, sync, cancelSync, booksSyncCount, lastSyncDate, currentBookTitle;
 </script>
 
 <style>
@@ -29,7 +29,7 @@ Downloading your Kindle highlights from Amazon.
 <div class="kp-syncmodal--sync-content">
   <Jumper color="#7f6df2" size="90" duration="1.6s" />
   <div class="setting-item-name kp-syncmodal--progress">86%</div>
-  <div class="setting-item-description kp-syncmodal--file">Downloading <b class="cm-highlight">Animal Farm</b>...</div>
+  <div class="setting-item-description kp-syncmodal--file">Downloading <b>{currentBookTitle}</b></div>
 </div>
 
 <div class="setting-item">
