@@ -1,6 +1,6 @@
 import { get } from 'svelte/store';
 
-import AmazonLoginModal from './components/amazonLoginModalodal';
+import AmazonLoginModal from './components/amazonLoginModal';
 import FileManager from './fileManager';
 import { Book } from './models';
 import { PluginSettings } from './settings';

@@ -1,6 +1,7 @@
 <script>
   import { Jumper } from 'svelte-loading-spinners';
 
+  import { santizeTitle } from '../../fileManager';
   import store from '../../store';
 
   const moment = window.moment;
@@ -47,8 +48,12 @@
 
   <div class="kp-syncmodal--sync-content">
     <Jumper color="#7f6df2" size="90" duration="1.6s" />
-    <div class="setting-item-name kp-syncmodal--progress">{($store.done.length/$store.jobs.length * 100).toFixed(0)}%</div>
-    <div class="setting-item-description kp-syncmodal--file">Downloading <b>{$store.inProgress?.title}</b></div>
+    {#if $store.jobs.length === 0}
+      Looking for new Kindle highlights to sync...
+    {:else}
+      <div class="setting-item-name kp-syncmodal--progress">{($store.done.length/$store.jobs.length * 100).toFixed(0)}%</div>
+      <div class="setting-item-description kp-syncmodal--file">Downloading <b>{santizeTitle($store.inProgress?.title)}</b></div>
+    {/if}
   </div>
 
   <div class="setting-item">
