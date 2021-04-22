@@ -22,7 +22,7 @@ export default class AmazonLoginModal {
       parent: remote.getCurrentWindow(),
       width: 450,
       height: 730,
-      show: true,
+      show: false,
     });
 
     // We can only change title after page is loaded since HTML page has its own title
