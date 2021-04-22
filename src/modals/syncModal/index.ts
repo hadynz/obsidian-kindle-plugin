@@ -36,11 +36,11 @@ export default class SyncModal extends Modal {
         isSyncing: false,
         booksSyncCount: settings.synchedBookAsins.length,
         lastSyncDate: settings.lastSyncDate,
-        cancelSync: () => {
-          this.stopSync();
-        },
-        sync: () => {
+        startSync: () => {
           this.startSync();
+        },
+        stopSync: () => {
+          this.stopSync();
         },
       },
     });
@@ -51,25 +51,33 @@ export default class SyncModal extends Modal {
   }
 
   private setupListeners(): void {
+    this.emitter.on('sync-start', () => {
+      this.titleEl.innerText = this.SYNCING_MODAL_TITLE;
+      this.modalContent.$set({
+        isSyncing: true,
+      });
+    });
+
     this.emitter.on('sync-book-start', (book: Book) =>
       this.modalContent.$set({
         currentBookTitle: santizeTitle(book.title),
       }),
     );
-  }
 
-  stopSync(): void {
-    this.titleEl.innerText = this.DEFAULT_MODAL_TITLE;
-    this.modalContent.$set({
-      isSyncing: false,
+    this.emitter.on('sync-complete', () => {
+      this.titleEl.innerText = this.DEFAULT_MODAL_TITLE;
+      this.modalContent.$set({
+        isSyncing: false,
+      });
     });
   }
 
   startSync(): void {
-    this.titleEl.innerText = this.SYNCING_MODAL_TITLE;
-    this.modalContent.$set({
-      isSyncing: true,
-    });
+    this.emitter.emit('start-sync');
+  }
+
+  stopSync(): void {
+    this.emitter.emit('stop-sync');
   }
 
   onClose(): void {

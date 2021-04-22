@@ -24,7 +24,7 @@ export default class SyncHighlights {
     this.emitter = emitter;
   }
 
-  async sync(): Promise<void> {
+  async startSync(): Promise<void> {
     const modal = new AmazonLoginModal(this.settings);
     await modal.doLogin();
 
@@ -38,6 +38,8 @@ export default class SyncHighlights {
     if (booksToSync.length > 0) {
       await this.syncBooks(booksToSync);
     }
+
+    await this.settings.setSyncDate(new Date());
 
     this.emitter.emit('sync-complete', booksToSync);
   }

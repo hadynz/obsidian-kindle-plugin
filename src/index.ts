@@ -9,30 +9,43 @@ import { SettingsTab } from './settingsTab';
 import { StatusBar } from './statusBar';
 
 export default class KindlePlugin extends Plugin {
+  private emitter!: TinyEmitter;
+  private syncHighlights!: SyncHighlights;
+
   async onload(): Promise<void> {
     console.log('loading plugin', new Date().toLocaleString());
 
-    const emitter = new TinyEmitter();
+    this.emitter = new TinyEmitter();
 
     const settings = loadSettings(this, await this.loadData());
 
     const fileManager = new FileManager(this.app.vault, settings);
 
-    const statusBar = new StatusBar(this.addStatusBarItem(), settings, emitter);
+    const statusBar = new StatusBar(
+      this.addStatusBarItem(),
+      settings,
+      this.emitter,
+    );
 
     statusBar.onClick(() => {
-      new SyncModal(this.app, settings, emitter);
+      new SyncModal(this.app, settings, this.emitter);
     });
 
-    const syncHighlights = new SyncHighlights(fileManager, settings, emitter);
-
-    this.addRibbonIcon(
-      'dice',
-      'Sync your Kindle highlights',
-      async () => await syncHighlights.sync(),
+    this.syncHighlights = new SyncHighlights(
+      fileManager,
+      settings,
+      this.emitter,
     );
 
     this.addSettingTab(new SettingsTab(this.app, this, settings));
+
+    this.setupListeners();
+  }
+
+  setupListeners(): void {
+    this.emitter.on('start-sync', () => {
+      this.syncHighlights.startSync();
+    });
   }
 
   async onunload(): Promise<void> {

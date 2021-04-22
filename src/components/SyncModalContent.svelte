@@ -2,7 +2,7 @@
   import { Jumper } from 'svelte-loading-spinners';
   const moment = window.moment;
 
-  export let isSyncing, sync, cancelSync, booksSyncCount, lastSyncDate, currentBookTitle;
+  export let isSyncing, startSync, stopSync, booksSyncCount, lastSyncDate, currentBookTitle;
 </script>
 
 <style>
@@ -34,7 +34,7 @@ Downloading your Kindle highlights from Amazon.
 
 <div class="setting-item">
   <div class="setting-item-control">
-    <button class="mod-warning" on:click={cancelSync}>Stop sync</button>
+    <button class="mod-warning" on:click={stopSync}>Stop sync</button>
     <button class="mod-muted" disabled>Syncing...</button>
   </div>
 </div>
@@ -50,7 +50,7 @@ Downloading your Kindle highlights from Amazon.
 
 <div class="setting-item">
   <div class="setting-item-control">
-    <button class="mod-cta" on:click={sync}>Sync now</button>
+    <button class="mod-cta" on:click={startSync}>Sync now</button>
   </div>
 </div>
 {/if}
