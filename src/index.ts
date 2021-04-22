@@ -1,3 +1,4 @@
+import { TinyEmitter } from 'tiny-emitter';
 import { Plugin } from 'obsidian';
 
 import loadSettings from './settings';
@@ -11,16 +12,18 @@ export default class KindlePlugin extends Plugin {
   async onload(): Promise<void> {
     console.log('loading plugin', new Date().toLocaleString());
 
+    const emitter = new TinyEmitter();
+
     const settings = loadSettings(this, await this.loadData());
 
     const fileManager = new FileManager(this.app.vault, settings);
 
-    const statusBar = new StatusBar(this.addStatusBarItem(), settings);
+    const statusBar = new StatusBar(this.addStatusBarItem(), settings, emitter);
     statusBar.onClick(() => {
       new SyncModal(this.app, settings);
     });
 
-    const syncHighlights = new SyncHighlights(statusBar, fileManager, settings);
+    const syncHighlights = new SyncHighlights(fileManager, settings, emitter);
 
     this.addRibbonIcon(
       'dice',

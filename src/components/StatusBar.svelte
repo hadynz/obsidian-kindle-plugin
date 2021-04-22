@@ -2,7 +2,7 @@
   import { Jumper } from 'svelte-loading-spinners';
   const moment = window.moment;
 
-  export let lastSyncDate, booksSyncCount, isSyncing;
+  export let text, isSyncing;
 </script>
 
 <style>
@@ -24,10 +24,6 @@
     </div>
   {/if}
   <div class="kp-statusbar--status">
-    {#if lastSyncDate}
-      {booksSyncCount} book(s) synced. Last sync {moment(lastSyncDate).fromNow()}
-    {:else}
-      Kindle sync has never run
-    {/if}
+    {text}
   </div>
 </div>
