@@ -1,4 +1,4 @@
-import StatusBarContent from './components/StatusBar.svelte';
+import StatusBarContent from './StatusBar.svelte';
 
 export class StatusBar {
   private el: HTMLElement;

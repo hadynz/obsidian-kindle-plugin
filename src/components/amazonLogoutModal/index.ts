@@ -1,5 +1,6 @@
 import { remote } from 'electron';
-import { PluginSettings } from 'src/settings';
+
+import { PluginSettings } from '../../settings';
 
 const { BrowserWindow } = remote;
 

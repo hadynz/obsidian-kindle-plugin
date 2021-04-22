@@ -2,7 +2,7 @@ import { App, PluginSettingTab, Setting } from 'obsidian';
 import pickBy from 'lodash.pickby';
 
 import KindlePlugin from '.';
-import AmazonLogoutModal from './modals/amazonLogoutModal';
+import AmazonLogoutModal from './components/amazonLogoutModal';
 import { PluginSettings } from './settings';
 import { getLogoutLink } from './scraper';
 

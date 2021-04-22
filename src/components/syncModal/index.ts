@@ -1,6 +1,6 @@
 import { App, Modal } from 'obsidian';
 
-import SyncModalContent from '../../components/SyncModalContent.svelte';
+import SyncModalContent from './SyncModalContent.svelte';
 import store from '../../store';
 
 export default class SyncModal extends Modal {

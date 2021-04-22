@@ -3,9 +3,9 @@ import { Plugin } from 'obsidian';
 import loadSettings from './settings';
 import FileManager from './fileManager';
 import SyncHighlights from './syncHighlights';
-import SyncModal from './modals/syncModal';
+import SyncModal from './components/syncModal';
 import { SettingsTab } from './settingsTab';
-import { StatusBar } from './statusBar';
+import { StatusBar } from './components/statusBar';
 import store from './store';
 
 export default class KindlePlugin extends Plugin {

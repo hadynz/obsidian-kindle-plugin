@@ -1,10 +1,10 @@
+import queryString, { ParsedQuery } from 'query-string';
 import { remote } from 'electron';
-import { PluginSettings } from 'src/settings';
+import { StringDecoder } from 'string_decoder';
+
+import { PluginSettings } from '../../settings';
 
 const { BrowserWindow } = remote;
-
-import { StringDecoder } from 'string_decoder';
-import queryString, { ParsedQuery } from 'query-string';
 
 export default class AmazonLoginModal {
   private modal;

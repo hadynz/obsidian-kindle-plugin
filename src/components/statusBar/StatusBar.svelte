@@ -1,7 +1,7 @@
 <script>
   import { Jumper } from 'svelte-loading-spinners';
 
-  import store from '../store';
+  import store from '../../store';
 </script>
 
 <style>
