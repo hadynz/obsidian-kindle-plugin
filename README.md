@@ -11,7 +11,7 @@ you're life's work held hostage in the cloud again", this plugin tries to do exa
 with your precious Kindle notes and highlights. Why should you struggle in accessing your own
 data, or paying for a third party service to access information that you own?
 
-![image](https://user-images.githubusercontent.com/315585/115801054-f4a7fc00-a42f-11eb-81e6-cd642b11fb9b.mp4)
+https://user-images.githubusercontent.com/315585/115801054-f4a7fc00-a42f-11eb-81e6-cd642b11fb9b.mp4
 
 ## Key features
 
