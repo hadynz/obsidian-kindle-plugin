@@ -16,7 +16,7 @@ type AppState = {
   done: Book[];
 };
 
-const foundBooks = (books: Book[]) => {
+const foundBooks = (books: Book[]): string => {
   let text = `Found ${books.length} books to sync`;
   if (books.length === 1) {
     text = 'Found 1 book to sync';
@@ -24,11 +24,11 @@ const foundBooks = (books: Book[]) => {
   return text;
 };
 
-const syncingBook = (book: Book) => {
+const syncingBook = (book: Book): string => {
   return `Syncing "${santizeTitle(book.title)}"`;
 };
 
-const syncedBooks = (books: Book[]) => {
+const syncedBooks = (books: Book[]): string => {
   let text = `${books.length} books synced`;
   if (books.length === 0) {
     text = 'No highlights synced';
@@ -38,10 +38,13 @@ const syncedBooks = (books: Book[]) => {
   return text;
 };
 
-const defaultMessage = (state: AppState) => {
-  return `${state.synchedBookAsins.length} book(s) synced. Last sync ${moment(
-    state.lastSyncDate,
-  ).fromNow()}`;
+const defaultMessage = (state: AppState): string => {
+  if (state.lastSyncDate) {
+    return `${state.synchedBookAsins.length} book(s) synced. Last sync ${moment(
+      state.lastSyncDate,
+    ).fromNow()}`;
+  }
+  return 'Start syncing your Kindle highlights';
 };
 
 const store = () => {

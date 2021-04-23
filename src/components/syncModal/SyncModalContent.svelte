@@ -52,7 +52,9 @@
       Looking for new Kindle highlights to sync...
     {:else}
       <div class="setting-item-name kp-syncmodal--progress">{($store.done.length/$store.jobs.length * 100).toFixed(0)}%</div>
-      <div class="setting-item-description kp-syncmodal--file">Downloading <b>{santizeTitle($store.inProgress?.title)}</b></div>
+      {#if $store.inProgress}
+        <div class="setting-item-description kp-syncmodal--file">Downloading <b>{santizeTitle($store.inProgress?.title)}</b></div>
+      {/if}
     {/if}
   </div>
 
