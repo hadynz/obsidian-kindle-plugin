@@ -1,50 +1,67 @@
 # Obsidian Kindle Plugin
 
+Sync your Kindle notes and highlights directly from Amazon into your [Obsidian][1] vault. You
+can choose which folder to sync into and configure your own template to make this plugin
+fit in your very own workflow.
 
+## Mission statement
+
+Inspired by Obsidian's principle of "your data sitting in a local folder" and "never leaving
+you're life's work held hostage in the cloud again", this plugin tries to do exactly that
+with your precious Kindle notes and highlights. Why should you struggle in accessing your own
+data, or paying for a third party service to access information that you own?
+
+## Key features
+
+- Log in securely to your Amazon account to access your Kindle data. No login information
+  needs to be managed or stored by the plugin
+
+- Configure your own ([Nunjucks][2]) template to generate notes in exactly the way that you want
+
+- Sync on demand or on Obsidian startup
 
 ## How the sync process work
 
-## Usage
+This plugin works by wrapping itself around https://read.amazon.com and screen scraping your
+Kindle notes and highlights in the background.
 
-### Templating
+## Development
 
-The built-in template will generate a note with the following structure:
+Pull requests are encouraged and always welcome.
 
-```markdown
-- **URL:** {{ source_url }}
-- **Author:** {{ author }}
-- **Tags:** #{{ category }}
-- **Date:** [[{{ updated }}]]
----
+To install and work on this plugin locally:
+
+```bash
+cd /Users/<user>/<Obsidian vault>/.obsidian/plugins/obsidian-kindle-highlights
+git clone https://github.com/hadynz/obsidian-kindle-plugin.git
+cd obsidian-kindle-plugin
+npm install
 ```
 
-This can be overwritten by configuring the `Custom Note Header Template` setting to point to a different template. The templating system in use is [Nunjucks](https://mozilla.github.io/nunjucks/).
+To build this plugin into a single package:
 
-The available parameters for the templates are:
+```bash
+npm run build
+```
 
-- title
-- source_url
-- author
-- category
-- updated
+To watch for changes and continually rebuild the package:
 
-### Settings
+```bash
+npm run dev
+```
 
-- `Readwise API Token`: Add/update your Readwise API token.
-- `Sync on startup`: If enabled, will sync highlights from Readwise when Obsidian starts
-- `Custom Note Header Template`: Path to override default template for Readwise notes
-- `Disable Notifications`: Toggle for pop-up notifications
+Your development flow can be made very productive with the [Hot-Reload plugin][3] for Obsidian.
 
-### Commands
+### Running Tests
 
-`Readwise: Sync highlights`:  Will pull any new highlights from Readwise since the last time it was synced.
+```bash
+npm run test
+```
 
-### Features
+## License
 
-- Sync highlights on Obsidian startup
-- Update existing notes with new highlights
-- Support templating note's header
+[MIT](LICENSE)
 
-### Compatibility
-
-This plugin is being tested with Obsidian v0.11.9 and up
+[1]: https://obsidian.md
+[2]: https://mozilla.github.io/nunjucks
+[3]: https://github.com/pjeby/hot-reload
