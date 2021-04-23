@@ -1,8 +1,8 @@
 import { writable } from 'svelte/store';
 
-import { santizeTitle } from './fileManager';
-import { Book } from './models';
-import { PluginSettings } from './settings';
+import { santizeTitle } from '../fileManager';
+import { Book } from '../models';
+import { PluginSettings } from '../settings';
 
 const moment = window.moment;
 
