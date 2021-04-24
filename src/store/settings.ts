@@ -97,6 +97,7 @@ const createSettingsStore = () => {
   const logout = () => {
     store.update((state) => {
       state.isLoggedIn = false;
+      state.loggedInEmail = undefined;
 
       return state;
     });

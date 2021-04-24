@@ -1,6 +1,7 @@
 import queryString, { ParsedQuery } from 'query-string';
 import { remote } from 'electron';
 import { StringDecoder } from 'string_decoder';
+import { get } from 'svelte/store';
 
 import { settingsStore } from '../../store';
 
@@ -12,7 +13,7 @@ export default class AmazonLoginModal {
   private resolvePromise!: () => void;
 
   constructor() {
-    let userEmail = 'unknown';
+    let userEmail: string;
 
     this.waitForSignIn = new Promise(
       (resolve: () => void) => (this.resolvePromise = resolve),
@@ -46,7 +47,11 @@ export default class AmazonLoginModal {
     this.modal.webContents.on('did-navigate', async (_event, url) => {
       if (url.startsWith('https://read.amazon.com')) {
         this.modal.close();
-        await settingsStore.actions.login(userEmail);
+
+        if (!get(settingsStore).loggedInEmail) {
+          await settingsStore.actions.login(userEmail);
+        }
+
         this.resolvePromise();
       }
     });
