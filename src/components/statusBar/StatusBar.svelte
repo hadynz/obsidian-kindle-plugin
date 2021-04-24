@@ -1,6 +1,7 @@
 <script>
   import { Jumper } from 'svelte-loading-spinners';
   import CircleTick from '../../images/circleTick.svg';
+  import CircleExclamation from '../../images/circleExclamation.svg';
 
   import { statusBarStore, settingsStore } from '../../store';
 </script>
@@ -9,6 +10,10 @@
   {#if $statusBarStore.isSyncing}
     <div class="kp-statusbar--icon">
       <Jumper color="#7f6df2" size="18" duration="1.2s" />
+    </div>
+  {:else if !$settingsStore.isLoggedIn && $settingsStore.lastSyncDate}
+    <div class="kb-statusbar--circleExclamationIcon">
+      {@html CircleExclamation}
     </div>
   {:else if $settingsStore.lastSyncDate}
     <div class="kb-statusbar--circleIcon">
@@ -34,6 +39,14 @@
   .kb-statusbar--circleIcon {
     width: 11px;
     fill: green;
+    margin-right: 5px;
+  }
+
+  .kb-statusbar--circleExclamationIcon {
+    position: relative;
+    top: 2px;
+    width: 14px;
+    fill: orange;
     margin-right: 5px;
   }
 </style>

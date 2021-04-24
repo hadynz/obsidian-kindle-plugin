@@ -25,7 +25,7 @@ const DEFAULT_SETTINGS: Settings = {
   - > {{highlight.text}} (location: {{highlight.location}})
 {% endfor %}
 `,
-  syncOnBoot: true,
+  syncOnBoot: false,
 };
 
 const createSettingsStore = () => {
@@ -98,7 +98,6 @@ const createSettingsStore = () => {
     store.update((state) => {
       state.isLoggedIn = false;
       state.loggedInEmail = undefined;
-
       return state;
     });
   };
