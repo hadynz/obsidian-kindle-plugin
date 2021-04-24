@@ -13,6 +13,7 @@ export class Renderer {
     const content = nunjucks.renderString(get(settingsStore).noteTemplate, {
       title: book.title,
       author: book.author,
+      url: book.url,
       highlights,
     });
 
