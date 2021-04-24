@@ -1,8 +1,24 @@
 <script>
   import { Jumper } from 'svelte-loading-spinners';
+  import GreenCircle from '../../images/greenCircle.svg';
 
-  import { statusBarStore } from '../../store';
+  import { statusBarStore, settingsStore } from '../../store';
 </script>
+
+<div class="kp-statusbar--wrapper">
+  {#if $statusBarStore.isSyncing}
+    <div class="kp-statusbar--icon">
+      <Jumper color="#7f6df2" size="18" duration="1.2s" />
+    </div>
+  {:else if $settingsStore.lastSyncDate}
+    <div class="kb-statusbar--circleIcon">
+      {@html GreenCircle}
+    </div>
+  {/if}
+  <div class="kp-statusbar--status">
+    {$statusBarStore.text}
+  </div>
+</div>
 
 <style>
   .kp-statusbar--wrapper {
@@ -14,15 +30,10 @@
   .kp-statusbar--icon {
     margin-right: 3px;
   }
-</style>
 
-<div class="kp-statusbar--wrapper">
-  {#if $statusBarStore.isSyncing}
-    <div class="kp-statusbar--icon">
-      <Jumper color="#7f6df2" size="18" duration="1.2s" />
-    </div>
-  {/if}
-  <div class="kp-statusbar--status">
-    {$statusBarStore.text}
-  </div>
-</div>
+  .kb-statusbar--circleIcon {
+    width: 11px;
+    fill: green;
+    margin-right: 5px;
+  }
+</style>
