@@ -1,6 +1,6 @@
 <script>
   import { Jumper } from 'svelte-loading-spinners';
-  import GreenCircle from '../../images/greenCircle.svg';
+  import CircleTick from '../../images/circleTick.svg';
 
   import { statusBarStore, settingsStore } from '../../store';
 </script>
@@ -12,7 +12,7 @@
     </div>
   {:else if $settingsStore.lastSyncDate}
     <div class="kb-statusbar--circleIcon">
-      {@html GreenCircle}
+      {@html CircleTick}
     </div>
   {/if}
   <div class="kp-statusbar--status">
