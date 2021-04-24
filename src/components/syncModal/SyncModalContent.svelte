@@ -1,7 +1,7 @@
 <script>
   import { Jumper } from 'svelte-loading-spinners';
 
-  import { santizeTitle } from '../../fileManager';
+  import { santizeTitle } from '../../utils';
   import { syncSessionStore, settingsStore } from '../../store';
 
   const moment = window.moment;

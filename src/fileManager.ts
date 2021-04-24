@@ -1,17 +1,8 @@
-import sanitize from 'sanitize-filename';
 import { Vault } from 'obsidian';
 import { get } from 'svelte/store';
 
 import { settingsStore } from './store';
-
-export const santizeTitle = (title: string): string => {
-  const santizedTitle = title
-    .replace(/ *\([^)]*\) */g, '') // remove parenthesis and contents from title
-    .replace(/:.*/g, '') // remove description test after `:` in title
-    .replace(/[':]/g, ''); // remove single quotes from title
-
-  return sanitize(santizedTitle);
-};
+import { santizeTitle } from './utils';
 
 export default class FileManager {
   private vault: Vault;

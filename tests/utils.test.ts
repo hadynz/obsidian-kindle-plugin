@@ -1,4 +1,4 @@
-import { santizeTitle } from '../src/fileManager';
+import { santizeTitle } from '../src/utils';
 
 describe('Santize title for Obsidian environment', () => {
   it('strip book description in title after colon', () => {

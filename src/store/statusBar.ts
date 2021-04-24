@@ -1,7 +1,7 @@
 import { writable, derived } from 'svelte/store';
 
 import { Book } from '../models';
-import { santizeTitle } from '../fileManager';
+import { santizeTitle } from '../utils';
 import { settingsStore, syncSessionStore } from './index';
 
 const moment = window.moment;
