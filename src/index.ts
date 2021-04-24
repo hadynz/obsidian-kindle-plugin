@@ -1,12 +1,12 @@
 import { Plugin } from 'obsidian';
+import { get } from 'svelte/store';
 
-import loadSettings from './settings';
 import FileManager from './fileManager';
 import SyncHighlights from './syncHighlights';
 import SyncModal from './components/syncModal';
 import { SettingsTab } from './settingsTab';
 import { StatusBar } from './components/statusBar';
-import store from './store';
+import { initialise, settingsStore } from './store';
 
 export default class KindlePlugin extends Plugin {
   private syncHighlights!: SyncHighlights;
@@ -14,15 +14,14 @@ export default class KindlePlugin extends Plugin {
   async onload(): Promise<void> {
     console.log('loading plugin', new Date().toLocaleString());
 
-    const settings = loadSettings(this, await this.loadData());
-    store.initialize(settings);
+    await initialise(this);
 
     new StatusBar(this.addStatusBarItem(), () => {
       new SyncModal(this.app, () => this.startSync());
     });
 
-    const fileManager = new FileManager(this.app.vault, settings);
-    this.syncHighlights = new SyncHighlights(fileManager, settings);
+    const fileManager = new FileManager(this.app.vault);
+    this.syncHighlights = new SyncHighlights(fileManager);
 
     this.addCommand({
       id: 'kindle-sync',
@@ -32,9 +31,9 @@ export default class KindlePlugin extends Plugin {
       },
     });
 
-    this.addSettingTab(new SettingsTab(this.app, this, settings));
+    this.addSettingTab(new SettingsTab(this.app, this));
 
-    if (settings.syncOnBoot) {
+    if (get(settingsStore).syncOnBoot) {
       await this.startSync();
     }
   }

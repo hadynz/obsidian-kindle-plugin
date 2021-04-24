@@ -1,6 +1,6 @@
 import { remote } from 'electron';
 
-import { PluginSettings } from '../../settings';
+import { settingsStore } from '../../store';
 
 const { BrowserWindow } = remote;
 
@@ -10,7 +10,7 @@ export default class AmazonLogoutModal {
   private waitForSignIn: Promise<void>;
   private resolvePromise!: () => void;
 
-  constructor(url: string, settings: PluginSettings) {
+  constructor(url: string) {
     this.url = url;
 
     this.waitForSignIn = new Promise(
@@ -33,7 +33,7 @@ export default class AmazonLogoutModal {
     this.modal.webContents.on('did-navigate', async (_event, url) => {
       if (url.contains('signin')) {
         this.modal.close();
-        await settings.logout();
+        await settingsStore.actions.logout();
         this.resolvePromise();
       }
     });

@@ -2,60 +2,54 @@ import { get } from 'svelte/store';
 
 import AmazonLoginModal from './components/amazonLoginModal';
 import FileManager from './fileManager';
+import { settingsStore, syncSessionStore } from './store';
 import { Book } from './models';
-import { PluginSettings } from './settings';
 import { getBookHighlights, getListofBooks } from './scraper';
 import { Renderer } from './renderer';
-import store from './store';
 
 export default class SyncHighlights {
   private fileManager: FileManager;
-  private settings: PluginSettings;
+
   private renderer: Renderer;
 
-  constructor(fileManager: FileManager, settings: PluginSettings) {
+  constructor(fileManager: FileManager) {
     this.fileManager = fileManager;
-    this.settings = settings;
 
-    this.renderer = new Renderer(settings);
+    this.renderer = new Renderer();
   }
 
   async startSync(): Promise<void> {
-    const modal = new AmazonLoginModal(this.settings);
+    const modal = new AmazonLoginModal();
     await modal.doLogin();
 
-    store.getBooks();
+    syncSessionStore.actions.startSync();
 
     const allBooks = await getListofBooks();
     const booksToSync = allBooks.filter(
-      (b) => !get(store).synchedBookAsins.includes(b.asin),
+      (b) => !get(settingsStore).synchedBookAsins.includes(b.asin),
     );
 
-    store.getBooksSuccessful(booksToSync);
+    syncSessionStore.actions.setJobs(booksToSync);
 
     if (booksToSync.length > 0) {
       await this.syncBooks(booksToSync);
     }
 
-    await this.settings.setSyncDate(new Date());
+    await settingsStore.actions.setSyncDate(new Date());
 
-    store.syncComplete(booksToSync);
+    syncSessionStore.actions.syncComplete();
   }
 
   async syncBooks(books: Book[]): Promise<void> {
     for (const book of books) {
       try {
-        store.getBookHighlights(book);
+        syncSessionStore.actions.startJob(book);
 
         await this.syncBook(book);
 
-        await this.settings.setSyncDate(new Date());
-
-        store.getBookHighlightsSuccess(book);
-
-        await this.settings.addSynchedBookAsins(book.asin);
+        syncSessionStore.actions.completeJob(book);
       } catch (error) {
-        // handle error
+        syncSessionStore.actions.errorJob(book);
       }
     }
   }

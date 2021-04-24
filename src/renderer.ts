@@ -1,19 +1,16 @@
 import nunjucks from 'nunjucks';
+import { get } from 'svelte/store';
 
+import { settingsStore } from './store';
 import { Book, Highlight } from './models';
-import { PluginSettings } from './settings';
 
 export class Renderer {
-  private settings: PluginSettings;
-
-  constructor(settings: PluginSettings) {
-    this.settings = settings;
-
+  constructor() {
     nunjucks.configure({ autoescape: true });
   }
 
   render(book: Book, highlights: Highlight[]): string {
-    const content = nunjucks.renderString(this.settings.noteTemplate, {
+    const content = nunjucks.renderString(get(settingsStore).noteTemplate, {
       title: book.title,
       author: book.author,
       highlights,

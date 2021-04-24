@@ -1,22 +1,20 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import pickBy from 'lodash.pickby';
+import { get } from 'svelte/store';
 
 import KindlePlugin from '.';
 import AmazonLogoutModal from './components/amazonLogoutModal';
-import { PluginSettings } from './settings';
+import { settingsStore } from './store';
 import { getLogoutLink } from './scraper';
 
-const moment = (window as any).moment;
+const moment = window.moment;
 
 export class SettingsTab extends PluginSettingTab {
   public app: App;
-  private settings: PluginSettings;
 
-  constructor(app: App, plugin: KindlePlugin, settings: PluginSettings) {
+  constructor(app: App, plugin: KindlePlugin) {
     super(app, plugin);
-
     this.app = app;
-    this.settings = settings;
   }
 
   public async display(): Promise<void> {
@@ -24,7 +22,7 @@ export class SettingsTab extends PluginSettingTab {
 
     containerEl.empty();
 
-    if (this.settings.isLoggedIn) {
+    if (get(settingsStore).isLoggedIn) {
       this.logout();
     }
 
@@ -35,17 +33,17 @@ export class SettingsTab extends PluginSettingTab {
   }
 
   private logout(): void {
-    const syncMessage = this.settings.lastSyncDate
-      ? `Last sync ${moment(this.settings.lastSyncDate).fromNow()}`
+    const syncMessage = get(settingsStore).lastSyncDate
+      ? `Last sync ${moment(get(settingsStore).lastSyncDate).fromNow()}`
       : 'Sync has never run';
 
     const descFragment = document.createRange().createContextualFragment(`
-      ${this.settings.synchedBookAsins.length} book(s) synced<br/>
+      ${get(settingsStore).synchedBookAsins.length} book(s) synced<br/>
       ${syncMessage}
     `);
 
     new Setting(this.containerEl)
-      .setName(`Logged in as ${this.settings.loggedInEmail}`)
+      .setName(`Logged in as ${get(settingsStore).loggedInEmail}`)
       .setDesc(descFragment)
       .addButton((button) => {
         return button
@@ -59,7 +57,7 @@ export class SettingsTab extends PluginSettingTab {
 
             const signoutLink = await getLogoutLink();
 
-            const modal = new AmazonLogoutModal(signoutLink, this.settings);
+            const modal = new AmazonLogoutModal(signoutLink);
             await modal.doLogout();
 
             this.display(); // rerender
@@ -81,9 +79,9 @@ export class SettingsTab extends PluginSettingTab {
           dropdown.addOption(val, val);
         });
         return dropdown
-          .setValue(this.settings.highlightsFolderLocation)
+          .setValue(get(settingsStore).highlightsFolder)
           .onChange(async (value) => {
-            await this.settings.setHighlightsFolderLocation(value);
+            await settingsStore.actions.setHighlightsFolder(value);
           });
       });
   }
@@ -117,9 +115,11 @@ export class SettingsTab extends PluginSettingTab {
         text.inputEl.style.width = '100%';
         text.inputEl.style.height = '250px';
         text.inputEl.style.fontSize = '0.8em';
-        text.setValue(this.settings.noteTemplate).onChange(async (value) => {
-          await this.settings.setNoteTemplate(value);
-        });
+        text
+          .setValue(get(settingsStore).noteTemplate)
+          .onChange(async (value) => {
+            await settingsStore.actions.setNoteTemplate(value);
+          });
         return text;
       });
   }
@@ -129,9 +129,11 @@ export class SettingsTab extends PluginSettingTab {
       .setName('Sync on Startup')
       .setDesc('Automatically sync new Kindle highlights when Obsidian starts')
       .addToggle((toggle) =>
-        toggle.setValue(this.settings.syncOnBoot).onChange(async (value) => {
-          await this.settings.setSyncOnBoot(value);
-        }),
+        toggle
+          .setValue(get(settingsStore).syncOnBoot)
+          .onChange(async (value) => {
+            await settingsStore.actions.setSyncOnBoot(value);
+          }),
       );
   }
 
@@ -144,7 +146,7 @@ export class SettingsTab extends PluginSettingTab {
           .setButtonText('Reset')
           .setWarning()
           .onClick(async () => {
-            await this.settings.resetSyncHistory();
+            await settingsStore.actions.resetSyncHistory();
             this.display(); // rerender
           });
       });

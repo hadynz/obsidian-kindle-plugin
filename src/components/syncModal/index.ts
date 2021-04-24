@@ -1,7 +1,7 @@
 import { App, Modal } from 'obsidian';
 
 import SyncModalContent from './SyncModalContent.svelte';
-import store from '../../store';
+import { syncSessionStore } from '../../store';
 
 export default class SyncModal extends Modal {
   public waitForClose: Promise<void>;
@@ -18,7 +18,7 @@ export default class SyncModal extends Modal {
       (resolve) => (this.resolvePromise = resolve),
     );
 
-    store.subscribe((state) => {
+    syncSessionStore.subscribe((state) => {
       this.titleEl.innerText =
         state.status === 'loading'
           ? this.SYNCING_MODAL_TITLE

@@ -1,7 +1,7 @@
 <script>
   import { Jumper } from 'svelte-loading-spinners';
 
-  import store from '../../store';
+  import { statusBarStore } from '../../store';
 </script>
 
 <style>
@@ -17,12 +17,12 @@
 </style>
 
 <div class="kp-statusbar--wrapper">
-  {#if $store.status === 'loading'}
+  {#if $statusBarStore.isSyncing}
     <div class="kp-statusbar--icon">
       <Jumper color="#7f6df2" size="18" duration="1.2s" />
     </div>
   {/if}
   <div class="kp-statusbar--status">
-    {$store.statusMessage}
+    {$statusBarStore.text}
   </div>
 </div>

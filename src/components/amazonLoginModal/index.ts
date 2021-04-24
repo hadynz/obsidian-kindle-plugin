@@ -2,7 +2,7 @@ import queryString, { ParsedQuery } from 'query-string';
 import { remote } from 'electron';
 import { StringDecoder } from 'string_decoder';
 
-import { PluginSettings } from '../../settings';
+import { settingsStore } from '../../store';
 
 const { BrowserWindow } = remote;
 
@@ -11,7 +11,7 @@ export default class AmazonLoginModal {
   private waitForSignIn: Promise<void>;
   private resolvePromise!: () => void;
 
-  constructor(settings: PluginSettings) {
+  constructor() {
     let userEmail = 'unknown';
 
     this.waitForSignIn = new Promise(
@@ -46,7 +46,7 @@ export default class AmazonLoginModal {
     this.modal.webContents.on('did-navigate', async (_event, url) => {
       if (url.startsWith('https://read.amazon.com')) {
         this.modal.close();
-        await settings.login(userEmail);
+        await settingsStore.actions.login(userEmail);
         this.resolvePromise();
       }
     });
