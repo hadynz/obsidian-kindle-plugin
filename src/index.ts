@@ -3,6 +3,7 @@ import { get } from 'svelte/store';
 
 import FileManager from './fileManager';
 import SyncHighlights from './syncHighlights';
+import SyncKindleClippings from './syncKindleClippings';
 import SyncModal from './components/syncModal';
 import { SettingsTab } from './settingsTab';
 import { StatusBar } from './components/statusBar';
@@ -16,12 +17,18 @@ export default class KindlePlugin extends Plugin {
 
     await initialise(this);
 
-    new StatusBar(this.addStatusBarItem(), () => {
-      new SyncModal(this.app, () => this.startSync());
-    });
-
     const fileManager = new FileManager(this.app.vault);
+
     this.syncHighlights = new SyncHighlights(fileManager);
+
+    const syncKindleClippings = new SyncKindleClippings(fileManager);
+
+    new StatusBar(this.addStatusBarItem(), () => {
+      new SyncModal(this.app, {
+        onOnlineSync: () => this.startSync(),
+        onMyClippingsSync: () => syncKindleClippings.startSync(),
+      });
+    });
 
     this.addCommand({
       id: 'kindle-sync',

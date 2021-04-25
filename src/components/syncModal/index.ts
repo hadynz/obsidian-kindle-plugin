@@ -1,8 +1,12 @@
 import { App, Modal } from 'obsidian';
 
-import syncKindleClippings from './syncKindleClippings';
 import SyncModalContent from './SyncModalContent.svelte';
 import { syncSessionStore } from '../../store';
+
+type SyncModalProps = {
+  onOnlineSync: () => void;
+  onMyClippingsSync: () => void;
+};
 
 export default class SyncModal extends Modal {
   public waitForClose: Promise<void>;
@@ -12,7 +16,7 @@ export default class SyncModal extends Modal {
   private DEFAULT_MODAL_TITLE = 'Sync your Kindle highlights';
   private SYNCING_MODAL_TITLE = 'Syncing data...';
 
-  constructor(app: App, startSync: () => void) {
+  constructor(app: App, props: SyncModalProps) {
     super(app);
 
     this.waitForClose = new Promise(
@@ -29,8 +33,8 @@ export default class SyncModal extends Modal {
     this.modalContent = new SyncModalContent({
       target: this.contentEl,
       props: {
-        startSync,
-        startUpload: syncKindleClippings,
+        startSync: props.onOnlineSync,
+        startUpload: props.onMyClippingsSync,
       },
     });
 

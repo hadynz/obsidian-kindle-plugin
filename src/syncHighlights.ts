@@ -57,7 +57,7 @@ export default class SyncHighlights {
   async syncBook(book: Book): Promise<void> {
     const highlights = await getBookHighlights(book);
 
-    const content = this.renderer.render(book, highlights);
+    const content = this.renderer.render({ book, highlights });
     await this.fileManager.writeNote(book.title, content);
   }
 }

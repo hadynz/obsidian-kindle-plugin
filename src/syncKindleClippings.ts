@@ -2,7 +2,9 @@ import * as kc from '@darylserrano/kindle-clippings';
 import fs from 'fs';
 import { remote } from 'electron';
 
-import { Book, Highlight, BookHighlight } from '../../models';
+import FileManager from './fileManager';
+import { Book, Highlight, BookHighlight } from './models';
+import { Renderer } from './renderer';
 
 const { dialog } = remote;
 
@@ -34,20 +36,15 @@ const parseBooks = async (file: string): Promise<BookHighlight[]> => {
     const book: Book = {
       title: firstRow.bookTile,
       author: firstRow.authors,
-      asin: '',
-      url: '',
-      imageUrl: '',
-      lastAccessedDate: '',
     };
 
     const highlights = entries
-      .filter((e) => e.type === 'HIGHLIGHT')
+      .filter((entry) => entry.type === 'HIGHLIGHT')
       .map(
-        (e): Highlight => ({
-          id: '',
-          text: e.content,
-          location: parseInt(e.location),
-          page: e.page,
+        (entry): Highlight => ({
+          text: entry.content,
+          location: parseInt(entry.location),
+          page: entry.page,
         }),
       );
 
@@ -58,15 +55,33 @@ const parseBooks = async (file: string): Promise<BookHighlight[]> => {
   });
 };
 
-const syncKindleClippings = async (): Promise<void> => {
-  const [clippingsFile, canceled] = await openDialog();
+export default class SyncKindleClippings {
+  private fileManager: FileManager;
 
-  if (canceled) {
-    return; // Do nothing...
+  private renderer: Renderer;
+
+  constructor(fileManager: FileManager) {
+    this.fileManager = fileManager;
+
+    this.renderer = new Renderer();
   }
 
-  const books = await parseBooks(clippingsFile);
-  console.log('books', books);
-};
+  async startSync(): Promise<void> {
+    const [clippingsFile, canceled] = await openDialog();
 
-export default syncKindleClippings;
+    if (canceled) {
+      return; // Do nothing...
+    }
+
+    const books = await parseBooks(clippingsFile);
+
+    for (const book of books) {
+      await this.writeBook(book);
+    }
+  }
+
+  async writeBook(entry: BookHighlight): Promise<void> {
+    const content = this.renderer.render(entry);
+    await this.fileManager.writeNote(entry.book.title, content);
+  }
+}

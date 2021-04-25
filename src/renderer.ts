@@ -2,19 +2,19 @@ import nunjucks from 'nunjucks';
 import { get } from 'svelte/store';
 
 import { settingsStore } from './store';
-import { Book, Highlight } from './models';
+import { BookHighlight } from './models';
 
 export class Renderer {
   constructor() {
     nunjucks.configure({ autoescape: true });
   }
 
-  render(book: Book, highlights: Highlight[]): string {
+  render(entry: BookHighlight): string {
     const content = nunjucks.renderString(get(settingsStore).noteTemplate, {
-      title: book.title,
-      author: book.author,
-      url: book.url,
-      highlights,
+      title: entry.book.title,
+      author: entry.book.author,
+      url: entry.book.url,
+      highlights: entry.highlights,
     });
 
     return content;
