@@ -16,7 +16,7 @@
     (job) => job.status === 'in-progress',
   );
 
-  export let startSync;
+  export let startSync, startUpload;
 </script>
 
 {#if $syncSessionStore.status === 'idle'}
@@ -28,10 +28,14 @@
       Kindle sync has never run
     {/if}
   </div>
-
   <div class="setting-item">
     <div class="setting-item-control">
-      <button class="mod-cta" on:click={startSync}>Sync now</button>
+      <button class="mod-cta" on:click={startUpload}>
+        Upload My Clippings.txt
+      </button>
+      <button class="mod-cta" on:click={startSync}>
+        Sync now
+      </button>
     </div>
   </div>
 {:else}

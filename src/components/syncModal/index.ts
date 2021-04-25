@@ -1,5 +1,6 @@
 import { App, Modal } from 'obsidian';
 
+import syncKindleClippings from './syncKindleClippings';
 import SyncModalContent from './SyncModalContent.svelte';
 import { syncSessionStore } from '../../store';
 
@@ -29,6 +30,7 @@ export default class SyncModal extends Modal {
       target: this.contentEl,
       props: {
         startSync,
+        startUpload: syncKindleClippings,
       },
     });
 
