@@ -13,3 +13,8 @@ export type Highlight = {
   location: number;
   page: number;
 };
+
+export type BookHighlight = {
+  book: Book;
+  highlights: Highlight[];
+};
