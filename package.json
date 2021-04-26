@@ -1,6 +1,6 @@
 {
   "name": "obsidian-kindle-plugin",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "An Obsidian plugin for syncing your Kindle book highlights using your Amazon login",
   "main": "src/index.ts",
   "repository": {

@@ -22,7 +22,7 @@ export default class FileManager {
     const fileExists = await this.vault.adapter.exists(filePath);
 
     if (fileExists) {
-      console.log('File exists already...');
+      // TODO: Handle scenario when a file exists. How do we prompt the user?
     } else {
       await this.vault.create(filePath, content);
     }
