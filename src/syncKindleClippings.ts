@@ -1,4 +1,4 @@
-import * as kc from '@darylserrano/kindle-clippings';
+import * as kc from '@hadynz/kindle-clippings';
 import fs from 'fs';
 import { remote } from 'electron';
 
@@ -28,31 +28,11 @@ const parseBooks = async (file: string): Promise<BookHighlight[]> => {
 
   const rawRows = kc.readKindleClipping(clippingsFileContent);
   const parsedRows = kc.parseKindleEntries(rawRows);
-  const rowsByBookTitle = kc.organizeKindleEntriesByBookTitle(parsedRows);
+  const books = kc.organizeKindleEntriesByBooks(parsedRows);
 
-  return Array.from(rowsByBookTitle.values()).map((entries) => {
-    const firstRow = entries[0];
+  console.log('books', books);
 
-    const book: Book = {
-      title: firstRow.bookTile,
-      author: firstRow.authors,
-    };
-
-    const highlights = entries
-      .filter((entry) => entry.type === 'HIGHLIGHT')
-      .map(
-        (entry): Highlight => ({
-          text: entry.content,
-          location: parseInt(entry.location),
-          page: entry.page,
-        }),
-      );
-
-    return {
-      book,
-      highlights,
-    };
-  });
+  return [];
 };
 
 export default class SyncKindleClippings {
