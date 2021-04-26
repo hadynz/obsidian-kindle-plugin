@@ -4,7 +4,7 @@ import cheerio from 'cheerio';
 import { Book } from '../models';
 import { parseBooks } from './parser';
 
-const { BrowserWindow, ipcMain } = remote;
+const { BrowserWindow } = remote;
 
 export default function getListofBooks(): Promise<Book[]> {
   return new Promise<Book[]>((resolve) => {
@@ -18,31 +18,19 @@ export default function getListofBooks(): Promise<Book[]> {
       show: false,
     });
 
-    /**
-     * Everytime page finishes loading, select entire DOM and send to
-     * main process for scraping
-     */
     window.webContents.on('did-finish-load', async () => {
-      await window.webContents.executeJavaScript(
-        `require('electron').ipcRenderer.send('pageloaded', document.querySelector('body').innerHTML);`,
+      const html = await window.webContents.executeJavaScript(
+        `document.querySelector('body').innerHTML`,
       );
-    });
 
-    window.webContents.openDevTools();
-
-    window.loadURL('https://read.amazon.com/notebook');
-
-    /**
-     * Listens for the `pageloaded` event to parse and scrape HTML
-     */
-    ipcMain.on('pageloaded', (_event, html) => {
       const $ = cheerio.load(html);
-
       const books = parseBooks($);
 
       window.destroy();
 
       resolve(books);
     });
+
+    window.loadURL('https://read.amazon.com/notebook');
   });
 }
