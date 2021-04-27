@@ -1,7 +1,7 @@
 <script>
   import { Jumper } from 'svelte-loading-spinners';
-  import CircleTick from '../../images/circleTick.svg';
-  import CircleExclamation from '../../images/circleExclamation.svg';
+  import CircleTick from '../../assets/circleTick.svg';
+  import CircleExclamation from '../../assets/circleExclamation.svg';
 
   import { statusBarStore, settingsStore } from '../../store';
 </script>

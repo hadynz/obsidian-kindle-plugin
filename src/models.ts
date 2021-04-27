@@ -10,6 +10,6 @@ export type Book = {
 export type Highlight = {
   id: string;
   text: string;
-  location: number;
-  page: number;
+  location: string;
+  page: string;
 };

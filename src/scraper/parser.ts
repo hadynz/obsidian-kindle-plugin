@@ -40,8 +40,8 @@ export const parseHighlights = ($: Root): Highlight[] => {
       return {
         id: highlight.id,
         text: highlight.text,
-        location: Number(highlight.locationString),
-        page: Number(highlight.pageLocationString![0]),
+        location: highlight.locationString,
+        page: highlight.pageLocationString![0],
       };
     },
   );

@@ -3,6 +3,8 @@ import { writable } from 'svelte/store';
 import KindlePlugin from '../index';
 import { Book } from '../models';
 
+import defaultTemplate from '../assets/defaultTemplate.njk';
+
 type Settings = {
   highlightsFolder: string;
   synchedBookAsins: string[];
@@ -17,14 +19,7 @@ const DEFAULT_SETTINGS: Settings = {
   highlightsFolder: '/',
   synchedBookAsins: [],
   isLoggedIn: false,
-  noteTemplate: `# {{title}}
-* Author: [[{{author}}]]
-* Reference: {{url}}
-
-{% for highlight in highlights %}
-  - > {{highlight.text}} (location: {{highlight.location}})
-{% endfor %}
-`,
+  noteTemplate: defaultTemplate,
   syncOnBoot: false,
 };
 
