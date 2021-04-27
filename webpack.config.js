@@ -33,7 +33,7 @@ module.exports = {
         },
       },
       {
-        test: /\.svg/,
+        test: /\.(svg|njk)$/,
         type: 'asset/source',
       },
     ],
