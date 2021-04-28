@@ -12,4 +12,5 @@ export type Highlight = {
   text: string;
   location: string;
   page: string;
+  note?: string;
 };

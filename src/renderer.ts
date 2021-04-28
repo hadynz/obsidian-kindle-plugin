@@ -15,6 +15,7 @@ type RenderTemplate = {
     text: string;
     location: string;
     page: string;
+    note?: string;
     appLink: string;
   }[];
 };
@@ -36,6 +37,7 @@ export class Renderer {
         text: h.text,
         location: h.location,
         page: h.page,
+        note: h.note,
         appLink: `kindle://book?action=open&asin=${book.asin}&location=${h.location}`,
       })),
     };

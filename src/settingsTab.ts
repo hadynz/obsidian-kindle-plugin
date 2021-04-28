@@ -108,6 +108,7 @@ export class SettingsTab extends PluginSettingTab {
         <li><span class="u-pop">{{text}}</span> - Highlight text</li>
         <li><span class="u-pop">{{location}}</span> - Highlight location in book</li>
         <li><span class="u-pop">{{page}}</span> - Highlighted page location in book</li>
+        <li><span class="u-pop">{{note}}</span> - Your note associated with highlight</li>
         <li><span class="u-pop">{{appLink}}</span> - Link to highlighted text in local Kindle app</li>
       </ul>
     `);
