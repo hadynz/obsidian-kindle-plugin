@@ -1,11 +1,11 @@
 import { get } from 'svelte/store';
 
-import AmazonLoginModal from './components/amazonLoginModal';
-import FileManager from './fileManager';
-import { settingsStore, syncSessionStore } from './store';
-import { Book } from './models';
-import { getBookHighlights, getListofBooks } from './scraper';
-import { Renderer } from './renderer';
+import AmazonLoginModal from '../components/amazonLoginModal';
+import FileManager from '../fileManager';
+import { settingsStore, syncSessionStore } from '../store';
+import { Book } from '../models';
+import { getBookHighlights, getListofBooks } from '../scraper';
+import { Renderer } from '../renderer';
 
 export default class SyncHighlights {
   private fileManager: FileManager;
@@ -40,7 +40,7 @@ export default class SyncHighlights {
     syncSessionStore.actions.syncComplete();
   }
 
-  async syncBooks(books: Book[]): Promise<void> {
+  private async syncBooks(books: Book[]): Promise<void> {
     for (const book of books) {
       try {
         syncSessionStore.actions.startJob(book);
@@ -54,7 +54,7 @@ export default class SyncHighlights {
     }
   }
 
-  async syncBook(book: Book): Promise<void> {
+  private async syncBook(book: Book): Promise<void> {
     const highlights = await getBookHighlights(book);
     const populatedHighlights = highlights.filter((h) => h.text);
 
