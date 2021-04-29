@@ -18,7 +18,7 @@
     "dev": "NODE_ENV=development webpack && cp ./dist/main.js* ."
   },
   "dependencies": {
-    "@hadynz/kindle-clippings": "^1.0.2",
+    "@hadynz/kindle-clippings": "^1.0.3",
     "cheerio": "*",
     "lodash.pickby": "^4.6.0",
     "nunjucks": "^3.2.3",
