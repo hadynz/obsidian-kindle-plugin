@@ -28,20 +28,16 @@ export const parseHighlights = ($: Root): Highlight[] => {
 
   return highlightsEl.map(
     (highlightEl): Highlight => {
-      const highlight = {
-        id: $(highlightEl).attr('id') as string,
-        text: $('#highlight', highlightEl).text(),
-        locationString: $('#kp-annotation-location', highlightEl).val(),
-        pageLocationString: $('#annotationNoteHeader', highlightEl)
-          .text()
-          ?.match(/\d+$/),
-      };
+      const pageMatch = $('#annotationNoteHeader', highlightEl)
+        .text()
+        ?.match(/\d+$/);
 
       return {
-        id: highlight.id,
-        text: highlight.text,
-        location: Number(highlight.locationString),
-        page: Number(highlight.pageLocationString![0]),
+        id: $(highlightEl).attr('id') as string,
+        text: $('#highlight', highlightEl).text(),
+        location: $('#kp-annotation-location', highlightEl).val(),
+        page: pageMatch![0],
+        note: $('#note', highlightEl).text(),
       };
     },
   );

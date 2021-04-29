@@ -4,7 +4,7 @@ import cheerio from 'cheerio';
 import { Book, Highlight } from '../models';
 import { parseHighlights } from './parser';
 
-const { BrowserWindow, ipcMain } = remote;
+const { BrowserWindow } = remote;
 
 export default function getBookHighlights(book: Book): Promise<Highlight[]> {
   return new Promise<Highlight[]>((resolve) => {
@@ -18,33 +18,21 @@ export default function getBookHighlights(book: Book): Promise<Highlight[]> {
       show: false,
     });
 
-    /**
-     * Everytime page finishes loading, select entire DOM and send to
-     * main process for scraping
-     */
     window.webContents.on('did-finish-load', async () => {
-      await window.webContents.executeJavaScript(
-        `require('electron').ipcRenderer.send('pageloaded', document.querySelector('body').innerHTML);`,
+      const html = await window.webContents.executeJavaScript(
+        `document.querySelector('body').innerHTML`,
       );
-    });
 
-    window.webContents.openDevTools();
-
-    window.loadURL(
-      `https://read.amazon.com/notebook?asin=${book.asin}&contentLimitState=&`,
-    );
-
-    /**
-     * Listens for the `pageloaded` event to parse and scrape HTML
-     */
-    ipcMain.on('pageloaded', (_event, html) => {
       const $ = cheerio.load(html);
-
       const highlights = parseHighlights($);
 
       window.destroy();
 
       resolve(highlights);
     });
+
+    window.loadURL(
+      `https://read.amazon.com/notebook?asin=${book.asin}&contentLimitState=&`,
+    );
   });
 }

@@ -1,0 +1,11 @@
+# {{title}}
+
+* Author: [[{{author}}]]
+* ASIN: [[{{asin}}]]
+* Reference: {{url}}
+* [Kindle link]({{appLink}})
+
+{% for highlight in highlights %}
+  - > {{highlight.text}} (location: {{highlight.location}})
+{% if highlight.note %}    {{highlight.note}}{% endif %}
+{% endfor %}

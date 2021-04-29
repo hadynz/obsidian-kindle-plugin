@@ -56,8 +56,13 @@ export default class SyncHighlights {
 
   async syncBook(book: Book): Promise<void> {
     const highlights = await getBookHighlights(book);
+    const populatedHighlights = highlights.filter((h) => h.text);
 
-    const content = this.renderer.render({ book, highlights });
-    await this.fileManager.writeNote(book.title, content);
+    if (populatedHighlights.length > 0) {
+      const content = this.renderer.render({ book, highlights });
+      await this.fileManager.writeNote(book.title, content);
+    }
+
+    // TODO: Track skipped books because of no highlights
   }
 }

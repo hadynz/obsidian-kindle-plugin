@@ -27,6 +27,11 @@ https://user-images.githubusercontent.com/315585/115801054-f4a7fc00-a42f-11eb-81
 This plugin works by wrapping itself around https://read.amazon.com and screen scraping your
 Kindle notes and highlights in the background.
 
+An important **security consideration** to note:- Logging in to your Amazon account via Obsidian
+will make your Amazon login session available to this plugin (and any other plugin, potentially across
+all your vaults) until your session expires. You can address this risk by logging out after every sync
+(in plugin settings).
+
 ## Development
 
 Pull requests are encouraged and always welcome.
