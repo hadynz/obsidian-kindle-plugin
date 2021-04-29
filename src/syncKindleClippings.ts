@@ -3,7 +3,7 @@ import fs from 'fs';
 import { remote } from 'electron';
 
 import FileManager from './fileManager';
-import { Book, Highlight, BookHighlight } from './models';
+import { BookHighlight } from './models';
 import { Renderer } from './renderer';
 
 const { dialog } = remote;
@@ -23,6 +23,23 @@ const openDialog = async (): Promise<DialogResponse> => {
   return [result.filePaths[0], false];
 };
 
+const toBookHighlight = (book: kc.Book): BookHighlight => {
+  return {
+    book: {
+      title: book.title,
+      author: book.author,
+    },
+    highlights: book.entries
+      .filter((entry) => entry.type === 'HIGHLIGHT')
+      .map((entry) => ({
+        text: entry.content,
+        note: entry.note,
+        location: entry.location,
+        page: entry.page,
+      })),
+  };
+};
+
 const parseBooks = async (file: string): Promise<BookHighlight[]> => {
   const clippingsFileContent = fs.readFileSync(file, 'utf8');
 
@@ -30,9 +47,7 @@ const parseBooks = async (file: string): Promise<BookHighlight[]> => {
   const parsedRows = kc.parseKindleEntries(rawRows);
   const books = kc.organizeKindleEntriesByBooks(parsedRows);
 
-  console.log('books', books);
-
-  return [];
+  return books.map(toBookHighlight);
 };
 
 export default class SyncKindleClippings {
