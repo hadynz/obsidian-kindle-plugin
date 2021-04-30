@@ -13,6 +13,14 @@ type SyncSession = {
   jobs: SyncJob[];
 };
 
+const getBooks = (state: SyncSession): Book[] => {
+  return state.jobs.map((j) => j.book);
+};
+
+const getJobFromBook = (state: SyncSession, book: Book): SyncJob => {
+  return state.jobs.find((j) => j.book.title === book.title) as SyncJob;
+};
+
 const createSyncSessionStore = () => {
   const initialState: SyncSession = {
     status: 'idle',
@@ -31,10 +39,10 @@ const createSyncSessionStore = () => {
 
   const syncComplete = () => {
     store.update((state) => {
+      statusBarStore.actions.syncComplete(getBooks(state));
+      settingsStore.actions.setSyncDate(new Date());
       state.status = 'idle';
       state.jobs = [];
-      statusBarStore.actions.syncComplete(state.jobs.map((j) => j.book));
-      settingsStore.actions.setSyncDate(new Date());
       return state;
     });
   };
@@ -43,6 +51,18 @@ const createSyncSessionStore = () => {
     store.update((state) => {
       state.jobs = books.map((book) => ({ status: 'idle', book }));
       statusBarStore.actions.booksFound(books);
+      return state;
+    });
+  };
+
+  const completeJobs = (books: Book[]) => {
+    store.update((state) => {
+      books.forEach((book) => {
+        const job = getJobFromBook(state, book);
+        job.status = 'done';
+      });
+
+      settingsStore.actions.setSyncDate(new Date());
       return state;
     });
   };
@@ -73,6 +93,7 @@ const createSyncSessionStore = () => {
       setJobs,
       startJob: (book: Book) => updateJob(book, 'in-progress'),
       completeJob: (book: Book) => updateJob(book, 'done'),
+      completeJobs,
       errorJob: (book: Book) => updateJob(book, 'error'),
     },
   };

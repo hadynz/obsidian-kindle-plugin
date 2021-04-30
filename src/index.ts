@@ -2,12 +2,11 @@ import { Plugin } from 'obsidian';
 import { get } from 'svelte/store';
 
 import FileManager from './fileManager';
-import SyncHighlights from './sync/syncHighlights';
-import SyncKindleClippings from './sync/syncKindleClippings';
 import SyncModal from './components/syncModal';
 import { SettingsTab } from './settingsTab';
 import { StatusBar } from './components/statusBar';
 import { initialise, settingsStore } from './store';
+import { SyncHighlights, SyncKindleClippings } from './sync';
 
 export default class KindlePlugin extends Plugin {
   private syncHighlights!: SyncHighlights;

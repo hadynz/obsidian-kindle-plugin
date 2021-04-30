@@ -35,8 +35,6 @@ export default class SyncHighlights {
       await this.syncBooks(booksToSync);
     }
 
-    await settingsStore.actions.setSyncDate(new Date());
-
     syncSessionStore.actions.syncComplete();
   }
 
