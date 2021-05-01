@@ -1,26 +1,32 @@
 import { writable } from 'svelte/store';
 
 import KindlePlugin from '../index';
-import { Book } from '../models';
-
 import defaultTemplate from '../assets/defaultTemplate.njk';
+
+type SyncHistory = {
+  totalBooks: number;
+  totalHighlights: number;
+};
 
 type Settings = {
   highlightsFolder: string;
-  synchedBookAsins: string[];
   lastSyncDate?: string;
   loggedInEmail?: string;
   isLoggedIn: boolean;
   noteTemplate: string;
   syncOnBoot: boolean;
+  history: SyncHistory;
 };
 
 const DEFAULT_SETTINGS: Settings = {
   highlightsFolder: '/',
-  synchedBookAsins: [],
   isLoggedIn: false,
   noteTemplate: defaultTemplate,
   syncOnBoot: false,
+  history: {
+    totalBooks: 0,
+    totalHighlights: 0,
+  },
 };
 
 const createSettingsStore = () => {
@@ -52,31 +58,24 @@ const createSettingsStore = () => {
     }
   });
 
-  const setHighlightsFolderLocation = (value: string) => {
+  const setHighlightsFolder = (value: string) => {
     store.update((state) => {
       state.highlightsFolder = value;
       return state;
     });
   };
 
-  const markBookAsSynced = (book: Book) => {
-    store.update((state) => {
-      state.synchedBookAsins.push(book.asin);
-      return state;
-    });
-  };
-
   const resetSyncHistory = () => {
     store.update((state) => {
-      state.synchedBookAsins = [];
+      state.history = DEFAULT_SETTINGS.history;
       state.lastSyncDate = undefined;
       return state;
     });
   };
 
-  const setSyncDate = (value: Date) => {
+  const setSyncDateToNow = () => {
     store.update((state) => {
-      state.lastSyncDate = value.toString();
+      state.lastSyncDate = new Date().toString();
       return state;
     });
   };
@@ -112,18 +111,26 @@ const createSettingsStore = () => {
     });
   };
 
+  const incrementHistory = (delta: SyncHistory) => {
+    store.update((state) => {
+      state.history.totalBooks += delta.totalBooks;
+      state.history.totalHighlights += delta.totalHighlights;
+      return state;
+    });
+  };
+
   return {
     subscribe: store.subscribe,
     initialise,
     actions: {
-      setHighlightsFolder: setHighlightsFolderLocation,
-      markBookAsSynced,
+      setHighlightsFolder,
       resetSyncHistory,
-      setSyncDate,
+      setSyncDateToNow,
       login,
       logout,
       setNoteTemplate,
       setSyncOnBoot,
+      incrementHistory,
     },
   };
 };

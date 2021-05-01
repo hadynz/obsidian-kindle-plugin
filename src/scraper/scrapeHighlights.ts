@@ -1,12 +1,13 @@
 import { remote } from 'electron';
 import cheerio from 'cheerio';
 
-import { parseSignoutLink } from './parser';
+import { Book, Highlight } from '../models';
+import { parseHighlights } from './parser';
 
 const { BrowserWindow } = remote;
 
-export default function getLogoutLink(): Promise<string> {
-  return new Promise<string>((resolve) => {
+export default function scrapeHighlightsForBook(book: Book): Promise<Highlight[]> {
+  return new Promise<Highlight[]>((resolve) => {
     const window = new BrowserWindow({
       width: 1000,
       height: 600,
@@ -23,14 +24,15 @@ export default function getLogoutLink(): Promise<string> {
       );
 
       const $ = cheerio.load(html);
-
-      const url = parseSignoutLink($);
+      const highlights = parseHighlights($);
 
       window.destroy();
 
-      resolve(url);
+      resolve(highlights);
     });
 
-    window.loadURL('https://read.amazon.com/notebook');
+    window.loadURL(
+      `https://read.amazon.com/notebook?asin=${book.asin}&contentLimitState=&`,
+    );
   });
 }

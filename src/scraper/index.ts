@@ -1,5 +1,5 @@
-import getBookHighlights from './getBookHighlights';
-import getListofBooks from './getListofBooks';
-import getLogoutLink from './getLogoutLink';
+import scrapeHighlightsForBook from './scrapeHighlights';
+import scrapeBooks from './scrapeBooks';
+import scrapeLogoutUrl from './scrapeLogoutUrl';
 
-export { getBookHighlights, getListofBooks, getLogoutLink };
+export { scrapeHighlightsForBook, scrapeBooks, scrapeLogoutUrl };

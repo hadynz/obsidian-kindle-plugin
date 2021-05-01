@@ -5,7 +5,7 @@ import { get } from 'svelte/store';
 import KindlePlugin from '.';
 import AmazonLogoutModal from './components/amazonLogoutModal';
 import { settingsStore } from './store';
-import { getLogoutLink } from './scraper';
+import { scrapeLogoutUrl } from './scraper';
 
 const moment = window.moment;
 
@@ -38,7 +38,7 @@ export class SettingsTab extends PluginSettingTab {
       : 'Sync has never run';
 
     const descFragment = document.createRange().createContextualFragment(`
-      ${get(settingsStore).synchedBookAsins.length} book(s) synced<br/>
+      ${get(settingsStore).history.totalBooks} book(s) synced<br/>
       ${syncMessage}
     `);
 
@@ -55,7 +55,7 @@ export class SettingsTab extends PluginSettingTab {
               .setButtonText('Signing out...')
               .setDisabled(true);
 
-            const signoutLink = await getLogoutLink();
+            const signoutLink = await scrapeLogoutUrl();
 
             const modal = new AmazonLogoutModal(signoutLink);
             await modal.doLogout();

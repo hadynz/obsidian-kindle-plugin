@@ -6,7 +6,7 @@ import { parseBooks } from './parser';
 
 const { BrowserWindow } = remote;
 
-export default function getListofBooks(): Promise<Book[]> {
+export default function scrapeBooks(): Promise<Book[]> {
   return new Promise<Book[]>((resolve) => {
     const window = new BrowserWindow({
       width: 1000,

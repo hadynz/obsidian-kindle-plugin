@@ -16,13 +16,13 @@ const createStatusBarStore = () => {
       let text = $config;
 
       if (!isSyncing && $settings.lastSyncDate) {
-        const booksCount = $settings.synchedBookAsins.length;
+        const booksCount = $settings.history.totalBooks;
         const lastSyncText = `Last sync ${moment(
           $settings.lastSyncDate,
         ).fromNow()}`;
 
         if (booksCount === 0) {
-          text = `No books to sync. ${lastSyncText}`;
+          text = `No books synced. ${lastSyncText}`;
         } else if (booksCount === 1) {
           text = `1 book synced. ${lastSyncText}`;
         } else {
