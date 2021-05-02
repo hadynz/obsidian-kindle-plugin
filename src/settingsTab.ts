@@ -70,6 +70,7 @@ export class SettingsTab extends PluginSettingTab {
       .setName('Highlights folder location')
       .setDesc('Vault folder to use for writing book highlight notes')
       .addDropdown((dropdown) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const files = (this.app.vault.adapter as any).files;
         const folders = pickBy(files, (val) => {
           return val.type === 'folder';

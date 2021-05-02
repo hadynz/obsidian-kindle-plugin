@@ -25,12 +25,15 @@ module.exports = {
       },
       {
         test: /\.(html|svelte)$/,
-        use: {
-          loader: 'svelte-loader',
-          options: {
-            preprocess: sveltePreprocess({}),
+        use: [
+          { loader: 'babel-loader' },
+          {
+            loader: 'svelte-loader',
+            options: {
+              preprocess: sveltePreprocess({}),
+            },
           },
-        },
+        ],
       },
       {
         test: /\.(svg|njk)$/,
