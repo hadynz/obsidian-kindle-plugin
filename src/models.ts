@@ -1,16 +1,21 @@
 export type Book = {
-  asin: string;
   title: string;
   author: string;
-  url: string;
-  imageUrl: string;
-  lastAccessedDate: string;
+  asin?: string;
+  url?: string;
+  imageUrl?: string;
+  lastAccessedDate?: string;
 };
 
 export type Highlight = {
-  id: string;
+  id?: string;
   text: string;
-  location: string;
-  page: string;
+  location?: string;
+  page?: string;
   note?: string;
+};
+
+export type BookHighlight = {
+  book: Book;
+  highlights: Highlight[];
 };

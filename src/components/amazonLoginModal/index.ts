@@ -1,14 +1,18 @@
 import queryString, { ParsedQuery } from 'query-string';
-import { remote } from 'electron';
+import {
+  remote,
+  BrowserWindow,
+  OnBeforeRequestListenerDetails,
+} from 'electron';
 import { StringDecoder } from 'string_decoder';
 import { get } from 'svelte/store';
 
 import { settingsStore } from '../../store';
 
-const { BrowserWindow } = remote;
+const { BrowserWindow: RemoteBrowserWindow } = remote;
 
 export default class AmazonLoginModal {
-  private modal;
+  private modal: BrowserWindow;
   private waitForSignIn: Promise<void>;
   private resolvePromise!: () => void;
 
@@ -16,10 +20,10 @@ export default class AmazonLoginModal {
     let userEmail: string;
 
     this.waitForSignIn = new Promise(
-      (resolve: () => void) => (this.resolvePromise = resolve),
+      (resolve: () => void) => (this.resolvePromise = resolve)
     );
 
-    this.modal = new BrowserWindow({
+    this.modal = new RemoteBrowserWindow({
       parent: remote.getCurrentWindow(),
       width: 450,
       height: 730,
@@ -40,7 +44,7 @@ export default class AmazonLoginModal {
         userEmail = formData.email as string;
 
         callback(details);
-      },
+      }
     );
 
     // If user is on the read.amazon.com url, we can safely assume they are logged in
@@ -63,9 +67,10 @@ export default class AmazonLoginModal {
   }
 }
 
-const decodeRequestBody = (body: any): ParsedQuery<string> => {
-  const formDataRaw = (body as any).uploadData as Iterable<unknown>;
-  const formDataBuffer = (Array.from(formDataRaw)[0] as any).bytes;
+const decodeRequestBody = (body: unknown): ParsedQuery<string> => {
+  const requestDetails = body as OnBeforeRequestListenerDetails;
+  const formDataRaw = requestDetails.uploadData;
+  const formDataBuffer = Array.from(formDataRaw)[0].bytes;
 
   const decoder = new StringDecoder();
   const formData = decoder.write(formDataBuffer);

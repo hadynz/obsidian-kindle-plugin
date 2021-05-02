@@ -1,8 +1,14 @@
-import { Vault } from 'obsidian';
+import type { Vault } from 'obsidian';
 import { get } from 'svelte/store';
 
 import { settingsStore } from './store';
 import { santizeTitle } from './utils';
+import type { Book } from './models';
+
+const bookFilePath = (book: Book): string => {
+  const fileName = santizeTitle(book.title);
+  return `${get(settingsStore).highlightsFolder}/${fileName}.md`;
+};
 
 export default class FileManager {
   private vault: Vault;
@@ -11,20 +17,13 @@ export default class FileManager {
     this.vault = vault;
   }
 
-  public async writeNote(title: string, content: string): Promise<void> {
-    const fileName = santizeTitle(title);
-    const filePath = `${get(settingsStore).highlightsFolder}/${fileName}.md`;
-
-    await this.saveToFile(filePath, content);
+  public async fileExists(book: Book): Promise<boolean> {
+    const filePath = bookFilePath(book);
+    return await this.vault.adapter.exists(filePath);
   }
 
-  private async saveToFile(filePath: string, content: string): Promise<void> {
-    const fileExists = await this.vault.adapter.exists(filePath);
-
-    if (fileExists) {
-      // TODO: Handle scenario when a file exists. How do we prompt the user?
-    } else {
-      await this.vault.create(filePath, content);
-    }
+  public async createFile(book: Book, content: string): Promise<void> {
+    const filePath = bookFilePath(book);
+    await this.vault.create(filePath, content);
   }
 }

@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 
-import { Book } from '../models';
+import type { Book } from '../models';
 import { statusBarStore, settingsStore } from '../store';
 
 type SyncJob = {
@@ -8,9 +8,21 @@ type SyncJob = {
   book: Book;
 };
 
+type SyncResult = {
+  newBookCount: number;
+  newHighlightsCount: number;
+  updatedBookCount: number;
+  updatedHighlightsCount: number;
+};
+
 type SyncSession = {
   status: 'idle' | 'loading';
+  method?: 'amazon' | 'clippings-file';
   jobs: SyncJob[];
+};
+
+const getBooks = (state: SyncSession): Book[] => {
+  return state.jobs.map((j) => j.book);
 };
 
 const createSyncSessionStore = () => {
@@ -21,20 +33,26 @@ const createSyncSessionStore = () => {
 
   const store = writable(initialState);
 
-  const startSync = () => {
+  const startSync = (method: SyncSession['method']) => {
     store.update((state) => {
-      state.status = 'loading';
       statusBarStore.actions.syncStarted();
+      state.status = 'loading';
+      state.method = method;
       return state;
     });
   };
 
-  const syncComplete = () => {
+  const completeSync = (result: SyncResult) => {
     store.update((state) => {
+      statusBarStore.actions.syncComplete(getBooks(state));
+      settingsStore.actions.setSyncDateToNow();
+      settingsStore.actions.incrementHistory({
+        totalBooks: result.newBookCount,
+        totalHighlights: result.newHighlightsCount,
+      });
       state.status = 'idle';
+      state.method = undefined;
       state.jobs = [];
-      statusBarStore.actions.syncComplete(state.jobs.map((j) => j.book));
-      settingsStore.actions.setSyncDate(new Date());
       return state;
     });
   };
@@ -57,8 +75,7 @@ const createSyncSessionStore = () => {
       }
 
       if (status === 'done') {
-        settingsStore.actions.setSyncDate(new Date());
-        settingsStore.actions.markBookAsSynced(book);
+        settingsStore.actions.setSyncDateToNow();
       }
 
       return state;
@@ -69,7 +86,7 @@ const createSyncSessionStore = () => {
     subscribe: store.subscribe,
     actions: {
       startSync,
-      syncComplete,
+      completeSync,
       setJobs,
       startJob: (book: Book) => updateJob(book, 'in-progress'),
       completeJob: (book: Book) => updateJob(book, 'done'),

@@ -2,12 +2,12 @@ import { App, PluginSettingTab, Setting } from 'obsidian';
 import pickBy from 'lodash.pickby';
 import { get } from 'svelte/store';
 
-import KindlePlugin from '.';
+import type KindlePlugin from '.';
 import AmazonLogoutModal from './components/amazonLogoutModal';
 import { settingsStore } from './store';
-import { getLogoutLink } from './scraper';
+import { scrapeLogoutUrl } from './scraper';
 
-const moment = window.moment;
+const { moment } = window;
 
 export class SettingsTab extends PluginSettingTab {
   public app: App;
@@ -38,7 +38,7 @@ export class SettingsTab extends PluginSettingTab {
       : 'Sync has never run';
 
     const descFragment = document.createRange().createContextualFragment(`
-      ${get(settingsStore).synchedBookAsins.length} book(s) synced<br/>
+      ${get(settingsStore).history.totalBooks} book(s) synced<br/>
       ${syncMessage}
     `);
 
@@ -55,7 +55,7 @@ export class SettingsTab extends PluginSettingTab {
               .setButtonText('Signing out...')
               .setDisabled(true);
 
-            const signoutLink = await getLogoutLink();
+            const signoutLink = await scrapeLogoutUrl();
 
             const modal = new AmazonLogoutModal(signoutLink);
             await modal.doLogout();
@@ -70,6 +70,7 @@ export class SettingsTab extends PluginSettingTab {
       .setName('Highlights folder location')
       .setDesc('Vault folder to use for writing book highlight notes')
       .addDropdown((dropdown) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const files = (this.app.vault.adapter as any).files;
         const folders = pickBy(files, (val) => {
           return val.type === 'folder';
@@ -138,7 +139,7 @@ export class SettingsTab extends PluginSettingTab {
           .setValue(get(settingsStore).syncOnBoot)
           .onChange(async (value) => {
             await settingsStore.actions.setSyncOnBoot(value);
-          }),
+          })
       );
   }
 

@@ -2,21 +2,21 @@ import nunjucks from 'nunjucks';
 import { get } from 'svelte/store';
 
 import { settingsStore } from './store';
-import { Book, Highlight } from './models';
+import type { BookHighlight } from './models';
 
 type RenderTemplate = {
   title: string;
-  author: string;
-  asin: string;
-  url: string;
-  imageUrl: string;
-  appLink: string;
+  author?: string;
+  asin?: string;
+  url?: string;
+  imageUrl?: string;
+  appLink?: string;
   highlights: {
     text: string;
-    location: string;
-    page: string;
+    location?: string;
+    page?: string;
     note?: string;
-    appLink: string;
+    appLink?: string;
   }[];
 };
 
@@ -25,20 +25,28 @@ export class Renderer {
     nunjucks.configure({ autoescape: false });
   }
 
-  render(book: Book, highlights: Highlight[]): string {
+  render(entry: BookHighlight): string {
+    const { book, highlights } = entry;
+
     const context: RenderTemplate = {
       title: book.title,
       author: book.author,
       asin: book.asin,
       url: book.url,
       imageUrl: book.imageUrl,
-      appLink: `kindle://book?action=open&asin=${book.asin}`,
+      ...(book.asin
+        ? { appLink: `kindle://book?action=open&asin=${book.asin}` }
+        : {}),
       highlights: highlights.map((h) => ({
         text: h.text,
         location: h.location,
         page: h.page,
         note: h.note,
-        appLink: `kindle://book?action=open&asin=${book.asin}&location=${h.location}`,
+        ...(book.asin
+          ? {
+              appLink: `kindle://book?action=open&asin=${book.asin}&location=${h.location}`,
+            }
+          : {}),
       })),
     };
 

@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
   import { Jumper } from 'svelte-loading-spinners';
 
   import { santizeTitle } from '../../utils';
   import { syncSessionStore, settingsStore } from '../../store';
 
-  const moment = window.moment;
+  const { moment } = window;
 
   $: percentage = (
     ($syncSessionStore.jobs.filter((j) => j.status === 'done').length /
@@ -13,25 +13,35 @@
   ).toFixed(0);
 
   $: currentJob = $syncSessionStore.jobs.find(
-    (job) => job.status === 'in-progress',
+    (job) => job.status === 'in-progress'
   );
 
-  export let startSync;
+  export let startSync: () => void, startUpload: () => void;
 </script>
 
 {#if $syncSessionStore.status === 'idle'}
   <div class="kp-syncmodal--nosync-content">
     {#if $settingsStore.lastSyncDate}
-      {$settingsStore.synchedBookAsins.length} book(s) synced<br />
+      {$settingsStore.history.totalBooks} book(s) synced<br />
       Last sync {moment($settingsStore.lastSyncDate).fromNow()}
     {:else}
-      Kindle sync has never run
+      <p>
+        Start syncing your Kindle highlights now and leverage Obsidian's ability
+        to map and traverse your data.
+      </p>
+      <p>You can sync in two ways:</p>
+      <ul>
+        <li>Sync via Amazon's Kindle Reader</li>
+        <li>Upload your Kindle My Clippings text file</li>
+      </ul>
     {/if}
   </div>
-
   <div class="setting-item">
     <div class="setting-item-control">
-      <button class="mod-cta" on:click={startSync}>Sync now</button>
+      <button class="mod-cta" on:click={startUpload}>
+        Upload My Clippings.txt
+      </button>
+      <button class="mod-cta" on:click={startSync}>Sync using Amazon</button>
     </div>
   </div>
 {:else}

@@ -1,10 +1,10 @@
 import { writable, derived } from 'svelte/store';
 
-import { Book } from '../models';
+import type { Book } from '../models';
 import { santizeTitle } from '../utils';
 import { settingsStore, syncSessionStore } from './index';
 
-const moment = window.moment;
+const { moment } = window;
 
 const createStatusBarStore = () => {
   const config = writable('Kindle sync never run. Start now...');
@@ -16,13 +16,13 @@ const createStatusBarStore = () => {
       let text = $config;
 
       if (!isSyncing && $settings.lastSyncDate) {
-        const booksCount = $settings.synchedBookAsins.length;
+        const booksCount = $settings.history.totalBooks;
         const lastSyncText = `Last sync ${moment(
-          $settings.lastSyncDate,
+          $settings.lastSyncDate
         ).fromNow()}`;
 
         if (booksCount === 0) {
-          text = `No books to sync. ${lastSyncText}`;
+          text = `No books found to sync. ${lastSyncText}`;
         } else if (booksCount === 1) {
           text = `1 book synced. ${lastSyncText}`;
         } else {
@@ -31,7 +31,7 @@ const createStatusBarStore = () => {
       }
 
       return { text, isSyncing };
-    },
+    }
   );
 
   const syncStarted = () => {

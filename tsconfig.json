@@ -1,20 +1,13 @@
 {
-  "compilerOptions": {
-    "incremental": true,
-    "target": "es2019",
-    "module": "commonjs",
-    "declaration": true,
-    "sourceMap": true,
-    "composite": true,
-    "strict": true,
-    "moduleResolution": "node",
-    "baseUrl": ".",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "experimentalDecorators": true,
-    "types": ["node", "svelte", "jest"]
-  },
+  "extends": "@tsconfig/svelte/tsconfig.json",
+
   "include": ["src/**/*", "tests/**/*"],
-  "exclude": ["node_modules/*"]
+  "exclude": ["node_modules/*"],
+  "compilerOptions": {
+    "types": ["node", "svelte", "jest"],
+    "baseUrl": ".",
+    "paths": {
+      "src": ["src/*", "tests/*"]
+    }
+  }
 }

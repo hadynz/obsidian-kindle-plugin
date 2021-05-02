@@ -1,12 +1,12 @@
 import { remote } from 'electron';
 import cheerio from 'cheerio';
 
-import { Book } from '../models';
+import type { Book } from '../models';
 import { parseBooks } from './parser';
 
 const { BrowserWindow } = remote;
 
-export default function getListofBooks(): Promise<Book[]> {
+export default function scrapeBooks(): Promise<Book[]> {
   return new Promise<Book[]>((resolve) => {
     const window = new BrowserWindow({
       width: 1000,
@@ -20,7 +20,7 @@ export default function getListofBooks(): Promise<Book[]> {
 
     window.webContents.on('did-finish-load', async () => {
       const html = await window.webContents.executeJavaScript(
-        `document.querySelector('body').innerHTML`,
+        `document.querySelector('body').innerHTML`
       );
 
       const $ = cheerio.load(html);

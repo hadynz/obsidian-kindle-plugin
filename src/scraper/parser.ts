@@ -1,6 +1,6 @@
-import { Root } from 'cheerio';
+import type { Root } from 'cheerio';
 
-import { Book, Highlight } from '../models';
+import type { Book, Highlight } from '../models';
 
 export const parseBooks = ($: Root): Book[] => {
   const booksEl = $('.kp-notebook-library-each-book').toArray();
@@ -17,13 +17,13 @@ export const parseBooks = ($: Root): Book[] => {
         imageUrl: $('.kp-notebook-cover-image', bookEl).attr('src') as string,
         lastAccessedDate: $('[id^="kp-notebook-annotated-date"]', bookEl).val(),
       };
-    },
+    }
   );
 };
 
 export const parseHighlights = ($: Root): Highlight[] => {
   const highlightsEl = $(
-    '#kp-notebook-annotations .a-row.a-spacing-base',
+    '#kp-notebook-annotations .a-row.a-spacing-base'
   ).toArray();
 
   return highlightsEl.map(
@@ -36,10 +36,10 @@ export const parseHighlights = ($: Root): Highlight[] => {
         id: $(highlightEl).attr('id') as string,
         text: $('#highlight', highlightEl).text(),
         location: $('#kp-annotation-location', highlightEl).val(),
-        page: pageMatch![0],
+        page: pageMatch ? pageMatch[0] : null,
         note: $('#note', highlightEl).text(),
       };
-    },
+    }
   );
 };
 
