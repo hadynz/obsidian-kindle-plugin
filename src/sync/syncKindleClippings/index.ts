@@ -48,7 +48,7 @@ export default class SyncKindleClippings {
 
   private async writeBook(entry: BookHighlight): Promise<void> {
     // File already exists. Do nothing for now...
-    if (this.fileManager.fileExists(entry.book)) {
+    if (await this.fileManager.fileExists(entry.book)) {
       return;
     }
 

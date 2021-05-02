@@ -21,6 +21,7 @@
     "@hadynz/kindle-clippings": "^1.0.5",
     "cheerio": "*",
     "lodash.pickby": "^4.6.0",
+    "lodasync": "^1.0.7",
     "nunjucks": "^3.2.3",
     "query-string": "^7.0.0",
     "sanitize-filename": "^1.6.3",

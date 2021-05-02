@@ -1,3 +1,5 @@
+import { filterAsync } from 'lodasync';
+
 import AmazonLoginModal from '../components/amazonLoginModal';
 import type FileManager from '../fileManager';
 import { syncSessionStore } from '../store';
@@ -27,7 +29,11 @@ export default class SyncHighlights {
     syncSessionStore.actions.startSync('amazon');
 
     const allBooks = await scrapeBooks();
-    const booksToSync = allBooks.filter((b) => !this.fileManager.fileExists(b));
+
+    const booksToSync = await filterAsync(async (b) => {
+      const exists = await this.fileManager.fileExists(b);
+      return !exists;
+    }, allBooks);
 
     syncSessionStore.actions.setJobs(booksToSync);
 
