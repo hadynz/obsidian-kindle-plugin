@@ -2,7 +2,7 @@ import nunjucks from 'nunjucks';
 import { get } from 'svelte/store';
 
 import { settingsStore } from './store';
-import { BookHighlight } from './models';
+import type { BookHighlight } from './models';
 
 type RenderTemplate = {
   title: string;

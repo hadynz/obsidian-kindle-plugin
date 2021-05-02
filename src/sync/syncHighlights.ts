@@ -1,10 +1,10 @@
 import AmazonLoginModal from '../components/amazonLoginModal';
-import FileManager from '../fileManager';
+import type FileManager from '../fileManager';
 import { syncSessionStore } from '../store';
-import { Book } from '../models';
+import type { Book } from '../models';
 import { scrapeHighlightsForBook, scrapeBooks } from '../scraper';
 import { Renderer } from '../renderer';
-import { SyncState } from './syncState';
+import type { SyncState } from './syncState';
 
 const initialState = { newBooksSynced: 0, newHighlightsSynced: 0 };
 

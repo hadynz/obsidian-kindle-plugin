@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 
-import { Book } from '../models';
+import type { Book } from '../models';
 import { statusBarStore, settingsStore } from '../store';
 
 type SyncJob = {

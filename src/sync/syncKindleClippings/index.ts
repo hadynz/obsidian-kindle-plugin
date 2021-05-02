@@ -1,10 +1,10 @@
-import FileManager from '../../fileManager';
-import { BookHighlight } from '../../models';
+import type FileManager from '../../fileManager';
+import type { BookHighlight } from '../../models';
 import { Renderer } from '../../renderer';
 import { openDialog } from './openDialog';
 import { parseBooks } from './parseBooks';
 import { syncSessionStore } from '../../store';
-import { SyncState } from '../syncState';
+import type { SyncState } from '../syncState';
 
 const initialState = { newBooksSynced: 0, newHighlightsSynced: 0 };
 

@@ -19,7 +19,7 @@ export default function scrapeLogoutUrl(): Promise<string> {
 
     window.webContents.on('did-finish-load', async () => {
       const html = await window.webContents.executeJavaScript(
-        `document.querySelector('body').innerHTML`,
+        `document.querySelector('body').innerHTML`
       );
 
       const $ = cheerio.load(html);

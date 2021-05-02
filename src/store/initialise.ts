@@ -1,4 +1,4 @@
-import KindlePlugin from '../index';
+import type KindlePlugin from '../index';
 import { settingsStore } from './settings';
 
 export async function initialise(plugin: KindlePlugin): Promise<void> {

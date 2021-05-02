@@ -2,12 +2,12 @@ import { App, PluginSettingTab, Setting } from 'obsidian';
 import pickBy from 'lodash.pickby';
 import { get } from 'svelte/store';
 
-import KindlePlugin from '.';
+import type KindlePlugin from '.';
 import AmazonLogoutModal from './components/amazonLogoutModal';
 import { settingsStore } from './store';
 import { scrapeLogoutUrl } from './scraper';
 
-const moment = window.moment;
+const { moment } = window;
 
 export class SettingsTab extends PluginSettingTab {
   public app: App;
@@ -138,7 +138,7 @@ export class SettingsTab extends PluginSettingTab {
           .setValue(get(settingsStore).syncOnBoot)
           .onChange(async (value) => {
             await settingsStore.actions.setSyncOnBoot(value);
-          }),
+          })
       );
   }
 

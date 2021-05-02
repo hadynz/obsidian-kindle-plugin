@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 
-import KindlePlugin from '../index';
+import type KindlePlugin from '../index';
 import defaultTemplate from '../assets/defaultTemplate.njk';
 
 type SyncHistory = {

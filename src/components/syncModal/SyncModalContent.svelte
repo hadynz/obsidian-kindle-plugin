@@ -1,25 +1,25 @@
 <script>
-  import { Jumper } from 'svelte-loading-spinners';
+  import { Jumper } from "svelte-loading-spinners";
 
-  import { santizeTitle } from '../../utils';
-  import { syncSessionStore, settingsStore } from '../../store';
+  import { santizeTitle } from "../../utils";
+  import { syncSessionStore, settingsStore } from "../../store";
 
-  const moment = window.moment;
+  const { moment } = window;
 
   $: percentage = (
-    ($syncSessionStore.jobs.filter((j) => j.status === 'done').length /
+    ($syncSessionStore.jobs.filter((j) => j.status === "done").length /
       $syncSessionStore.jobs.length) *
     100
   ).toFixed(0);
 
   $: currentJob = $syncSessionStore.jobs.find(
-    (job) => job.status === 'in-progress',
+    (job) => job.status === "in-progress"
   );
 
   export let startSync, startUpload;
 </script>
 
-{#if $syncSessionStore.status === 'idle'}
+{#if $syncSessionStore.status === "idle"}
   <div class="kp-syncmodal--nosync-content">
     {#if $settingsStore.lastSyncDate}
       {$settingsStore.synchedBookAsins.length} book(s) synced<br />
@@ -33,9 +33,7 @@
       <button class="mod-cta" on:click={startUpload}>
         Upload My Clippings.txt
       </button>
-      <button class="mod-cta" on:click={startSync}>
-        Sync now
-      </button>
+      <button class="mod-cta" on:click={startSync}> Sync now </button>
     </div>
   </div>
 {:else}

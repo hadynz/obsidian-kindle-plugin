@@ -1,12 +1,14 @@
 import { remote } from 'electron';
 import cheerio from 'cheerio';
 
-import { Book, Highlight } from '../models';
+import type { Book, Highlight } from '../models';
 import { parseHighlights } from './parser';
 
 const { BrowserWindow } = remote;
 
-export default function scrapeHighlightsForBook(book: Book): Promise<Highlight[]> {
+export default function scrapeHighlightsForBook(
+  book: Book
+): Promise<Highlight[]> {
   return new Promise<Highlight[]>((resolve) => {
     const window = new BrowserWindow({
       width: 1000,
@@ -20,7 +22,7 @@ export default function scrapeHighlightsForBook(book: Book): Promise<Highlight[]
 
     window.webContents.on('did-finish-load', async () => {
       const html = await window.webContents.executeJavaScript(
-        `document.querySelector('body').innerHTML`,
+        `document.querySelector('body').innerHTML`
       );
 
       const $ = cheerio.load(html);
@@ -32,7 +34,7 @@ export default function scrapeHighlightsForBook(book: Book): Promise<Highlight[]
     });
 
     window.loadURL(
-      `https://read.amazon.com/notebook?asin=${book.asin}&contentLimitState=&`,
+      `https://read.amazon.com/notebook?asin=${book.asin}&contentLimitState=&`
     );
   });
 }

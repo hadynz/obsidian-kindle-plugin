@@ -20,7 +20,7 @@ export default class SyncModal extends Modal {
     super(app);
 
     this.waitForClose = new Promise(
-      (resolve) => (this.resolvePromise = resolve),
+      (resolve) => (this.resolvePromise = resolve)
     );
 
     syncSessionStore.subscribe((state) => {

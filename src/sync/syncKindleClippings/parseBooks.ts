@@ -1,7 +1,7 @@
 import * as kc from '@hadynz/kindle-clippings';
 import fs from 'fs';
 
-import { BookHighlight } from '../../models';
+import type { BookHighlight } from '../../models';
 
 export const toBookHighlight = (book: kc.Book): BookHighlight => {
   return {
