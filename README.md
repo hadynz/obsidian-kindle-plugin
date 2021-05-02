@@ -66,6 +66,14 @@ any other plugin across your vaults until your session expires.
 You can mitigate this risk by logging out after every sync (from settings) or using the offline
 method of syncing by uploading your `My Clippings.txt` file instead.
 
+## Say Thanks
+
+If you like this plugin and would like to buy me a coffee, you can!
+
+[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="BuyMeACoffee" width="140">](https://www.buymeacoffee.com/hadynz)
+
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/hadynz?style=social)](https://github.com/sponsors/hadynz)
+
 ## License
 
 [MIT](LICENSE)
