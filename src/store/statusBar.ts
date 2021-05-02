@@ -22,7 +22,7 @@ const createStatusBarStore = () => {
         ).fromNow()}`;
 
         if (booksCount === 0) {
-          text = `No books synced. ${lastSyncText}`;
+          text = `No books found to sync. ${lastSyncText}`;
         } else if (booksCount === 1) {
           text = `1 book synced. ${lastSyncText}`;
         } else {
