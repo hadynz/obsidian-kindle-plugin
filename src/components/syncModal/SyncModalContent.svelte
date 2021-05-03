@@ -45,7 +45,11 @@
     </div>
   </div>
 {:else}
-  Downloading your Kindle highlights from Amazon.
+  {#if $syncSessionStore?.method === 'amazon'}
+    Downloading your Kindle highlights from Amazon.
+  {:else if $syncSessionStore?.method === 'clippings-file'}
+    Uploading Kindle highlights from your Clippings file.
+  {/if}
 
   <div class="kp-syncmodal--sync-content">
     <Jumper color="#7f6df2" size="90" duration="1.6s" />
@@ -54,8 +58,10 @@
       <div class="setting-item-description kp-syncmodal--file">
         Downloading <b>{santizeTitle(currentJob.book.title)}</b>
       </div>
-    {:else}
+    {:else if $syncSessionStore?.method === 'amazon'}
       Looking for new Kindle highlights to sync...
+    {:else if $syncSessionStore?.method === 'clippings-file'}
+      Parsing your Clippings files for highlights and notes.
     {/if}
   </div>
 

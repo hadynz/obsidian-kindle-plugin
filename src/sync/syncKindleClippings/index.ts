@@ -21,13 +21,13 @@ export default class SyncKindleClippings {
   async startSync(): Promise<void> {
     this.state = initialState;
 
-    syncSessionStore.actions.startSync('clippings-file');
-
     const [clippingsFile, canceled] = await openDialog();
 
     if (canceled) {
       return; // Do nothing...
     }
+
+    syncSessionStore.actions.startSync('clippings-file');
 
     const bookHighlights = await parseBooks(clippingsFile);
     await this.writeBooks(bookHighlights);
