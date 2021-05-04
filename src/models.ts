@@ -19,3 +19,10 @@ export type BookHighlight = {
   book: Book;
   highlights: Highlight[];
 };
+
+export type BookMetadata = {
+  isbn: string;
+  pages: string;
+  publication: string;
+  publisher: string;
+};
