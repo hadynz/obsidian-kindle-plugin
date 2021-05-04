@@ -13,12 +13,15 @@ export default function scrapeBooks(): Promise<Book[]> {
       height: 600,
       webPreferences: {
         webSecurity: false,
-        nodeIntegration: true,
+        nodeIntegration: false,
       },
       show: false,
     });
 
     window.webContents.on('did-finish-load', async () => {
+      // Sleep for about 1s to allow time for pagination to load all books
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       const html = await window.webContents.executeJavaScript(
         `document.querySelector('body').innerHTML`
       );
