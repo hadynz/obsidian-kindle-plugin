@@ -12,7 +12,7 @@ export default function scrapeLogoutUrl(): Promise<string> {
       height: 600,
       webPreferences: {
         webSecurity: false,
-        nodeIntegration: true,
+        nodeIntegration: false,
       },
       show: false,
     });
