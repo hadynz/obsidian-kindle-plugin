@@ -1,36 +1,20 @@
-import { remote } from 'electron';
-import cheerio from 'cheerio';
+import type { Root } from 'cheerio';
 
-import { parseSignoutLink } from './parser';
+import { loadRemoteDom } from './loadRemoteDom';
 
-const { BrowserWindow } = remote;
+export const parseSignoutLink = ($: Root): string => {
+  const signoutLinkEl = $('#kp-notebook-head tr:last-child a').attr('href');
 
-export default function scrapeLogoutUrl(): Promise<string> {
-  return new Promise<string>((resolve) => {
-    const window = new BrowserWindow({
-      width: 1000,
-      height: 600,
-      webPreferences: {
-        webSecurity: false,
-        nodeIntegration: false,
-      },
-      show: false,
-    });
+  if (signoutLinkEl) {
+    return signoutLinkEl;
+  }
 
-    window.webContents.on('did-finish-load', async () => {
-      const html = await window.webContents.executeJavaScript(
-        `document.querySelector('body').innerHTML`
-      );
+  throw new Error('Could not parse logout link');
+};
 
-      const $ = cheerio.load(html);
+const scrapeLogoutUrl = async (): Promise<string> => {
+  const dom = await loadRemoteDom('https://read.amazon.com/notebook');
+  return parseSignoutLink(dom);
+};
 
-      const url = parseSignoutLink($);
-
-      window.destroy();
-
-      resolve(url);
-    });
-
-    window.loadURL('https://read.amazon.com/notebook');
-  });
-}
+export default scrapeLogoutUrl;
