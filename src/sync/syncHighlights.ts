@@ -1,9 +1,10 @@
 import { filterAsync } from 'lodasync';
+import { get } from 'svelte/store';
 
 import AmazonLoginModal from '../components/amazonLoginModal';
 import type FileManager from '../fileManager';
-import { syncSessionStore } from '../store';
-import type { Book } from '../models';
+import { settingsStore, syncSessionStore } from '../store';
+import type { Book, BookMetadata } from '../models';
 import {
   scrapeHighlightsForBook,
   scrapeBookMetadata,
@@ -71,15 +72,20 @@ export default class SyncHighlights {
     const highlights = await scrapeHighlightsForBook(book);
     const populatedHighlights = highlights.filter((h) => h.text);
 
-    // TODO: Only fetch metadata if turned on by plugin
-    const metadata = await scrapeBookMetadata(book);
-
-    if (populatedHighlights.length > 0) {
-      const content = this.renderer.render({ book, highlights, metadata });
-      await this.fileManager.createFile(book, content);
-
-      this.state.newBooksSynced += 1;
-      this.state.newHighlightsSynced += populatedHighlights.length;
+    if (populatedHighlights.length === 0) {
+      return; // No highlights for book. Skip sync
     }
+
+    let metadata: BookMetadata;
+
+    if (get(settingsStore).downloadBookMetadata) {
+      metadata = await scrapeBookMetadata(book);
+    }
+
+    const content = this.renderer.render({ book, highlights, metadata });
+    await this.fileManager.createFile(book, content);
+
+    this.state.newBooksSynced += 1;
+    this.state.newHighlightsSynced += populatedHighlights.length;
   }
 }

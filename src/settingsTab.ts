@@ -27,8 +27,9 @@ export class SettingsTab extends PluginSettingTab {
     }
 
     this.highlightsFolder();
-    this.noteTemplate();
+    this.downloadBookMetadata();
     this.syncOnBoot();
+    this.noteTemplate();
     this.resetSyncHistory();
   }
 
@@ -130,10 +131,27 @@ export class SettingsTab extends PluginSettingTab {
       });
   }
 
+  private downloadBookMetadata(): void {
+    new Setting(this.containerEl)
+      .setName('Download book metadata')
+      .setDesc(
+        'Download extra book metadata from Amazon.com (Amazon sync only). Switch off to speed sync'
+      )
+      .addToggle((toggle) =>
+        toggle
+          .setValue(get(settingsStore).downloadBookMetadata)
+          .onChange(async (value) => {
+            await settingsStore.actions.setDownloadBookMetadata(value);
+          })
+      );
+  }
+
   private syncOnBoot(): void {
     new Setting(this.containerEl)
       .setName('Sync on Startup')
-      .setDesc('Automatically sync new Kindle highlights when Obsidian starts')
+      .setDesc(
+        'Automatically sync new Kindle highlights when Obsidian starts  (Amazon sync only)'
+      )
       .addToggle((toggle) =>
         toggle
           .setValue(get(settingsStore).syncOnBoot)
