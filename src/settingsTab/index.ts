@@ -2,10 +2,11 @@ import { App, PluginSettingTab, Setting } from 'obsidian';
 import pickBy from 'lodash.pickby';
 import { get } from 'svelte/store';
 
-import type KindlePlugin from '.';
-import AmazonLogoutModal from './components/amazonLogoutModal';
-import { settingsStore } from './store';
-import { scrapeLogoutUrl } from './scraper';
+import templateInstructions from './templateInstructions.html';
+import type KindlePlugin from '..';
+import AmazonLogoutModal from '../components/amazonLogoutModal';
+import { settingsStore } from '../store';
+import { scrapeLogoutUrl } from '../scraper';
 
 const { moment } = window;
 
@@ -27,8 +28,9 @@ export class SettingsTab extends PluginSettingTab {
     }
 
     this.highlightsFolder();
-    this.noteTemplate();
+    this.downloadBookMetadata();
     this.syncOnBoot();
+    this.noteTemplate();
     this.resetSyncHistory();
   }
 
@@ -88,38 +90,16 @@ export class SettingsTab extends PluginSettingTab {
   }
 
   private noteTemplate(): void {
-    const descFragment = document.createRange().createContextualFragment(`
-      Template (<a href="https://mozilla.github.io/nunjucks/">Nunjucks</a>) for rendering every synced Kindle note highlights.
-      <br/><br/>
-      <b>Available variables to use</b>
-      <br/>
-      Book
-      <ul>
-        <li><span class="u-pop">{{title}}</span> - Book title</li>
-        <li><span class="u-pop">{{author}}</span> - Book author</li>
-        <li><span class="u-pop">{{asin}}</span> - Book Amazon Standard Identification Number (ASIN)</li>
-        <li><span class="u-pop">{{url}}</span> - Book url (Amazon)</li>
-        <li><span class="u-pop">{{imageUrl}}</span> - Book cover image</li>
-        <li><span class="u-pop">{{appLink}}</span> - Link to book in local Kindle app</li>
-        <li><span class="u-pop">{{highlights}}</span> - List of your Kindle highlights for this book</li>
-      </ul>
-      <br/>
-      Highlight
-      <ul>
-        <li><span class="u-pop">{{text}}</span> - Highlight text</li>
-        <li><span class="u-pop">{{location}}</span> - Highlight location in book</li>
-        <li><span class="u-pop">{{page}}</span> - Highlighted page location in book</li>
-        <li><span class="u-pop">{{note}}</span> - Your note associated with highlight</li>
-        <li><span class="u-pop">{{appLink}}</span> - Link to highlighted text in local Kindle app</li>
-      </ul>
-    `);
+    const descFragment = document
+      .createRange()
+      .createContextualFragment(templateInstructions);
 
     new Setting(this.containerEl)
       .setName('Note template')
       .setDesc(descFragment)
       .addTextArea((text) => {
         text.inputEl.style.width = '100%';
-        text.inputEl.style.height = '250px';
+        text.inputEl.style.height = '450px';
         text.inputEl.style.fontSize = '0.8em';
         text
           .setValue(get(settingsStore).noteTemplate)
@@ -130,10 +110,27 @@ export class SettingsTab extends PluginSettingTab {
       });
   }
 
+  private downloadBookMetadata(): void {
+    new Setting(this.containerEl)
+      .setName('Download book metadata')
+      .setDesc(
+        'Download extra book metadata from Amazon.com (Amazon sync only). Switch off to speed sync'
+      )
+      .addToggle((toggle) =>
+        toggle
+          .setValue(get(settingsStore).downloadBookMetadata)
+          .onChange(async (value) => {
+            await settingsStore.actions.setDownloadBookMetadata(value);
+          })
+      );
+  }
+
   private syncOnBoot(): void {
     new Setting(this.containerEl)
       .setName('Sync on Startup')
-      .setDesc('Automatically sync new Kindle highlights when Obsidian starts')
+      .setDesc(
+        'Automatically sync new Kindle highlights when Obsidian starts  (Amazon sync only)'
+      )
       .addToggle((toggle) =>
         toggle
           .setValue(get(settingsStore).syncOnBoot)

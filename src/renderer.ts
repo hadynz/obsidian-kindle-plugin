@@ -2,23 +2,7 @@ import nunjucks from 'nunjucks';
 import { get } from 'svelte/store';
 
 import { settingsStore } from './store';
-import type { BookHighlight } from './models';
-
-type RenderTemplate = {
-  title: string;
-  author?: string;
-  asin?: string;
-  url?: string;
-  imageUrl?: string;
-  appLink?: string;
-  highlights: {
-    text: string;
-    location?: string;
-    page?: string;
-    note?: string;
-    appLink?: string;
-  }[];
-};
+import type { BookHighlight, RenderTemplate } from './models';
 
 export class Renderer {
   constructor() {
@@ -29,19 +13,13 @@ export class Renderer {
     const { book, highlights } = entry;
 
     const context: RenderTemplate = {
-      title: book.title,
-      author: book.author,
-      asin: book.asin,
-      url: book.url,
-      imageUrl: book.imageUrl,
+      ...book,
       ...(book.asin
         ? { appLink: `kindle://book?action=open&asin=${book.asin}` }
         : {}),
+      ...entry.metadata,
       highlights: highlights.map((h) => ({
-        text: h.text,
-        location: h.location,
-        page: h.page,
-        note: h.note,
+        ...h,
         ...(book.asin
           ? {
               appLink: `kindle://book?action=open&asin=${book.asin}&location=${h.location}`,
@@ -52,7 +30,7 @@ export class Renderer {
 
     const content = nunjucks.renderString(
       get(settingsStore).noteTemplate,
-      context,
+      context
     );
 
     return content;

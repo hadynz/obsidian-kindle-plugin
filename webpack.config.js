@@ -24,7 +24,7 @@ module.exports = {
         },
       },
       {
-        test: /\.(html|svelte)$/,
+        test: /\.(svelte)$/,
         use: [
           { loader: 'babel-loader' },
           {
@@ -36,7 +36,7 @@ module.exports = {
         ],
       },
       {
-        test: /\.(svg|njk)$/,
+        test: /\.(svg|njk|html)$/,
         type: 'asset/source',
       },
     ],

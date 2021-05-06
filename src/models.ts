@@ -18,4 +18,24 @@ export type Highlight = {
 export type BookHighlight = {
   book: Book;
   highlights: Highlight[];
+  metadata?: BookMetadata;
+};
+
+export type BookMetadata = {
+  isbn?: string;
+  pages: string;
+  publication: string;
+  publisher: string;
+  authorUrl: string;
+};
+
+export type RenderTemplate = Book & BookMetadata & {
+  appLink?: string;
+  highlights: {
+    text: string;
+    location?: string;
+    page?: string;
+    note?: string;
+    appLink?: string;
+  }[];
 };

@@ -1,39 +1,30 @@
-import { remote } from 'electron';
-import cheerio from 'cheerio';
+import type { Root } from 'cheerio';
 
 import type { Book } from '../models';
-import { parseBooks } from './parser';
+import { loadRemoteDom } from './loadRemoteDom';
 
-const { BrowserWindow } = remote;
+export const parseBooks = ($: Root): Book[] => {
+  const booksEl = $('.kp-notebook-library-each-book').toArray();
 
-export default function scrapeBooks(): Promise<Book[]> {
-  return new Promise<Book[]>((resolve) => {
-    const window = new BrowserWindow({
-      width: 1000,
-      height: 600,
-      webPreferences: {
-        webSecurity: false,
-        nodeIntegration: false,
-      },
-      show: false,
-    });
+  return booksEl.map(
+    (bookEl): Book => {
+      return {
+        asin: $(bookEl).attr('id') as string,
+        title: $('h2.kp-notebook-searchable', bookEl).text(),
+        author: $('p.kp-notebook-searchable', bookEl)
+          .text()
+          .replace(/^(By: )/, ''),
+        url: `https://www.amazon.com/dp/${$(bookEl).attr('id')}`,
+        imageUrl: $('.kp-notebook-cover-image', bookEl).attr('src') as string,
+        lastAccessedDate: $('[id^="kp-notebook-annotated-date"]', bookEl).val(),
+      };
+    }
+  );
+};
 
-    window.webContents.on('did-finish-load', async () => {
-      // Sleep for about 1s to allow time for pagination to load all books
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+const scrapeBooks = async (): Promise<Book[]> => {
+  const dom = await loadRemoteDom('https://read.amazon.com/notebook', 1000);
+  return parseBooks(dom);
+};
 
-      const html = await window.webContents.executeJavaScript(
-        `document.querySelector('body').innerHTML`
-      );
-
-      const $ = cheerio.load(html);
-      const books = parseBooks($);
-
-      window.destroy();
-
-      resolve(books);
-    });
-
-    window.loadURL('https://read.amazon.com/notebook');
-  });
-}
+export default scrapeBooks;

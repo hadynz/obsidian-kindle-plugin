@@ -15,6 +15,7 @@ type Settings = {
   isLoggedIn: boolean;
   noteTemplate: string;
   syncOnBoot: boolean;
+  downloadBookMetadata: boolean;
   history: SyncHistory;
 };
 
@@ -23,6 +24,7 @@ const DEFAULT_SETTINGS: Settings = {
   isLoggedIn: false,
   noteTemplate: defaultTemplate,
   syncOnBoot: false,
+  downloadBookMetadata: true,
   history: {
     totalBooks: 0,
     totalHighlights: 0,
@@ -39,7 +41,7 @@ const createSettingsStore = () => {
     const settings = Object.assign(
       {},
       DEFAULT_SETTINGS,
-      await plugin.loadData(),
+      await plugin.loadData()
     );
 
     settings.lastSyncDate === undefined
@@ -106,7 +108,13 @@ const createSettingsStore = () => {
   const setSyncOnBoot = (value: boolean) => {
     store.update((state) => {
       state.syncOnBoot = value;
+      return state;
+    });
+  };
 
+  const setDownloadBookMetadata = (value: boolean) => {
+    store.update((state) => {
+      state.downloadBookMetadata = value;
       return state;
     });
   };
@@ -130,6 +138,7 @@ const createSettingsStore = () => {
       logout,
       setNoteTemplate,
       setSyncOnBoot,
+      setDownloadBookMetadata,
       incrementHistory,
     },
   };
