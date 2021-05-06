@@ -78,7 +78,7 @@ export default class SyncHighlights {
 
     let metadata: BookMetadata;
 
-    if (get(settingsStore).downloadBookMetadata) {
+    if (get(settingsStore).downloadBookMetadata && book.asin) {
       metadata = await scrapeBookMetadata(book);
     }
 
