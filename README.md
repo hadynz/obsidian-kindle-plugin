@@ -42,6 +42,8 @@ Configure the settings of the plugin to specify the folder location for your syn
 
 - Sync your highlights by uploading your `My Clippings.txt` file from your Kindle device
 
+- Enrich your notes by downloading extra metadata information about your book from Amazon.com
+
 - Configure your own ([Nunjucks][2]) template to generate notes in exactly the way that you want
 
 - Sync on demand or on Obsidian startup (via Amazon account method only)
@@ -51,13 +53,49 @@ Configure the settings of the plugin to specify the folder location for your syn
 - **Highlights folder**: Vault folder to use for plugin to write synced book highlights and notes
 - **Note template**: Template ([Nunjucks][2]) to use for rendering your highlights when writing
   them to disk
+- **Sync on startup [default: on]**: Download extra book metadata from Amazon.com (works for
+  Amazon sync only)
 - **Sync on startup [default: off]**: Enable to always automatically sync your latest highlights
   using your Amazon account
 - **Reset sync**: Wipe your sync history (number of books and highlights synced). Does **not**
   delete any previously synced notes from your vault.
 - **Sign out**: Log out from your Amazon account (appears only if you have logged in)
 
-## Security considreation
+## Usage
+
+You can open the sync modal when you click on the status bar at the bottom of Obsidian.
+
+Start syncing by choosing between uploading your `My Clippings.txt` file or using your online
+Amazon account.
+
+### Template tags
+
+| Tag | Description | Amazon sync | My Clippings sync |
+|-|-|-|-|
+| `{{title}}` | Book title | Always available | Always available |
+| `{{author}}` | Book author | Always available if book purchased from Amazon | Optional |
+| `{{asin}}` | Book ASIN | Always available if book purchased from Amazon | Not available |
+| `{{url}}` | Book URL on Amazon | Always available if book has an ASIN | Not available |
+| `{{imageUrl}}` | Book cover image URL | Always available if book purchased from Amazon | Not available |
+| `{{appLink}}` | Link to open book in Kindle app | Always available if book has an ASIN | Not available |
+| `{{isbn}}` | Book ISBN | Usually available. Download metadata option must be turned on | Not available |
+| `{{pages}}` | Print length | Always available. Download metadata option must be turned on | Not available |
+| `{{publication}}` | Publication date | Always available. Download metadata option must be turned on | Not available |
+| `{{publisher}}` | Publisher | Always available. Download metadata option must be turned on | Not available |
+| `{{authorUrl}}` | Book author URL on Amazon | Always available. Download metadata option must be turned on | Not available |
+| `{{highlights}}` | List of highlights for book | Always available | Always available |
+
+Properties of every item in `{{highlights}}`:
+
+| Tag | Description | Amazon sync | My Clippings sync |
+|-|-|-|-|
+| `{{text}}` | Highlighted text | Always available | Always available |
+| `{{location}}` | Highlighted text location | Usually available. If not, then  `{{page}}`  will be available | Usually available. If not, then  `{{page}}`  will be available |
+| `{{page}}` | Highlighted text page | Usually available. If not, then  `{{location}}`  will be available | Usually available. If not, then  `{{location}}`  will be available |
+| `{{note}}` | Associated note to highlight | Optional | Optional |
+| `{{appLink}}` | Link to open highlight in Kindle app | Always available if highlight location and book ASIN available | Not available |
+
+## Security consideration
 
 If you choose to sync your highlights via Amazon's online Kindle Reader, it is important to note
 that by logging in to your Amazon account via Obsidian your Amazon session becomes available to
