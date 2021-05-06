@@ -1,0 +1,46 @@
+Template (<a href="https://mozilla.github.io/nunjucks/">Nunjucks</a>) for
+rendering every synced Kindle note highlights.
+
+<p>
+  <b>Available variables to use</b>
+</p>
+
+Book
+<ul>
+  <li><span class="u-pop">{{title}}</span> - Title</li>
+  <li><span class="u-pop">{{author}}</span> - Author</li>
+  <li>
+    <span class="u-pop">{{asin}}</span> - Amazon Standard Identification Number
+    (ASIN)
+  </li>
+  <li><span class="u-pop">{{url}}</span> - Book Url on Amazon</li>
+  <li><span class="u-pop">{{imageUrl}}</span> - Cover image</li>
+  <li>
+    <span class="u-pop">{{appLink}}</span> - Link to book in local Kindle app
+  </li>
+  <li>
+    <span class="u-pop">{{highlights}}</span> - List of your Kindle highlights
+    for this book
+  </li>
+</ul>
+
+Book metadata (Amazon sync only)
+<ul>
+  <li><span class="u-pop">{{isbn}}</span> - ISBN</li>
+  <li><span class="u-pop">{{pages}}</span> - Print length</li>
+  <li><span class="u-pop">{{publication}}</span> - Publication date</li>
+  <li><span class="u-pop">{{publisher}}</span> - Publisher</li>
+  <li><span class="u-pop">{{authorUrl}}</span> - Author Url on Amazon</li>
+</ul>
+
+Highlight
+<ul>
+  <li><span class="u-pop">{{text}}</span> - Text</li>
+  <li><span class="u-pop">{{location}}</span> - Location in book</li>
+  <li><span class="u-pop">{{page}}</span> - Page location in book</li>
+  <li><span class="u-pop">{{note}}</span> - Associated note</li>
+  <li>
+    <span class="u-pop">{{appLink}}</span> - Link to highlighted text in local
+    Kindle app
+  </li>
+</ul>
