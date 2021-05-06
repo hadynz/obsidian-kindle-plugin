@@ -63,10 +63,12 @@ Configure the settings of the plugin to specify the folder location for your syn
 
 ## Usage
 
-You can open the sync modal when you click on the status bar at the bottom of Obsidian.
+You can start the sync process by clicking on the Kindle icon in the ribbon bar or clicking
+on the plugin's status bar message at the bottom of Obsidian. You will be presented with a 
+modal that gives you several two options to sync.
 
-Start syncing by choosing between uploading your `My Clippings.txt` file or using your online
-Amazon account.
+Start syncing by choosing between uploading a copy of your `My Clippings.txt` file or using 
+your online Amazon account.
 
 ### Template tags
 
