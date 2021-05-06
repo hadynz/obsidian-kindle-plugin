@@ -4,7 +4,11 @@ import AmazonLoginModal from '../components/amazonLoginModal';
 import type FileManager from '../fileManager';
 import { syncSessionStore } from '../store';
 import type { Book } from '../models';
-import { scrapeHighlightsForBook, scrapeBooks } from '../scraper';
+import {
+  scrapeHighlightsForBook,
+  scrapeBookMetadata,
+  scrapeBooks,
+} from '../scraper';
 import { Renderer } from '../renderer';
 import type { SyncState } from './syncState';
 
@@ -67,8 +71,11 @@ export default class SyncHighlights {
     const highlights = await scrapeHighlightsForBook(book);
     const populatedHighlights = highlights.filter((h) => h.text);
 
+    // TODO: Only fetch metadata if turned on by plugin
+    const metadata = await scrapeBookMetadata(book);
+
     if (populatedHighlights.length > 0) {
-      const content = this.renderer.render({ book, highlights });
+      const content = this.renderer.render({ book, highlights, metadata });
       await this.fileManager.createFile(book, content);
 
       this.state.newBooksSynced += 1;

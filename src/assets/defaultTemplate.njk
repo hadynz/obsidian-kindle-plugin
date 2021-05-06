@@ -1,11 +1,16 @@
 # {{title}}
 
-* Author: [[{{author}}]]
-* ASIN: [[{{asin}}]]
-* Reference: {{url}}
-* [Kindle link]({{appLink}})
+{% if author %}* Author: [{{author}}]({{authorUrl}}){% endif %}
+{% if asin %}* ASIN: {{asin}}{% endif %}
+{% if isbn %}* ISBN: {{isbn}}{% endif %}
+{% if pages %}* Pages: {{pages}}{% endif %}
+{% if publication %}* Publication: {{publication}}{% endif %}
+{% if publisher %}* Publisher: {{publisher}}{% endif %}
+{% if url %}* Reference: [[{{url}}]]{% endif %}
+{% if appLink %}* [Kindle link]({{appLink}}){% endif %}
 
 {% for highlight in highlights %}
-  - > {{highlight.text}} (location: {{highlight.location}})
-{% if highlight.note %}    {{highlight.note}}{% endif %}
+---
+{{highlight.text}} — location: [{{highlight.location}}]({{highlight.appLink}})
+{%- if highlight.note %}{{highlight.note}}{% endif %}
 {% endfor %}
