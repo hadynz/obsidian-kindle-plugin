@@ -10,7 +10,7 @@ type SyncHistory = {
 
 type Settings = {
   highlightsFolder: string;
-  lastSyncDate?: string;
+  lastSyncDate?: Date;
   loggedInEmail?: string;
   isLoggedIn: boolean;
   noteTemplate: string;
@@ -38,15 +38,12 @@ const createSettingsStore = () => {
 
   // Load settings data from disk into store
   const initialise = async (plugin: KindlePlugin): Promise<void> => {
-    const settings = Object.assign(
-      {},
-      DEFAULT_SETTINGS,
-      await plugin.loadData()
-    );
+    const data = Object.assign({}, DEFAULT_SETTINGS, await plugin.loadData());
 
-    settings.lastSyncDate === undefined
-      ? undefined
-      : new Date(settings.lastSyncDate);
+    const settings: Settings = {
+      ...data,
+      lastSyncDate: data.lastSyncDate ? new Date(data.lastSyncDate) : undefined,
+    };
 
     store.set(settings);
 
@@ -56,7 +53,15 @@ const createSettingsStore = () => {
   // Listen to any change to store, and write to disk
   store.subscribe(async (settings) => {
     if (_plugin) {
-      await _plugin.saveData(settings);
+      // Transform settings fields for serialization
+      const data = {
+        ...settings,
+        lastSyncDate: settings.lastSyncDate
+          ? settings.lastSyncDate.toJSON()
+          : undefined,
+      };
+
+      await _plugin.saveData(data);
     }
   });
 
@@ -77,7 +82,7 @@ const createSettingsStore = () => {
 
   const setSyncDateToNow = () => {
     store.update((state) => {
-      state.lastSyncDate = new Date().toString();
+      state.lastSyncDate = new Date();
       return state;
     });
   };
