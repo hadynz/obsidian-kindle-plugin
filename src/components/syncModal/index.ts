@@ -3,6 +3,8 @@ import { App, Modal } from 'obsidian';
 import SyncModalContent from './SyncModalContent.svelte';
 import { syncSessionStore } from '../../store';
 
+export type SyncMode = 'amazon' | 'my-clippings';
+
 type SyncModalProps = {
   onOnlineSync: () => void;
   onMyClippingsSync: () => void;
@@ -33,8 +35,13 @@ export default class SyncModal extends Modal {
     this.modalContent = new SyncModalContent({
       target: this.contentEl,
       props: {
-        startSync: props.onOnlineSync,
-        startUpload: props.onMyClippingsSync,
+        sync: (mode: SyncMode) => {
+          if (mode === 'amazon') {
+            props.onOnlineSync();
+          } else {
+            props.onMyClippingsSync();
+          }
+        },
       },
     });
 
