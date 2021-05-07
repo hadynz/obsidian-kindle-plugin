@@ -1,7 +1,6 @@
 <script lang="ts">
+  import SyncDashboard from './SyncDashboard.svelte';
   import FirstTimeText from './FirstTimeText.svelte';
-
-  const { moment } = window;
 
   export let syncAmazon: () => void;
   export let syncClippings: () => void;
@@ -12,9 +11,7 @@
 
 <div class="kp-syncmodal--nosync-content">
   {#if lastSyncDate}
-    {totalBooks} book(s) synced<br />
-    {totalHighlights} highlights synced<br />
-    Last sync {moment(lastSyncDate).fromNow()}
+    <SyncDashboard {lastSyncDate} {totalBooks} {totalHighlights} />
   {:else}
     <FirstTimeText />
   {/if}

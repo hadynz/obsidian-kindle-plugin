@@ -1,8 +1,8 @@
 <script lang="ts">
   import { Jumper } from 'svelte-loading-spinners';
 
-  import { santizeTitle } from '../../utils';
-  import { syncSessionStore } from '../../store';
+  import { santizeTitle } from '../../../utils';
+  import { syncSessionStore } from '../../../store';
 
   $: percentage = (
     ($syncSessionStore.jobs.filter((j) => j.status === 'done').length /

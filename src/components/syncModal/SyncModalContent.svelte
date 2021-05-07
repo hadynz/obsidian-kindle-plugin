@@ -1,6 +1,6 @@
 <script lang="ts">
-  import IdleView from './IdleView.svelte';
-  import SyncingView from './SyncingView.svelte';
+  import IdleView from './views/IdleView.svelte';
+  import SyncingView from './views/SyncingView.svelte';
 
   import { syncSessionStore, settingsStore } from '../../store';
   import type { SyncMode } from '.';
