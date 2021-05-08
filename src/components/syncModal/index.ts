@@ -1,8 +1,22 @@
 import { App, Modal } from 'obsidian';
+import { get } from 'svelte/store';
 
+import { settingsStore, syncSessionStore } from '../../store';
 import SyncModalContent from './SyncModalContent.svelte';
-import { syncSessionStore } from '../../store';
 import type { SyncMode } from '../../models';
+
+export type SyncModalState =
+  | 'first-time'
+  | 'syncing'
+  | 'idle'
+  | 'choose-sync-method';
+
+const SyncModalTitle: Record<SyncModalState, string> = {
+  'first-time': '',
+  idle: 'Your Kindle highlights',
+  syncing: 'Syncing data...',
+  'choose-sync-method': 'Choose a sync method',
+};
 
 type SyncModalProps = {
   onOnlineSync: () => void;
@@ -14,9 +28,6 @@ export default class SyncModal extends Modal {
   private resolvePromise!: () => void;
   private modalContent: SyncModalContent;
 
-  private DEFAULT_MODAL_TITLE = 'Sync your Kindle highlights';
-  private SYNCING_MODAL_TITLE = 'Syncing data...';
-
   constructor(app: App, props: SyncModalProps) {
     super(app);
 
@@ -24,17 +35,13 @@ export default class SyncModal extends Modal {
       (resolve) => (this.resolvePromise = resolve)
     );
 
-    syncSessionStore.subscribe((state) => {
-      this.titleEl.innerText =
-        state.status === 'loading'
-          ? this.SYNCING_MODAL_TITLE
-          : this.DEFAULT_MODAL_TITLE;
-    });
-
     this.modalContent = new SyncModalContent({
       target: this.contentEl,
       props: {
-        sync: (mode: SyncMode) => {
+        setModalTitle: (modalState: SyncModalState) => {
+          this.setModalTitle(modalState);
+        },
+        onClick: (mode: SyncMode) => {
           if (mode === 'amazon') {
             props.onOnlineSync();
           } else {
@@ -44,7 +51,30 @@ export default class SyncModal extends Modal {
       },
     });
 
+    this.susbcribeToStores();
     this.open();
+  }
+
+  private susbcribeToStores(): void {
+    const updateModal = () => {
+      const modalState = this.getSyncModalState();
+      this.setModalTitle(modalState);
+      this.modalContent.$set({ modalState });
+    };
+
+    settingsStore.subscribe(updateModal);
+    syncSessionStore.subscribe(updateModal);
+  }
+
+  private setModalTitle(modalState: SyncModalState): void {
+    this.titleEl.innerText = SyncModalTitle[modalState];
+  }
+
+  private getSyncModalState(): SyncModalState {
+    if (!get(settingsStore).lastSyncDate) {
+      return 'first-time';
+    }
+    return get(syncSessionStore).status === 'idle' ? 'idle' : 'syncing';
   }
 
   onClose(): void {

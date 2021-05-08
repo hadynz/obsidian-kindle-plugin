@@ -4,8 +4,7 @@
   import clippingsIcon from '../../../assets/clippingsIcon.svg';
 
   export let lastSyncMode: SyncMode;
-  export let syncAmazon: () => void;
-  export let syncClippings: () => void;
+  export let onClick: (mode: SyncMode) => void;
 
   let selectedSyncType: SyncMode = lastSyncMode;
 </script>
@@ -40,7 +39,12 @@
 </div>
 
 <div class="setting-item-control">
-  <button class="mod-cta">Sync</button>
+  <button
+    class="mod-cta"
+    on:click={() => {
+      onClick(selectedSyncType);
+    }}>Sync now</button
+  >
 </div>
 
 <style>
@@ -48,7 +52,7 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    margin-bottom: 20px;
+    margin: 40px 0;
   }
 
   .kp-syncbuttons--option {
