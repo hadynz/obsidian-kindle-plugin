@@ -46,7 +46,7 @@
   }
 
   .kp-stats--value {
-    color: var(--interactive-accent);
+    color: var(--text-accent);
     font-size: 3em;
     line-height: normal;
   }

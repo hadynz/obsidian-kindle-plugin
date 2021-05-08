@@ -32,5 +32,5 @@
 {:else if modalState === 'choose-sync-method'}
   <SyncButtons lastSyncMode={$settingsStore.lastSyncMode} {onClick} />
 {:else}
-  <FirstTimeView />
+  <FirstTimeView lastSyncMode={$settingsStore.lastSyncMode} {onClick} />
 {/if}

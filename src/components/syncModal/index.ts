@@ -15,7 +15,7 @@ const SyncModalTitle: Record<SyncModalState, string> = {
   'first-time': '',
   idle: 'Your Kindle highlights',
   syncing: 'Syncing data...',
-  'choose-sync-method': 'Choose a sync method',
+  'choose-sync-method': 'Choose a sync method...',
 };
 
 type SyncModalProps = {
