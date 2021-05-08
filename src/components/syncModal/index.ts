@@ -2,8 +2,7 @@ import { App, Modal } from 'obsidian';
 
 import SyncModalContent from './SyncModalContent.svelte';
 import { syncSessionStore } from '../../store';
-
-export type SyncMode = 'amazon' | 'my-clippings';
+import type { SyncMode } from '../../models';
 
 type SyncModalProps = {
   onOnlineSync: () => void;

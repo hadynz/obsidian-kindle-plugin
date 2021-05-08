@@ -2,6 +2,7 @@ import { writable } from 'svelte/store';
 
 import type KindlePlugin from '../index';
 import defaultTemplate from '../assets/defaultTemplate.njk';
+import type { SyncMode } from '../models';
 
 type SyncHistory = {
   totalBooks: number;
@@ -11,6 +12,7 @@ type SyncHistory = {
 type Settings = {
   highlightsFolder: string;
   lastSyncDate?: Date;
+  lastSyncMode: SyncMode;
   loggedInEmail?: string;
   isLoggedIn: boolean;
   noteTemplate: string;
@@ -21,6 +23,7 @@ type Settings = {
 
 const DEFAULT_SETTINGS: Settings = {
   highlightsFolder: '/',
+  lastSyncMode: 'amazon',
   isLoggedIn: false,
   noteTemplate: defaultTemplate,
   syncOnBoot: false,
@@ -117,6 +120,13 @@ const createSettingsStore = () => {
     });
   };
 
+  const setLastSyncMode = (value: SyncMode) => {
+    store.update((state) => {
+      state.lastSyncMode = value;
+      return state;
+    });
+  };
+
   const setDownloadBookMetadata = (value: boolean) => {
     store.update((state) => {
       state.downloadBookMetadata = value;
@@ -143,6 +153,7 @@ const createSettingsStore = () => {
       logout,
       setNoteTemplate,
       setSyncOnBoot,
+      setLastSyncMode,
       setDownloadBookMetadata,
       incrementHistory,
     },

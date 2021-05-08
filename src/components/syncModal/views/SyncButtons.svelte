@@ -1,12 +1,13 @@
 <script lang="ts">
-  import type { SyncMode } from '../index';
+  import type { SyncMode } from '../../../models';
   import amazonIcon from '../../../assets/amazonIcon.svg';
   import clippingsIcon from '../../../assets/clippingsIcon.svg';
 
-  let selectedSyncType: SyncMode = 'amazon';
-
+  export let lastSyncMode: SyncMode;
   export let syncAmazon: () => void;
   export let syncClippings: () => void;
+
+  let selectedSyncType: SyncMode = lastSyncMode;
 </script>
 
 <div class="kp-syncbuttons--wrapper">

@@ -17,7 +17,7 @@
 
 {#if $syncSessionStore?.method === 'amazon'}
   Downloading your Kindle highlights from Amazon.
-{:else if $syncSessionStore?.method === 'clippings-file'}
+{:else if $syncSessionStore?.method === 'my-clippings'}
   Uploading Kindle highlights from your Clippings file.
 {/if}
 
@@ -30,7 +30,7 @@
     </div>
   {:else if $syncSessionStore?.method === 'amazon'}
     Looking for new Kindle highlights to sync...
-  {:else if $syncSessionStore?.method === 'clippings-file'}
+  {:else if $syncSessionStore?.method === 'my-clippings'}
     Parsing your Clippings files for highlights and notes.
   {/if}
 </div>

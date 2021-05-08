@@ -27,7 +27,7 @@ export default class SyncKindleClippings {
       return; // Do nothing...
     }
 
-    syncSessionStore.actions.startSync('clippings-file');
+    syncSessionStore.actions.startSync('my-clippings');
 
     const bookHighlights = await parseBooks(clippingsFile);
     await this.writeBooks(bookHighlights);

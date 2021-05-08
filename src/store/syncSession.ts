@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 
-import type { Book } from '../models';
+import type { Book, SyncMode } from '../models';
 import { statusBarStore, settingsStore } from '../store';
 
 type SyncJob = {
@@ -17,7 +17,7 @@ type SyncResult = {
 
 type SyncSession = {
   status: 'idle' | 'loading';
-  method?: 'amazon' | 'clippings-file';
+  method?: SyncMode;
   jobs: SyncJob[];
 };
 
@@ -33,9 +33,10 @@ const createSyncSessionStore = () => {
 
   const store = writable(initialState);
 
-  const startSync = (method: SyncSession['method']) => {
+  const startSync = (method: SyncMode) => {
     store.update((state) => {
       statusBarStore.actions.syncStarted();
+      settingsStore.actions.setLastSyncMode(method);
       state.status = 'loading';
       state.method = method;
       return state;
