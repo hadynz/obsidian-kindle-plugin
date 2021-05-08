@@ -1,6 +1,7 @@
 <script lang="ts">
-  import SyncDashboard from './SyncDashboard.svelte';
+  import SyncStats from './SyncStats.svelte';
   import FirstTimeText from './FirstTimeText.svelte';
+  import SyncButtons from './SyncButtons.svelte';
 
   export let syncAmazon: () => void;
   export let syncClippings: () => void;
@@ -11,19 +12,13 @@
 
 <div class="kp-syncmodal--nosync-content">
   {#if lastSyncDate}
-    <SyncDashboard {lastSyncDate} {totalBooks} {totalHighlights} />
+    <SyncStats {lastSyncDate} {totalBooks} {totalHighlights} />
   {:else}
     <FirstTimeText />
   {/if}
 </div>
-<div class="setting-item">
-  <div class="setting-item-control">
-    <button class="mod-cta" on:click={syncClippings}>
-      Upload My Clippings.txt
-    </button>
-    <button class="mod-cta" on:click={syncAmazon}>Sync using Amazon</button>
-  </div>
-</div>
+
+<SyncButtons {syncAmazon} {syncClippings} />
 
 <style>
   .kp-syncmodal--nosync-content {
