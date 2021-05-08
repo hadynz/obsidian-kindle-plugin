@@ -2,6 +2,7 @@ import { writable } from 'svelte/store';
 
 import type KindlePlugin from '../index';
 import defaultTemplate from '../assets/defaultTemplate.njk';
+import type { SyncMode } from '../models';
 
 type SyncHistory = {
   totalBooks: number;
@@ -10,7 +11,8 @@ type SyncHistory = {
 
 type Settings = {
   highlightsFolder: string;
-  lastSyncDate?: string;
+  lastSyncDate?: Date;
+  lastSyncMode: SyncMode;
   loggedInEmail?: string;
   isLoggedIn: boolean;
   noteTemplate: string;
@@ -21,6 +23,7 @@ type Settings = {
 
 const DEFAULT_SETTINGS: Settings = {
   highlightsFolder: '/',
+  lastSyncMode: 'amazon',
   isLoggedIn: false,
   noteTemplate: defaultTemplate,
   syncOnBoot: false,
@@ -38,15 +41,12 @@ const createSettingsStore = () => {
 
   // Load settings data from disk into store
   const initialise = async (plugin: KindlePlugin): Promise<void> => {
-    const settings = Object.assign(
-      {},
-      DEFAULT_SETTINGS,
-      await plugin.loadData()
-    );
+    const data = Object.assign({}, DEFAULT_SETTINGS, await plugin.loadData());
 
-    settings.lastSyncDate === undefined
-      ? undefined
-      : new Date(settings.lastSyncDate);
+    const settings: Settings = {
+      ...data,
+      lastSyncDate: data.lastSyncDate ? new Date(data.lastSyncDate) : undefined,
+    };
 
     store.set(settings);
 
@@ -56,7 +56,15 @@ const createSettingsStore = () => {
   // Listen to any change to store, and write to disk
   store.subscribe(async (settings) => {
     if (_plugin) {
-      await _plugin.saveData(settings);
+      // Transform settings fields for serialization
+      const data = {
+        ...settings,
+        lastSyncDate: settings.lastSyncDate
+          ? settings.lastSyncDate.toJSON()
+          : undefined,
+      };
+
+      await _plugin.saveData(data);
     }
   });
 
@@ -77,7 +85,7 @@ const createSettingsStore = () => {
 
   const setSyncDateToNow = () => {
     store.update((state) => {
-      state.lastSyncDate = new Date().toString();
+      state.lastSyncDate = new Date();
       return state;
     });
   };
@@ -112,6 +120,13 @@ const createSettingsStore = () => {
     });
   };
 
+  const setLastSyncMode = (value: SyncMode) => {
+    store.update((state) => {
+      state.lastSyncMode = value;
+      return state;
+    });
+  };
+
   const setDownloadBookMetadata = (value: boolean) => {
     store.update((state) => {
       state.downloadBookMetadata = value;
@@ -138,6 +153,7 @@ const createSettingsStore = () => {
       logout,
       setNoteTemplate,
       setSyncOnBoot,
+      setLastSyncMode,
       setDownloadBookMetadata,
       incrementHistory,
     },

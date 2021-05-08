@@ -29,13 +29,16 @@ export type BookMetadata = {
   authorUrl: string;
 };
 
-export type RenderTemplate = Book & BookMetadata & {
-  appLink?: string;
-  highlights: {
-    text: string;
-    location?: string;
-    page?: string;
-    note?: string;
+export type RenderTemplate = Book &
+  BookMetadata & {
     appLink?: string;
-  }[];
-};
+    highlights: {
+      text: string;
+      location?: string;
+      page?: string;
+      note?: string;
+      appLink?: string;
+    }[];
+  };
+
+export type SyncMode = 'amazon' | 'my-clippings';
