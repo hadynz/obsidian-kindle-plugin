@@ -22,7 +22,7 @@ if it has been purchased via Amazon.
 
 You can extract your `My Clippings.txt` file by plugging it into your computer using USB.
 
-https://user-images.githubusercontent.com/315585/115801054-f4a7fc00-a42f-11eb-81e6-cd642b11fb9b.mp4
+![](https://user-images.githubusercontent.com/315585/117566330-39a78000-b10a-11eb-834f-52b90ccda1ac.gif)
 
 ## Mission statement
 
