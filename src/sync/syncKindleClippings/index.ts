@@ -29,15 +29,21 @@ export default class SyncKindleClippings {
 
     syncSessionStore.actions.startSync('my-clippings');
 
-    const bookHighlights = await parseBooks(clippingsFile);
-    await this.writeBooks(bookHighlights);
+    try {
+      const bookHighlights = await parseBooks(clippingsFile);
+      await this.writeBooks(bookHighlights);
 
-    syncSessionStore.actions.completeSync({
-      newBookCount: this.state.newBooksSynced,
-      newHighlightsCount: this.state.newHighlightsSynced,
-      updatedBookCount: 0,
-      updatedHighlightsCount: 0,
-    });
+      syncSessionStore.actions.completeSync({
+        newBookCount: this.state.newBooksSynced,
+        newHighlightsCount: this.state.newHighlightsSynced,
+        updatedBookCount: 0,
+        updatedHighlightsCount: 0,
+      });
+    } catch (error) {
+      const errorMessage = `Error parsing ${clippingsFile}.`;
+      syncSessionStore.actions.errorSync(errorMessage);
+      console.error(errorMessage, error);
+    }
   }
 
   private async writeBooks(entries: BookHighlight[]): Promise<void> {

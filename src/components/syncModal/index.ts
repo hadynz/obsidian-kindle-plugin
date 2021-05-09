@@ -41,6 +41,10 @@ export default class SyncModal extends Modal {
         setModalTitle: (modalState: SyncModalState) => {
           this.setModalTitle(modalState);
         },
+        onDone: () => {
+          this.close();
+          syncSessionStore.actions.reset();
+        },
         onClick: (mode: SyncMode) => {
           if (mode === 'amazon') {
             props.onOnlineSync();
