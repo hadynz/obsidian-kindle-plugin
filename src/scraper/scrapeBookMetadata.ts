@@ -28,17 +28,25 @@ const parseDetailsList = ($: Root): Omit<BookMetadata, 'authorUrl'> => {
 };
 
 const parseIsbn = ($: Root): string | null => {
+  // Attempt 1 - Try and fetch isbn from product information popover
   const popoverData = $(
-    '#rich_product_information ol.a-carousel li:first-child span[data-action=a-popover]'
+    '#rich_product_information ol.a-carousel span[data-action=a-popover]'
   ).data('a-popover');
 
-  const isbnMatches = popoverData.inlineContent.match(/(?<=\bISBN\s)(\w+)/g);
+  const isbnMatches = popoverData?.inlineContent.match(/(?<=\bISBN\s)(\w+)/g);
 
   if (isbnMatches) {
     return isbnMatches[0];
   }
 
-  return null;
+  // Attempt 2 - Look for ISBN feature on page
+  const isbnFeature = $(
+    '#printEditionIsbn_feature_div .a-row:first-child span:nth-child(2)'
+  )
+    ?.text()
+    .trim();
+
+  return isbnFeature;
 };
 
 const parseAuthorUrl = ($: Root): string | null => {
