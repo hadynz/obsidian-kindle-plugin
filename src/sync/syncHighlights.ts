@@ -63,6 +63,7 @@ export default class SyncHighlights {
 
         syncSessionStore.actions.completeJob(book);
       } catch (error) {
+        console.error(`Error syncing ${book.title}`, error);
         syncSessionStore.actions.errorJob(book);
       }
     }
@@ -76,16 +77,26 @@ export default class SyncHighlights {
       return; // No highlights for book. Skip sync
     }
 
-    let metadata: BookMetadata;
-
-    if (get(settingsStore).downloadBookMetadata && book.asin) {
-      metadata = await scrapeBookMetadata(book);
-    }
+    const metadata = await this.syncBookMetadata(book);
 
     const content = this.renderer.render({ book, highlights, metadata });
     await this.fileManager.createFile(book, content);
 
     this.state.newBooksSynced += 1;
     this.state.newHighlightsSynced += populatedHighlights.length;
+  }
+
+  private async syncBookMetadata(book: Book): Promise<BookMetadata> {
+    let metadata: BookMetadata;
+
+    try {
+      if (get(settingsStore).downloadBookMetadata && book.asin) {
+        metadata = await scrapeBookMetadata(book);
+      }
+    } catch (error) {
+      console.error(`Couldn't download metadata for ${book.title}`, error);
+    }
+
+    return metadata;
   }
 }
