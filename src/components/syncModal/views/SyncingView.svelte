@@ -1,14 +1,18 @@
 <script lang="ts">
   import { Jumper } from 'svelte-loading-spinners';
 
-  import { santizeTitle } from '../../../utils';
+  import { santizeTitleExcess } from '../../../utils';
   import { syncSessionStore } from '../../../store';
 
-  $: percentage = (
-    ($syncSessionStore.jobs.filter((j) => j.status === 'done').length /
-      $syncSessionStore.jobs.length) *
-    100
-  ).toFixed(0);
+  let progressMessage =
+    $syncSessionStore?.method === 'amazon'
+      ? 'Looking for new Kindle highlights to sync...'
+      : 'Parsing your Clippings files for highlights and notes...';
+
+  $: doneTotal =
+    $syncSessionStore.jobs.filter((j) => j.status === 'done').length + 1;
+
+  $: total = $syncSessionStore.jobs.length;
 
   $: currentJob = $syncSessionStore.jobs.find(
     (job) => job.status === 'in-progress'
@@ -25,30 +29,63 @@
     <button class="mod-cta" on:click={onDone}>OK</button>
   </div>
 {:else}
-  {#if $syncSessionStore?.method === 'amazon'}
-    Downloading your Kindle highlights from Amazon.
-  {:else if $syncSessionStore?.method === 'my-clippings'}
-    Uploading Kindle highlights from your Clippings file.
-  {/if}
   <div class="kp-syncmodal--sync-content">
     <Jumper color="#7f6df2" size="90" duration="1.6s" />
-    {#if currentJob}
-      <div class="setting-item-name kp-syncmodal--progress">{percentage}%</div>
-      <div class="setting-item-description kp-syncmodal--file">
-        Downloading <b>{santizeTitle(currentJob.book.title)}</b>
-      </div>
-    {:else if $syncSessionStore?.method === 'amazon'}
-      Looking for new Kindle highlights to sync...
-    {:else if $syncSessionStore?.method === 'my-clippings'}
-      Parsing your Clippings files for highlights and notes.
-    {/if}
+
+    <div class="kp-syncmodal--progress">
+      {#if currentJob}
+        <span class="kp-syncmodal--progress-current">{doneTotal}</span>
+        <span class="kp-syncmodal--progress-total">/ {total}</span>
+        <div class="kp-syncmodal--download">
+          Synching
+          <span class="kp-syncmodal--book-name">
+            {santizeTitleExcess(currentJob.book.title)}
+          </span>
+        </div>
+      {:else}
+        <span class="kp-syncmodal--progress-message">{progressMessage}</span>
+      {/if}
+    </div>
   </div>
+
   <div class="setting-item-control">
     <button class="mod-muted" disabled>Syncing...</button>
   </div>
 {/if}
 
 <style>
+  .kp-syncmodal--download {
+    color: var(--text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 350px;
+    margin: 10px 100px 0;
+  }
+
+  .kp-syncmodal--book-name {
+    color: var(--text-normal);
+    font-weight: bold;
+  }
+
+  .kp-syncmodal--progress {
+    margin: 30px 0 15px;
+    text-align: center;
+  }
+
+  .kp-syncmodal--progress-message {
+    font-size: 1.2em;
+  }
+
+  .kp-syncmodal--progress-current {
+    font-size: 2.4em;
+  }
+
+  .kp-syncmodal--progress-total {
+    color: var(--text-muted);
+    font-size: 1.6em;
+  }
+
   .kp-syncmodal--error {
     font-size: 0.9em;
     color: var(--text-error);
@@ -62,10 +99,5 @@
     justify-content: center;
     align-items: center;
     margin: 40px 0;
-  }
-
-  .kp-syncmodal--progress {
-    margin: 20px 0;
-    font-size: 1.6em;
   }
 </style>
