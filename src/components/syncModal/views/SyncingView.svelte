@@ -13,35 +13,49 @@
   $: currentJob = $syncSessionStore.jobs.find(
     (job) => job.status === 'in-progress'
   );
+
+  export let onDone: () => void;
 </script>
 
-{#if $syncSessionStore?.method === 'amazon'}
-  Downloading your Kindle highlights from Amazon.
-{:else if $syncSessionStore?.method === 'my-clippings'}
-  Uploading Kindle highlights from your Clippings file.
-{/if}
-
-<div class="kp-syncmodal--sync-content">
-  <Jumper color="#7f6df2" size="90" duration="1.6s" />
-  {#if currentJob}
-    <div class="setting-item-name kp-syncmodal--progress">{percentage}%</div>
-    <div class="setting-item-description kp-syncmodal--file">
-      Downloading <b>{santizeTitle(currentJob.book.title)}</b>
-    </div>
-  {:else if $syncSessionStore?.method === 'amazon'}
-    Looking for new Kindle highlights to sync...
+{#if $syncSessionStore.status === 'error'}
+  <div class="kp-syncmodal--error">
+    {$syncSessionStore.errorMessage}
+  </div>
+  <div class="setting-item-control">
+    <button class="mod-cta" on:click={onDone}>OK</button>
+  </div>
+{:else}
+  {#if $syncSessionStore?.method === 'amazon'}
+    Downloading your Kindle highlights from Amazon.
   {:else if $syncSessionStore?.method === 'my-clippings'}
-    Parsing your Clippings files for highlights and notes.
+    Uploading Kindle highlights from your Clippings file.
   {/if}
-</div>
-
-<div class="setting-item">
+  <div class="kp-syncmodal--sync-content">
+    <Jumper color="#7f6df2" size="90" duration="1.6s" />
+    {#if currentJob}
+      <div class="setting-item-name kp-syncmodal--progress">{percentage}%</div>
+      <div class="setting-item-description kp-syncmodal--file">
+        Downloading <b>{santizeTitle(currentJob.book.title)}</b>
+      </div>
+    {:else if $syncSessionStore?.method === 'amazon'}
+      Looking for new Kindle highlights to sync...
+    {:else if $syncSessionStore?.method === 'my-clippings'}
+      Parsing your Clippings files for highlights and notes.
+    {/if}
+  </div>
   <div class="setting-item-control">
     <button class="mod-muted" disabled>Syncing...</button>
   </div>
-</div>
+{/if}
 
 <style>
+  .kp-syncmodal--error {
+    font-size: 0.9em;
+    color: var(--text-error);
+    margin: 40px 0;
+    max-width: 500px;
+  }
+
   .kp-syncmodal--sync-content {
     display: flex;
     flex-direction: column;

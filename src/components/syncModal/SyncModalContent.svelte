@@ -9,6 +9,7 @@
   import type { SyncModalState } from './index';
 
   export let modalState: SyncModalState;
+  export let onDone: () => void;
   export let onClick: (mode: SyncMode) => void;
   export let setModalTitle: (modalState: SyncModalState) => void;
 
@@ -28,9 +29,9 @@
     }}
   />
 {:else if modalState === 'syncing'}
-  <SyncingView />
+  <SyncingView {onDone} />
 {:else if modalState === 'choose-sync-method'}
   <SyncButtons lastSyncMode={$settingsStore.lastSyncMode} {onClick} />
-{:else}
+{:else if modalState === 'first-time'}
   <FirstTimeView lastSyncMode={$settingsStore.lastSyncMode} {onClick} />
 {/if}

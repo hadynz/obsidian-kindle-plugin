@@ -16,7 +16,8 @@ type SyncResult = {
 };
 
 type SyncSession = {
-  status: 'idle' | 'loading';
+  status: 'idle' | 'loading' | 'error';
+  errorMessage?: string;
   method?: SyncMode;
   jobs: SyncJob[];
 };
@@ -39,6 +40,26 @@ const createSyncSessionStore = () => {
       settingsStore.actions.setLastSyncMode(method);
       state.status = 'loading';
       state.method = method;
+      state.errorMessage = undefined;
+      state.jobs = [];
+      return state;
+    });
+  };
+
+  const reset = () => {
+    store.update((state) => {
+      state.status = 'idle';
+      state.errorMessage = undefined;
+      state.method = undefined;
+      state.jobs = [];
+      return state;
+    });
+  };
+  const errorSync = (errorMessage: string) => {
+    store.update((state) => {
+      state.status = 'error';
+      state.errorMessage = errorMessage;
+      state.method = undefined;
       return state;
     });
   };
@@ -51,9 +72,7 @@ const createSyncSessionStore = () => {
         totalBooks: result.newBookCount,
         totalHighlights: result.newHighlightsCount,
       });
-      state.status = 'idle';
-      state.method = undefined;
-      state.jobs = [];
+      reset();
       return state;
     });
   };
@@ -87,11 +106,13 @@ const createSyncSessionStore = () => {
     subscribe: store.subscribe,
     actions: {
       startSync,
+      errorSync,
       completeSync,
       setJobs,
       startJob: (book: Book) => updateJob(book, 'in-progress'),
       completeJob: (book: Book) => updateJob(book, 'done'),
       errorJob: (book: Book) => updateJob(book, 'error'),
+      reset,
     },
   };
 };
