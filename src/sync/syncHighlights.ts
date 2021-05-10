@@ -28,10 +28,10 @@ export default class SyncHighlights {
   async startSync(): Promise<void> {
     this.state = initialState;
 
+    syncSessionStore.actions.startSync('amazon');
+
     const modal = new AmazonLoginModal();
     await modal.doLogin();
-
-    syncSessionStore.actions.startSync('amazon');
 
     const allBooks = await scrapeBooks();
 
