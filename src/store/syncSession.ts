@@ -16,7 +16,7 @@ type SyncResult = {
 };
 
 type SyncSession = {
-  status: 'idle' | 'loading' | 'error';
+  status: 'idle' | 'login' | 'loading' | 'error';
   errorMessage?: string;
   method?: SyncMode;
   jobs: SyncJob[];
@@ -33,6 +33,14 @@ const createSyncSessionStore = () => {
   };
 
   const store = writable(initialState);
+
+  // This action is only relevant to syncing with Amazon, code smell in store?
+  const login = () => {
+    store.update((state) => {
+      state.status = 'login';
+      return state;
+    });
+  };
 
   const startSync = (method: SyncMode) => {
     store.update((state) => {
@@ -105,6 +113,7 @@ const createSyncSessionStore = () => {
   return {
     subscribe: store.subscribe,
     actions: {
+      login,
       startSync,
       errorSync,
       completeSync,
