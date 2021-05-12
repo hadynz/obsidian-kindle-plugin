@@ -1,4 +1,4 @@
-import SyncHighlights from './syncHighlights';
-import SyncKindleClippings from './syncKindleClippings';
+import SyncAmazon from './syncAmazon';
+import SyncClippings from './syncClippings';
 
-export { SyncHighlights, SyncKindleClippings };
+export { SyncAmazon, SyncClippings };

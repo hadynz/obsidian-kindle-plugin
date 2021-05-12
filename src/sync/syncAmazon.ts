@@ -15,7 +15,7 @@ import type { SyncState } from './syncState';
 
 const initialState = { newBooksSynced: 0, newHighlightsSynced: 0 };
 
-export default class SyncHighlights {
+export default class SyncAmazon {
   private fileManager: FileManager;
   private renderer: Renderer;
   private state: SyncState = initialState;
