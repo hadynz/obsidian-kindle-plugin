@@ -13,14 +13,14 @@ const { BrowserWindow: RemoteBrowserWindow } = remote;
 
 export default class AmazonLoginModal {
   private modal: BrowserWindow;
-  private waitForSignIn: Promise<void>;
-  private resolvePromise!: () => void;
+  private waitForSignIn: Promise<boolean>;
+  private resolvePromise!: (success: boolean) => void;
 
   constructor() {
     let userEmail: string;
 
     this.waitForSignIn = new Promise(
-      (resolve: () => void) => (this.resolvePromise = resolve)
+      (resolve: (success: boolean) => void) => (this.resolvePromise = resolve)
     );
 
     this.modal = new RemoteBrowserWindow({
@@ -47,6 +47,10 @@ export default class AmazonLoginModal {
       }
     );
 
+    this.modal.on('closed', () => {
+      this.resolvePromise(false);
+    });
+
     // If user is on the read.amazon.com url, we can safely assume they are logged in
     this.modal.webContents.on('did-navigate', async (_event, url) => {
       if (url.startsWith('https://read.amazon.com')) {
@@ -56,12 +60,12 @@ export default class AmazonLoginModal {
           await settingsStore.actions.login(userEmail);
         }
 
-        this.resolvePromise();
+        this.resolvePromise(true);
       }
     });
   }
 
-  async doLogin(): Promise<void> {
+  async doLogin(): Promise<boolean> {
     this.modal.loadURL('https://read.amazon.com/notebook');
     return this.waitForSignIn;
   }

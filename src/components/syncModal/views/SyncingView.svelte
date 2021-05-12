@@ -4,10 +4,16 @@
   import { santizeTitleExcess } from '../../../utils';
   import { syncSessionStore } from '../../../store';
 
-  let progressMessage =
-    $syncSessionStore?.method === 'amazon'
-      ? 'Looking for new Kindle highlights to sync...'
-      : 'Parsing your Clippings files for highlights and notes...';
+  let progressMessage: string;
+
+  $: if ($syncSessionStore.status === 'login') {
+    progressMessage = 'Logging into Amazon.com';
+  } else if ($syncSessionStore?.method === 'amazon') {
+    progressMessage = 'Looking for new Kindle highlights to sync...';
+  } else {
+    progressMessage =
+      'Parsing your Clippings files for highlights and notes...';
+  }
 
   $: doneTotal =
     $syncSessionStore.jobs.filter((j) => j.status === 'done').length + 1;

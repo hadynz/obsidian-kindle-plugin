@@ -6,14 +6,14 @@ import SyncModal from './components/syncModal';
 import { SettingsTab } from './settingsTab';
 import { StatusBar } from './components/statusBar';
 import { initialise, settingsStore } from './store';
-import { SyncHighlights, SyncKindleClippings } from './sync';
+import { SyncAmazon, SyncClippings } from './sync';
 import kindleIcon from './assets/kindleIcon.svg';
 
 addIcon('kindle', kindleIcon);
 
 export default class KindlePlugin extends Plugin {
-  private syncHighlights!: SyncHighlights;
-  private syncKindleClippings!: SyncKindleClippings;
+  private syncAmazon!: SyncAmazon;
+  private syncClippings!: SyncClippings;
 
   async onload(): Promise<void> {
     console.log('loading plugin', new Date().toLocaleString());
@@ -22,8 +22,8 @@ export default class KindlePlugin extends Plugin {
 
     const fileManager = new FileManager(this.app.vault);
 
-    this.syncHighlights = new SyncHighlights(fileManager);
-    this.syncKindleClippings = new SyncKindleClippings(fileManager);
+    this.syncAmazon = new SyncAmazon(fileManager);
+    this.syncClippings = new SyncClippings(fileManager);
 
     new StatusBar(this.addStatusBarItem(), () => {
       this.showSyncModal();
@@ -51,12 +51,12 @@ export default class KindlePlugin extends Plugin {
   showSyncModal(): void {
     new SyncModal(this.app, {
       onOnlineSync: () => this.startAmazonSync(),
-      onMyClippingsSync: () => this.syncKindleClippings.startSync(),
+      onMyClippingsSync: () => this.syncClippings.startSync(),
     });
   }
 
   startAmazonSync(): void {
-    this.syncHighlights.startSync();
+    this.syncAmazon.startSync();
   }
 
   async onunload(): Promise<void> {

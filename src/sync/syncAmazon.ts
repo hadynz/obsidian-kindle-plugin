@@ -15,7 +15,7 @@ import type { SyncState } from './syncState';
 
 const initialState = { newBooksSynced: 0, newHighlightsSynced: 0 };
 
-export default class SyncHighlights {
+export default class SyncAmazon {
   private fileManager: FileManager;
   private renderer: Renderer;
   private state: SyncState = initialState;
@@ -28,10 +28,17 @@ export default class SyncHighlights {
   async startSync(): Promise<void> {
     this.state = initialState;
 
-    syncSessionStore.actions.startSync('amazon');
+    syncSessionStore.actions.login();
 
     const modal = new AmazonLoginModal();
-    await modal.doLogin();
+    const success = await modal.doLogin();
+
+    if (!success) {
+      syncSessionStore.actions.reset();
+      return; // Do nothing...
+    }
+
+    syncSessionStore.actions.startSync('amazon');
 
     const allBooks = await scrapeBooks();
 
