@@ -1,6 +1,6 @@
 {
   "name": "obsidian-kindle-plugin",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Sync your Kindle book highlights using your Amazon login or uploading your My Clippings file",
   "main": "src/index.ts",
   "repository": {
@@ -18,7 +18,7 @@
     "dev": "NODE_ENV=development webpack && cp ./dist/main.js* ."
   },
   "dependencies": {
-    "@hadynz/kindle-clippings": "^1.0.7",
+    "@hadynz/kindle-clippings": "^1.0.8",
     "cheerio": "*",
     "lodash.pickby": "^4.6.0",
     "lodasync": "^1.0.7",
