@@ -16,7 +16,7 @@ type SyncResult = {
 };
 
 type SyncSession = {
-  status: 'idle' | 'login' | 'loading' | 'error';
+  status: 'idle' | 'login' | 'loading' | 'done' | 'error';
   errorMessage?: string;
   method?: SyncMode;
   jobs: SyncJob[];
@@ -80,7 +80,7 @@ const createSyncSessionStore = () => {
         totalBooks: result.newBookCount,
         totalHighlights: result.newHighlightsCount,
       });
-      reset();
+      state.status = 'done';
       return state;
     });
   };

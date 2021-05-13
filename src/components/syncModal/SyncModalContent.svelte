@@ -1,5 +1,6 @@
 <script lang="ts">
   import IdleView from './views/IdleView.svelte';
+  import DoneView from './views/DoneView.svelte';
   import SyncingView from './views/SyncingView.svelte';
   import FirstTimeView from './views/FirstTimeView.svelte';
   import SyncButtons from './views/SyncButtons.svelte';
@@ -28,6 +29,8 @@
       setModalTitle(modalState);
     }}
   />
+{:else if modalState === 'done'}
+  <DoneView />
 {:else if modalState === 'syncing'}
   <SyncingView {onDone} />
 {:else if modalState === 'choose-sync-method'}

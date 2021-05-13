@@ -9,13 +9,15 @@ export type SyncModalState =
   | 'first-time'
   | 'syncing'
   | 'idle'
-  | 'choose-sync-method';
+  | 'choose-sync-method'
+  | 'done';
 
 const SyncModalTitle: Record<SyncModalState, string> = {
   'first-time': '',
   idle: 'Your Kindle highlights',
   syncing: 'Syncing data...',
   'choose-sync-method': 'Choose a sync method...',
+  done: 'Sync results',
 };
 
 type SyncModalProps = {
@@ -78,10 +80,22 @@ export default class SyncModal extends Modal {
     if (!get(settingsStore).lastSyncDate) {
       return 'first-time';
     }
-    return get(syncSessionStore).status === 'idle' ? 'idle' : 'syncing';
+
+    switch (get(syncSessionStore).status) {
+      case 'done':
+        return 'done';
+      case 'idle':
+        return 'idle';
+      default:
+        return 'syncing';
+    }
   }
 
   onClose(): void {
+    if (this.getSyncModalState() === 'done') {
+      syncSessionStore.actions.reset();
+    }
+
     super.onClose();
     this.modalContent.$destroy();
     this.resolvePromise();
