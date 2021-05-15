@@ -1,9 +1,7 @@
 <script lang="ts">
-  const { moment } = window;
+  import { numberWithCommas } from '../../../utils';
 
-  function numberWithCommas(x: number) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  }
+  const { moment } = window;
 
   export let lastSyncDate: Date;
   export let totalBooks: number;
