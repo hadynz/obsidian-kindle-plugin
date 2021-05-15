@@ -12,7 +12,10 @@ const createStatusBarStore = () => {
   const store = derived(
     [config, settingsStore, syncSessionStore],
     ([$config, $settings, $syncSession]) => {
-      const isSyncing = $syncSession.status === 'loading';
+      const isSyncing =
+        $syncSession.status === 'loading' ||
+        $syncSession.status === 'processing';
+
       let text = $config;
 
       if (!isSyncing && $settings.lastSyncDate) {

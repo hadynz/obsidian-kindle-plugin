@@ -1,29 +1,13 @@
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 
-import type { Book, SyncMode } from '../models';
+import type { Book, SyncJob, SyncMode } from '../models';
 import { statusBarStore, settingsStore } from '../store';
 
-type SyncJob = {
-  status: 'idle' | 'in-progress' | 'done' | 'error';
-  book: Book;
-};
-
-type SyncResult = {
-  newBookCount: number;
-  newHighlightsCount: number;
-  updatedBookCount: number;
-  updatedHighlightsCount: number;
-};
-
 type SyncSession = {
-  status: 'idle' | 'login' | 'loading' | 'done' | 'error';
+  status: 'idle' | 'login' | 'loading' | 'processing' | 'done' | 'error';
   errorMessage?: string;
   method?: SyncMode;
   jobs: SyncJob[];
-};
-
-const getBooks = (state: SyncSession): Book[] => {
-  return state.jobs.map((j) => j.book);
 };
 
 const createSyncSessionStore = () => {
@@ -33,6 +17,11 @@ const createSyncSessionStore = () => {
   };
 
   const store = writable(initialState);
+
+  const getJobs = (filter?: SyncJob['status']): SyncJob[] => {
+    const allJobs = get(store).jobs;
+    return filter ? allJobs.filter((job) => job.status === filter) : allJobs;
+  };
 
   // This action is only relevant to syncing with Amazon, code smell in store?
   const login = () => {
@@ -63,6 +52,7 @@ const createSyncSessionStore = () => {
       return state;
     });
   };
+
   const errorSync = (errorMessage: string) => {
     store.update((state) => {
       state.status = 'error';
@@ -72,14 +62,11 @@ const createSyncSessionStore = () => {
     });
   };
 
-  const completeSync = (result: SyncResult) => {
+  const completeSync = () => {
     store.update((state) => {
-      statusBarStore.actions.syncComplete(getBooks(state));
+      const allBooks = getJobs().map((job) => job.book);
+      statusBarStore.actions.syncComplete(allBooks);
       settingsStore.actions.setSyncDateToNow();
-      settingsStore.actions.incrementHistory({
-        totalBooks: result.newBookCount,
-        totalHighlights: result.newHighlightsCount,
-      });
       state.status = 'done';
       return state;
     });
@@ -87,16 +74,22 @@ const createSyncSessionStore = () => {
 
   const setJobs = (books: Book[]) => {
     store.update((state) => {
-      state.jobs = books.map((book) => ({ status: 'idle', book }));
+      state.status = 'processing';
+      state.jobs = books.map((book) => ({
+        status: 'idle',
+        book,
+        highlightsProcessed: 0,
+      }));
       statusBarStore.actions.booksFound(books);
       return state;
     });
   };
 
-  const updateJob = (book: Book, status: SyncJob['status']) => {
+  const updateJob = (book: Book, updatedJob: Partial<SyncJob>) => {
     store.update((state) => {
-      const job = state.jobs.filter((job) => job.book.asin === book.asin)[0];
-      job.status = status;
+      const jobIndex = state.jobs.findIndex((j) => j.book.title === book.title);
+      const job = { ...state.jobs[jobIndex], ...updatedJob };
+      state.jobs[jobIndex] = job;
 
       if (status === 'in-progress') {
         statusBarStore.actions.syncingBook(book);
@@ -104,6 +97,10 @@ const createSyncSessionStore = () => {
 
       if (status === 'done') {
         settingsStore.actions.setSyncDateToNow();
+        settingsStore.actions.incrementHistory({
+          totalBooks: 1,
+          totalHighlights: job.highlightsProcessed,
+        });
       }
 
       return state;
@@ -112,15 +109,14 @@ const createSyncSessionStore = () => {
 
   return {
     subscribe: store.subscribe,
+    getJobs,
     actions: {
       login,
       startSync,
       errorSync,
       completeSync,
       setJobs,
-      startJob: (book: Book) => updateJob(book, 'in-progress'),
-      completeJob: (book: Book) => updateJob(book, 'done'),
-      errorJob: (book: Book) => updateJob(book, 'error'),
+      updateJob,
       reset,
     },
   };

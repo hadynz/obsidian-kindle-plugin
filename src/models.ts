@@ -42,3 +42,9 @@ export type RenderTemplate = Book &
   };
 
 export type SyncMode = 'amazon' | 'my-clippings';
+
+export type SyncJob = {
+  status: 'idle' | 'in-progress' | 'done' | 'error' | 'skip';
+  book: Book;
+  highlightsProcessed: number;
+};

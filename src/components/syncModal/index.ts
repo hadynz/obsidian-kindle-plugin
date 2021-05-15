@@ -77,16 +77,18 @@ export default class SyncModal extends Modal {
   }
 
   private getSyncModalState(): SyncModalState {
-    if (!get(settingsStore).lastSyncDate) {
-      return 'first-time';
-    }
+    const firstTimeUse = !get(settingsStore).lastSyncDate;
+    const syncState = get(syncSessionStore).status;
 
-    switch (get(syncSessionStore).status) {
+    switch (syncState) {
       case 'done':
         return 'done';
       case 'idle':
-        return 'idle';
-      default:
+        return firstTimeUse ? 'first-time' : 'idle';
+      case 'login':
+      case 'error':
+      case 'loading':
+      case 'processing':
         return 'syncing';
     }
   }

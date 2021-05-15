@@ -1,24 +1,20 @@
-import { filterAsync } from 'lodasync';
+import { forEachAsync } from 'lodasync';
 import { get } from 'svelte/store';
 
 import AmazonLoginModal from '../components/amazonLoginModal';
 import type FileManager from '../fileManager';
 import { settingsStore, syncSessionStore } from '../store';
-import type { Book, BookMetadata } from '../models';
+import type { Book, BookMetadata, SyncJob } from '../models';
 import {
   scrapeHighlightsForBook,
   scrapeBookMetadata,
   scrapeBooks,
 } from '../scraper';
 import { Renderer } from '../renderer';
-import type { SyncState } from './syncState';
-
-const initialState = { newBooksSynced: 0, newHighlightsSynced: 0 };
 
 export default class SyncAmazon {
   private fileManager: FileManager;
   private renderer: Renderer;
-  private state: SyncState = initialState;
 
   constructor(fileManager: FileManager) {
     this.fileManager = fileManager;
@@ -26,8 +22,6 @@ export default class SyncAmazon {
   }
 
   async startSync(): Promise<void> {
-    this.state = initialState;
-
     syncSessionStore.actions.login();
 
     const modal = new AmazonLoginModal();
@@ -42,36 +36,32 @@ export default class SyncAmazon {
 
     const allBooks = await scrapeBooks();
 
-    const booksToSync = await filterAsync(async (b) => {
-      const exists = await this.fileManager.fileExists(b);
-      return !exists;
+    syncSessionStore.actions.setJobs(allBooks);
+
+    // Skip all books that have been written in disc
+    await forEachAsync(async (book) => {
+      const exists = await this.fileManager.fileExists(book);
+      if (exists) {
+        syncSessionStore.actions.updateJob(book, { status: 'skip' });
+      }
     }, allBooks);
 
-    syncSessionStore.actions.setJobs(booksToSync);
+    await this.syncBooks(syncSessionStore.getJobs('idle'));
 
-    if (booksToSync.length > 0) {
-      await this.syncBooks(booksToSync);
-    }
-
-    syncSessionStore.actions.completeSync({
-      newBookCount: this.state.newBooksSynced,
-      newHighlightsCount: this.state.newHighlightsSynced,
-      updatedBookCount: 0,
-      updatedHighlightsCount: 0,
-    });
+    syncSessionStore.actions.completeSync();
   }
 
-  private async syncBooks(books: Book[]): Promise<void> {
-    for (const book of books) {
+  private async syncBooks(jobs: SyncJob[]): Promise<void> {
+    for (const job of jobs) {
+      const book = job.book;
+
       try {
-        syncSessionStore.actions.startJob(book);
+        syncSessionStore.actions.updateJob(book, { status: 'in-progress' });
 
         await this.syncBook(book);
-
-        syncSessionStore.actions.completeJob(book);
       } catch (error) {
         console.error(`Error syncing ${book.title}`, error);
-        syncSessionStore.actions.errorJob(book);
+        syncSessionStore.actions.updateJob(book, { status: 'error' });
       }
     }
   }
@@ -81,6 +71,7 @@ export default class SyncAmazon {
     const populatedHighlights = highlights.filter((h) => h.text);
 
     if (populatedHighlights.length === 0) {
+      syncSessionStore.actions.updateJob(book, { status: 'skip' });
       return; // No highlights for book. Skip sync
     }
 
@@ -89,8 +80,10 @@ export default class SyncAmazon {
     const content = this.renderer.render({ book, highlights, metadata });
     await this.fileManager.createFile(book, content);
 
-    this.state.newBooksSynced += 1;
-    this.state.newHighlightsSynced += populatedHighlights.length;
+    syncSessionStore.actions.updateJob(book, {
+      status: 'done',
+      highlightsProcessed: highlights.length,
+    });
   }
 
   private async syncBookMetadata(book: Book): Promise<BookMetadata> {
