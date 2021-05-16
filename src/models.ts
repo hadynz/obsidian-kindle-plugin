@@ -13,6 +13,7 @@ export type Highlight = {
   location?: string;
   page?: string;
   note?: string;
+  color? : string;
 };
 
 export type BookHighlight = {
@@ -38,6 +39,7 @@ export type RenderTemplate = Book &
       page?: string;
       note?: string;
       appLink?: string;
+      color?: string;
     }[];
   };
 
