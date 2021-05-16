@@ -17,7 +17,7 @@ export const parseHighlights = ($: Root): Highlight[] => {
       return {
         id: $(highlightEl).attr('id') as string,
         text: $('#highlight', highlightEl).text(),
-        color : $('#annotationHighlightHeader', highlightEl).text().split(' ')[0],
+        color : $('#annotationHighlightHeader', highlightEl).text().split(' ')[0].toLowerCase(),
         location: $('#kp-annotation-location', highlightEl).val(),
         page: pageMatch ? pageMatch[0] : null,
         note: $('#note', highlightEl).text(),
