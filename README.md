@@ -99,6 +99,13 @@ Properties of every item in `{{highlights}}`:
 | `{{page}}` | Highlighted text page | Usually available. If not, then  `{{location}}`  will be available | Usually available. If not, then  `{{location}}`  will be available |
 | `{{note}}` | Associated note to highlight | Optional | Optional |
 | `{{appLink}}` | Link to open highlight in Kindle app | Always available if highlight location and book ASIN available | Not available |
+| `{{color}}` | Color of the highlight | Always available | Not available |
+
+#### Highlight colors available
+- Pink
+- Blue
+- Yellow
+- Orange
 
 ## Security consideration
 
