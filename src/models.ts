@@ -13,6 +13,7 @@ export type Highlight = {
   location?: string;
   page?: string;
   note?: string;
+  color? : string;
 };
 
 export type BookHighlight = {
