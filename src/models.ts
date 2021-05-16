@@ -39,6 +39,7 @@ export type RenderTemplate = Book &
       page?: string;
       note?: string;
       appLink?: string;
+      color?: string;
     }[];
   };
 
