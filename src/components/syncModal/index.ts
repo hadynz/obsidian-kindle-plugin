@@ -82,7 +82,8 @@ export default class SyncModal extends Modal {
 
     switch (syncState) {
       case 'done':
-        return 'done';
+        //return 'done';
+        return 'syncing';
       case 'idle':
         return firstTimeUse ? 'first-time' : 'idle';
       case 'login':
