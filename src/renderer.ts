@@ -9,6 +9,15 @@ export class Renderer {
     nunjucks.configure({ autoescape: false });
   }
 
+  validate(template: string): boolean {
+    try {
+      nunjucks.renderString(template, {});
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   render(entry: BookHighlight): string {
     const { book, highlights } = entry;
 

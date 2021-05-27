@@ -1,10 +1,11 @@
-import { App, PluginSettingTab, Setting } from 'obsidian';
 import pickBy from 'lodash.pickby';
+import { App, PluginSettingTab, Setting } from 'obsidian';
 import { get } from 'svelte/store';
 
+import AmazonLogoutModal from '../components/amazonLogoutModal';
 import templateInstructions from './templateInstructions.html';
 import type KindlePlugin from '..';
-import AmazonLogoutModal from '../components/amazonLogoutModal';
+import { Renderer } from '../renderer';
 import { settingsStore } from '../store';
 import { scrapeLogoutUrl } from '../scraper';
 
@@ -12,10 +13,12 @@ const { moment } = window;
 
 export class SettingsTab extends PluginSettingTab {
   public app: App;
+  private renderer: Renderer;
 
   constructor(app: App, plugin: KindlePlugin) {
     super(app, plugin);
     this.app = app;
+    this.renderer = new Renderer();
   }
 
   public async display(): Promise<void> {
@@ -104,7 +107,13 @@ export class SettingsTab extends PluginSettingTab {
         text
           .setValue(get(settingsStore).noteTemplate)
           .onChange(async (value) => {
-            await settingsStore.actions.setNoteTemplate(value);
+            const isValid = this.renderer.validate(value);
+
+            if (isValid) {
+              await settingsStore.actions.setNoteTemplate(value);
+            }
+
+            text.inputEl.style.border = isValid ? '' : '1px solid red';
           });
         return text;
       });
