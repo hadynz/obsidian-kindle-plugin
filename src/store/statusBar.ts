@@ -1,8 +1,8 @@
 import { writable, derived } from 'svelte/store';
 
-import type { Book } from '../models';
-import { santizeTitle } from '../utils';
-import { settingsStore, syncSessionStore } from './index';
+import type { Book } from '~/models';
+import { santizeTitle } from '~/utils';
+import { settingsStore, syncSessionStore } from './';
 
 const { moment } = window;
 

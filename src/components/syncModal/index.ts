@@ -1,9 +1,9 @@
 import { App, Modal } from 'obsidian';
 import { get } from 'svelte/store';
 
-import { settingsStore, syncSessionStore } from '../../store';
 import SyncModalContent from './SyncModalContent.svelte';
-import type { SyncMode } from '../../models';
+import { settingsStore, syncSessionStore } from '~/store';
+import type { SyncMode } from '~/models';
 
 export type SyncModalState =
   | 'first-time'

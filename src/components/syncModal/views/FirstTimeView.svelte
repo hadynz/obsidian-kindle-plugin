@@ -1,6 +1,6 @@
 <script lang="ts">
   import SyncButtons from './SyncButtons.svelte';
-  import type { SyncMode } from '../../../models';
+  import type { SyncMode } from '~/models';
 
   export let lastSyncMode: SyncMode;
   export let onClick: (mode: SyncMode) => void;

@@ -2,12 +2,12 @@ import pickBy from 'lodash.pickby';
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import { get } from 'svelte/store';
 
-import AmazonLogoutModal from '../components/amazonLogoutModal';
+import AmazonLogoutModal from '~/components/amazonLogoutModal';
 import templateInstructions from './templateInstructions.html';
-import type KindlePlugin from '..';
-import { Renderer } from '../renderer';
-import { settingsStore } from '../store';
-import { scrapeLogoutUrl } from '../scraper';
+import type KindlePlugin from '~/.';
+import { Renderer } from '~/renderer';
+import { settingsStore } from '~/store';
+import { scrapeLogoutUrl } from '~/scraper';
 
 const { moment } = window;
 

@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { SyncMode } from '../../../models';
-  import amazonIcon from '../../../assets/amazonIcon.svg';
-  import clippingsIcon from '../../../assets/clippingsIcon.svg';
+  import type { SyncMode } from '~/models';
+  import amazonIcon from '~/assets/amazonIcon.svg';
+  import clippingsIcon from '~/assets/clippingsIcon.svg';
 
   export let lastSyncMode: SyncMode;
   export let onClick: (mode: SyncMode) => void;

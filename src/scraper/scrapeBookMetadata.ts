@@ -1,6 +1,6 @@
 import type { Root } from 'cheerio';
 
-import type { Book, BookMetadata } from '../models';
+import type { Book, BookMetadata } from '~/models';
 import { loadRemoteDom } from './loadRemoteDom';
 
 const parseDetailsList = ($: Root): Omit<BookMetadata, 'authorUrl'> => {

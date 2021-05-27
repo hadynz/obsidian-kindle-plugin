@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 
-import type { Book, SyncMode } from '../models';
-import { statusBarStore, settingsStore } from '../store';
+import type { Book, SyncMode } from '~/models';
+import { statusBarStore, settingsStore } from '~/store';
 
 type SyncJob = {
   status: 'idle' | 'in-progress' | 'done' | 'error';

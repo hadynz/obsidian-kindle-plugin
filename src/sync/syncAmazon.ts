@@ -1,16 +1,16 @@
 import { filterAsync } from 'lodasync';
 import { get } from 'svelte/store';
 
-import AmazonLoginModal from '../components/amazonLoginModal';
-import type FileManager from '../fileManager';
-import { settingsStore, syncSessionStore } from '../store';
-import type { Book, BookMetadata } from '../models';
+import AmazonLoginModal from '~/components/amazonLoginModal';
+import type FileManager from '~/fileManager';
+import { settingsStore, syncSessionStore } from '~/store';
+import type { Book, BookMetadata } from '~/models';
 import {
   scrapeHighlightsForBook,
   scrapeBookMetadata,
   scrapeBooks,
-} from '../scraper';
-import { Renderer } from '../renderer';
+} from '~/scraper';
+import { Renderer } from '~/renderer';
 import type { SyncState } from './syncState';
 
 const initialState = { newBooksSynced: 0, newHighlightsSynced: 0 };
