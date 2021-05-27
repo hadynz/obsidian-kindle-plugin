@@ -28,10 +28,8 @@ export class Renderer {
       })),
     };
 
-    const content = nunjucks.renderString(
-      get(settingsStore).noteTemplate,
-      context
-    );
+    const template = get(settingsStore).noteTemplate;
+    const content = nunjucks.renderString(template, context);
 
     return content;
   }
