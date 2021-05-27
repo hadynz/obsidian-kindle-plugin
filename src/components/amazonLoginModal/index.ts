@@ -7,7 +7,7 @@ import {
 import { StringDecoder } from 'string_decoder';
 import { get } from 'svelte/store';
 
-import { settingsStore } from '../../store';
+import { settingsStore } from '~/store';
 
 const { BrowserWindow: RemoteBrowserWindow } = remote;
 

@@ -1,8 +1,8 @@
 import nunjucks from 'nunjucks';
 import { get } from 'svelte/store';
 
-import { settingsStore } from './store';
-import type { BookHighlight, RenderTemplate } from './models';
+import { settingsStore } from '~/store';
+import type { BookHighlight, RenderTemplate } from '~/models';
 
 export class Renderer {
   constructor() {

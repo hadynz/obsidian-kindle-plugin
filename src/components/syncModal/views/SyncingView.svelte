@@ -1,8 +1,8 @@
 <script lang="ts">
   import { Jumper } from 'svelte-loading-spinners';
 
-  import { santizeTitleExcess } from '../../../utils';
-  import { syncSessionStore } from '../../../store';
+  import { santizeTitleExcess } from '~/utils';
+  import { syncSessionStore } from '~/store';
 
   let progressMessage: string;
 

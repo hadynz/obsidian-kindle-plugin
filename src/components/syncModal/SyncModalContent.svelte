@@ -4,8 +4,8 @@
   import FirstTimeView from './views/FirstTimeView.svelte';
   import SyncButtons from './views/SyncButtons.svelte';
 
-  import { settingsStore } from '../../store';
-  import type { SyncMode } from '../../models';
+  import { settingsStore } from '~/store';
+  import type { SyncMode } from '~/models';
   import type { SyncModalState } from './index';
 
   export let modalState: SyncModalState;

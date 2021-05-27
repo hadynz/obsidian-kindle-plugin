@@ -1,13 +1,13 @@
 import { Plugin, addIcon } from 'obsidian';
 import { get } from 'svelte/store';
 
-import FileManager from './fileManager';
-import SyncModal from './components/syncModal';
-import { SettingsTab } from './settingsTab';
-import { StatusBar } from './components/statusBar';
-import { initialise, settingsStore } from './store';
-import { SyncAmazon, SyncClippings } from './sync';
-import kindleIcon from './assets/kindleIcon.svg';
+import FileManager from '~/fileManager';
+import SyncModal from '~/components/syncModal';
+import { SettingsTab } from '~/settingsTab';
+import { StatusBar } from '~/components/statusBar';
+import { initialise, settingsStore } from '~/store';
+import { SyncAmazon, SyncClippings } from '~/sync';
+import kindleIcon from '~/assets/kindleIcon.svg';
 
 addIcon('kindle', kindleIcon);
 

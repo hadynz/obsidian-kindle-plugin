@@ -1,6 +1,6 @@
 import { remote } from 'electron';
 
-import { settingsStore } from '../../store';
+import { settingsStore } from '~/store';
 
 const { BrowserWindow } = remote;
 

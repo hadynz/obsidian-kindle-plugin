@@ -1,6 +1,6 @@
 import type { Root } from 'cheerio';
 
-import type { Book, Highlight } from '../models';
+import type { Book, Highlight } from '~/models';
 import { loadRemoteDom } from './loadRemoteDom';
 
 const mapTextToColor = (colorText: string): Highlight['color'] => {

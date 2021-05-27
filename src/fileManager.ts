@@ -1,9 +1,9 @@
 import type { Vault } from 'obsidian';
 import { get } from 'svelte/store';
 
-import { settingsStore } from './store';
-import { santizeTitle } from './utils';
-import type { Book } from './models';
+import { settingsStore } from '~/store';
+import { santizeTitle } from '~/utils';
+import type { Book } from '~/models';
 
 const bookFilePath = (book: Book): string => {
   const fileName = santizeTitle(book.title);

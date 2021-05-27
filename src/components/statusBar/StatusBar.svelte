@@ -1,9 +1,9 @@
 <script lang="ts">
   import { Jumper } from 'svelte-loading-spinners';
-  import CircleTick from '../../assets/circleTick.svg';
-  import CircleExclamation from '../../assets/circleExclamation.svg';
 
-  import { statusBarStore, settingsStore } from '../../store';
+  import CircleTick from '~/assets/circleTick.svg';
+  import CircleExclamation from '~/assets/circleExclamation.svg';
+  import { statusBarStore, settingsStore } from '~/store';
 </script>
 
 <div class="kp-statusbar--wrapper">

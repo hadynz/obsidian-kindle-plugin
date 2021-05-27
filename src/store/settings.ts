@@ -1,8 +1,8 @@
 import { writable } from 'svelte/store';
 
-import type KindlePlugin from '../index';
-import defaultTemplate from '../assets/defaultTemplate.njk';
-import type { SyncMode } from '../models';
+import defaultTemplate from '~/assets/defaultTemplate.njk';
+import type KindlePlugin from '~/.';
+import type { SyncMode } from '~/models';
 
 type SyncHistory = {
   totalBooks: number;

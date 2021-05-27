@@ -1,6 +1,6 @@
 import type { Root } from 'cheerio';
 
-import type { Book } from '../models';
+import type { Book } from '~/models';
 import { loadRemoteDom } from './loadRemoteDom';
 
 export const parseBooks = ($: Root): Book[] => {
