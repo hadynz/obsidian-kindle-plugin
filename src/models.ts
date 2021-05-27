@@ -32,6 +32,7 @@ export type BookMetadata = {
 
 export type RenderTemplate = Book &
   BookMetadata & {
+    fullTitle: string;
     appLink?: string;
     highlights: {
       text: string;
