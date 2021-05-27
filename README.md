@@ -77,7 +77,8 @@ your online Amazon account.
 
 | Tag | Description | Amazon sync | My Clippings sync |
 |-|-|-|-|
-| `{{title}}` | Book title | Always available | Always available |
+| `{{title}}` | Shortened book title | Always available | Always available |
+| `{{fullTitle}}` | Full book title | Always available | Always available |
 | `{{author}}` | Book author | Always available if book purchased from Amazon | Optional |
 | `{{asin}}` | Book ASIN | Always available if book purchased from Amazon | Not available |
 | `{{url}}` | Book URL on Amazon | Always available if book has an ASIN | Not available |
