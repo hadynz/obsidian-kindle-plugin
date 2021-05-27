@@ -13,7 +13,7 @@ export type Highlight = {
   location?: string;
   page?: string;
   note?: string;
-  color? : string;
+  color?: 'pink' | 'blue' | 'yellow' | 'orange';
 };
 
 export type BookHighlight = {
