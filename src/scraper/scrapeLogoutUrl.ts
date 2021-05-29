@@ -1,6 +1,7 @@
 import type { Root } from 'cheerio';
 
 import { loadRemoteDom } from './loadRemoteDom';
+import { currentAmazonRegion } from '~/amazonRegion';
 
 export const parseSignoutLink = ($: Root): string => {
   const signoutLinkEl = $('#kp-notebook-head tr:last-child a').attr('href');
@@ -13,7 +14,8 @@ export const parseSignoutLink = ($: Root): string => {
 };
 
 const scrapeLogoutUrl = async (): Promise<string> => {
-  const dom = await loadRemoteDom('https://read.amazon.com/notebook');
+  const region = currentAmazonRegion();
+  const dom = await loadRemoteDom(region.notebookUrl);
   return parseSignoutLink(dom);
 };
 

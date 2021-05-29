@@ -3,11 +3,13 @@
 
   import { santizeTitleExcess } from '~/utils';
   import { syncSessionStore } from '~/store';
+  import { currentAmazonRegion } from '~/amazonRegion';
 
   let progressMessage: string;
 
   $: if ($syncSessionStore.status === 'login') {
-    progressMessage = 'Logging into Amazon.com';
+    const region = currentAmazonRegion();
+    progressMessage = `Logging into ${region.hostname}`;
   } else if ($syncSessionStore?.method === 'amazon') {
     progressMessage = 'Looking for new Kindle highlights to sync...';
   } else {
