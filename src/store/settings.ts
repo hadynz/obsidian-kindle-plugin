@@ -13,7 +13,6 @@ type Settings = {
   highlightsFolder: string;
   lastSyncDate?: Date;
   lastSyncMode: SyncMode;
-  loggedInEmail?: string;
   isLoggedIn: boolean;
   noteTemplate: string;
   syncOnBoot: boolean;
@@ -90,10 +89,9 @@ const createSettingsStore = () => {
     });
   };
 
-  const login = (value: string) => {
+  const login = () => {
     store.update((state) => {
       state.isLoggedIn = true;
-      state.loggedInEmail = value;
       return state;
     });
   };
@@ -101,7 +99,6 @@ const createSettingsStore = () => {
   const logout = () => {
     store.update((state) => {
       state.isLoggedIn = false;
-      state.loggedInEmail = undefined;
       return state;
     });
   };

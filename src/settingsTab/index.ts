@@ -48,7 +48,7 @@ export class SettingsTab extends PluginSettingTab {
     `);
 
     new Setting(this.containerEl)
-      .setName(`Logged in as ${get(settingsStore).loggedInEmail}`)
+      .setName('Logged in to Amazon Kindle Reader')
       .setDesc(descFragment)
       .addButton((button) => {
         return button
