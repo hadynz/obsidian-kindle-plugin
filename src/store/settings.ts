@@ -2,7 +2,7 @@ import { writable } from 'svelte/store';
 
 import defaultTemplate from '~/assets/defaultTemplate.njk';
 import type KindlePlugin from '~/.';
-import type { SyncMode } from '~/models';
+import type { SyncMode, AmazonAccountRegion } from '~/models';
 
 type SyncHistory = {
   totalBooks: number;
@@ -10,10 +10,10 @@ type SyncHistory = {
 };
 
 type Settings = {
+  amazonRegion: AmazonAccountRegion;
   highlightsFolder: string;
   lastSyncDate?: Date;
   lastSyncMode: SyncMode;
-  loggedInEmail?: string;
   isLoggedIn: boolean;
   noteTemplate: string;
   syncOnBoot: boolean;
@@ -22,6 +22,7 @@ type Settings = {
 };
 
 const DEFAULT_SETTINGS: Settings = {
+  amazonRegion: 'global',
   highlightsFolder: '/',
   lastSyncMode: 'amazon',
   isLoggedIn: false,
@@ -90,10 +91,9 @@ const createSettingsStore = () => {
     });
   };
 
-  const login = (value: string) => {
+  const login = () => {
     store.update((state) => {
       state.isLoggedIn = true;
-      state.loggedInEmail = value;
       return state;
     });
   };
@@ -101,7 +101,6 @@ const createSettingsStore = () => {
   const logout = () => {
     store.update((state) => {
       state.isLoggedIn = false;
-      state.loggedInEmail = undefined;
       return state;
     });
   };
@@ -142,6 +141,13 @@ const createSettingsStore = () => {
     });
   };
 
+  const setAmazonRegion = (value: AmazonAccountRegion) => {
+    store.update((state) => {
+      state.amazonRegion = value;
+      return state;
+    });
+  };
+
   return {
     subscribe: store.subscribe,
     initialise,
@@ -156,6 +162,7 @@ const createSettingsStore = () => {
       setLastSyncMode,
       setDownloadBookMetadata,
       incrementHistory,
+      setAmazonRegion,
     },
   };
 };

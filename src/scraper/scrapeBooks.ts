@@ -2,6 +2,7 @@ import type { Root } from 'cheerio';
 
 import type { Book } from '~/models';
 import { loadRemoteDom } from './loadRemoteDom';
+import { currentAmazonRegion } from '~/amazonRegion';
 
 export const parseBooks = ($: Root): Book[] => {
   const booksEl = $('.kp-notebook-library-each-book').toArray();
@@ -23,7 +24,8 @@ export const parseBooks = ($: Root): Book[] => {
 };
 
 const scrapeBooks = async (): Promise<Book[]> => {
-  const dom = await loadRemoteDom('https://read.amazon.com/notebook', 1000);
+  const region = currentAmazonRegion();
+  const dom = await loadRemoteDom(region.notebookUrl, 1000);
   return parseBooks(dom);
 };
 

@@ -11,7 +11,7 @@ import {
   scrapeBooks,
 } from '~/scraper';
 import { Renderer } from '~/renderer';
-import type { SyncState } from './syncState';
+import type { SyncState } from '~/sync/syncState';
 
 const initialState = { newBooksSynced: 0, newHighlightsSynced: 0 };
 

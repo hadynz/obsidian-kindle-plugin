@@ -2,6 +2,7 @@ import type { Root } from 'cheerio';
 
 import type { Book, Highlight } from '~/models';
 import { loadRemoteDom } from './loadRemoteDom';
+import { currentAmazonRegion } from '~/amazonRegion';
 
 const mapTextToColor = (colorText: string): Highlight['color'] => {
   switch (colorText?.toLowerCase()) {
@@ -44,8 +45,9 @@ export const parseHighlights = ($: Root): Highlight[] => {
 };
 
 const scrapeBookHighlights = async (book: Book): Promise<Highlight[]> => {
+  const region = currentAmazonRegion();
   const dom = await loadRemoteDom(
-    `https://read.amazon.com/notebook?asin=${book.asin}&contentLimitState=&`
+    `${region.notebookUrl}?asin=${book.asin}&contentLimitState=&`
   );
 
   return parseHighlights(dom);
