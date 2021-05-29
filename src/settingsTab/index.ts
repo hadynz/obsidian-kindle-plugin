@@ -5,9 +5,11 @@ import { get } from 'svelte/store';
 import AmazonLogoutModal from '~/components/amazonLogoutModal';
 import templateInstructions from './templateInstructions.html';
 import type KindlePlugin from '~/.';
+import type { AmazonAccountRegion } from '~/models';
 import { Renderer } from '~/renderer';
 import { settingsStore } from '~/store';
 import { scrapeLogoutUrl } from '~/scraper';
+import { AmazonRegions } from '~/amazonRegion';
 
 const { moment } = window;
 
@@ -34,6 +36,7 @@ export class SettingsTab extends PluginSettingTab {
     this.downloadBookMetadata();
     this.syncOnBoot();
     this.noteTemplate();
+    this.amazonRegion();
     this.resetSyncHistory();
   }
 
@@ -66,6 +69,26 @@ export class SettingsTab extends PluginSettingTab {
             await modal.doLogout();
 
             this.display(); // rerender
+          });
+      });
+  }
+
+  private amazonRegion(): void {
+    new Setting(this.containerEl)
+      .setName('Amazon region')
+      .setDesc(
+        "Amazon's kindle reader is region specific. Choose your preferred country/region which has your highlights"
+      )
+      .addDropdown((dropdown) => {
+        Object.keys(AmazonRegions).forEach((region: AmazonAccountRegion) => {
+          const account = AmazonRegions[region];
+          dropdown.addOption(region, `${account.name} (${account.hostname})`);
+        });
+
+        return dropdown
+          .setValue(get(settingsStore).amazonRegion)
+          .onChange(async (value: AmazonAccountRegion) => {
+            await settingsStore.actions.setAmazonRegion(value);
           });
       });
   }
