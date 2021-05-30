@@ -10,7 +10,7 @@ export const toBookHighlight = (book: kc.Book): BookHighlight => {
       author: book.author,
     },
     highlights: book.entries
-      .filter((entry) => entry.type === 'HIGHLIGHT')
+      .filter((entry) => entry.type === 'HIGHLIGHT' || entry.type === 'UNKNOWN')
       .map((entry) => ({
         text: entry.content,
         note: entry.note,
