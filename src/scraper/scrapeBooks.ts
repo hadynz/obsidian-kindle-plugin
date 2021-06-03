@@ -11,10 +11,11 @@ export const parseBooks = ($: Root): Book[] => {
     (bookEl): Book => {
       return {
         asin: $(bookEl).attr('id') as string,
-        title: $('h2.kp-notebook-searchable', bookEl).text(),
+        title: $('h2.kp-notebook-searchable', bookEl).text()?.trim(),
         author: $('p.kp-notebook-searchable', bookEl)
           .text()
-          .replace(/^(By: )/, ''),
+          .replace(/^(By: )/, '')
+          ?.trim(),
         url: `https://www.amazon.com/dp/${$(bookEl).attr('id')}`,
         imageUrl: $('.kp-notebook-cover-image', bookEl).attr('src') as string,
         lastAccessedDate: $('[id^="kp-notebook-annotated-date"]', bookEl).val(),

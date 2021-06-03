@@ -32,13 +32,13 @@ export const parseHighlights = ($: Root): Highlight[] => {
 
       return {
         id: $(highlightEl).attr('id') as string,
-        text: $('#highlight', highlightEl).text(),
+        text: $('#highlight', highlightEl).text()?.trim(),
         color: mapTextToColor(
           $('#annotationHighlightHeader', highlightEl).text().split(' ')[0]
         ),
         location: $('#kp-annotation-location', highlightEl).val(),
         page: pageMatch ? pageMatch[0] : null,
-        note: $('#note', highlightEl).text(),
+        note: $('#note', highlightEl).text()?.trim(),
       };
     }
   );
