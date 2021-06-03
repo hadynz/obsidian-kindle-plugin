@@ -28,4 +28,9 @@ describe('Santize title for Obsidian environment', () => {
     );
     expect(santizedTitle).toEqual('The Discipline of Teams');
   });
+
+  it('trims any leading or trailing spaces', () => {
+    const santizedTitle = santizeTitle(' The Warm-Hearted Snowman ');
+    expect(santizedTitle).toEqual('The Warm-Hearted Snowman');
+  });
 });
