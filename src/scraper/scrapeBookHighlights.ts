@@ -79,7 +79,6 @@ const scrapeBookHighlights = async (book: Book): Promise<Highlight[]> => {
 
   while (hasNextPage) {
     const data = await loadAndScrapeHighlights(book, url);
-    console.log('loop', data);
 
     results = [...results, ...data.highlights];
 
