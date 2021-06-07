@@ -1,21 +1,7 @@
-import sanitize from 'sanitize-filename';
 import type { YAMLSeq } from 'yaml/types';
 import { parseDocument } from 'yaml';
 
-export const santizeTitle = (title: string): string => {
-  return santizeTitleExcess(title).replace(/[':]/g, ''); // remove single quotes from title
-};
-
-export const santizeTitleExcess = (title: string): string => {
-  const santizedTitle = title
-    .replace(/ *\([^)]*\) */g, '') // remove parenthesis and contents from title
-    .replace(/:.*/g, '') // remove description test after `:` in title
-    .trim();
-
-  return sanitize(santizedTitle);
-};
-
-export const replaceInFrontMatter = (
+export const addOrReplaceFrontMatter = (
   text: string,
   records: Record<string, string>
 ): string => {
@@ -27,11 +13,7 @@ export const replaceInFrontMatter = (
   }
 
   const { document, map } = parseStringAsYaml(frontMatter);
-
-  Object.keys(records).forEach((key) => {
-    const recordValue = records[key];
-    map.set(key, recordValue);
-  });
+  Object.keys(records).forEach((key) => map.set(key, records[key]));
 
   return text.replace(frontMatter, document.toString());
 };

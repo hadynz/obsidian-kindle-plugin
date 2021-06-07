@@ -1,8 +1,9 @@
-import { replaceInFrontMatter } from '~/utils';
+import { addOrReplaceFrontMatter } from '~/utils';
 
 const sampleYamlContent = (value: string | number) => {
   return `---
-bookId: ${value}
+some: "value"
+bookId: "${value}"
 ---
 
 # Content
@@ -14,10 +15,10 @@ bookId: ${value}
 describe('Replacing front matter data', () => {
   it.only('strip book description in title after colon', () => {
     const fileContent = sampleYamlContent(456);
-    const actual = replaceInFrontMatter(fileContent, { bookId: '500' });
+    const actual = addOrReplaceFrontMatter(fileContent, { hello: 'world' });
     console.log(actual);
 
-    const expected = sampleYamlContent(500);
+    const expected = sampleYamlContent("500");
     expect(actual).toEqual(expected);
   });
 });
