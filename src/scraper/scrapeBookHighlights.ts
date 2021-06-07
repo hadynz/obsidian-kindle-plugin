@@ -4,6 +4,11 @@ import type { Book, Highlight } from '~/models';
 import { loadRemoteDom } from './loadRemoteDom';
 import { currentAmazonRegion } from '~/amazonRegion';
 
+type NextPageState = {
+  token: string;
+  contentLimitState: string;
+};
+
 const mapTextToColor = (colorText: string): Highlight['color'] => {
   switch (colorText?.toLowerCase()) {
     case 'blue':
@@ -19,10 +24,21 @@ const mapTextToColor = (colorText: string): Highlight['color'] => {
   }
 };
 
-export const parseHighlights = ($: Root): Highlight[] => {
-  const highlightsEl = $(
-    '#kp-notebook-annotations .a-row.a-spacing-base'
-  ).toArray();
+const highlightsUrl = (book: Book, state?: NextPageState): string => {
+  const region = currentAmazonRegion();
+  return `${region.notebookUrl}?asin=${book.asin}&contentLimitState=${
+    state?.contentLimitState ?? ''
+  }&token=${state?.token ?? ''}`;
+};
+
+const parseNextPageState = ($: Root): NextPageState | null => {
+  const contentLimitState = $('.kp-notebook-content-limit-state').val();
+  const token = $('.kp-notebook-annotations-next-page-start').val();
+  return token === undefined ? null : { contentLimitState, token };
+};
+
+const parseHighlights = ($: Root): Highlight[] => {
+  const highlightsEl = $('.a-row.a-spacing-base').toArray();
 
   return highlightsEl.map(
     (highlightEl): Highlight => {
@@ -44,13 +60,34 @@ export const parseHighlights = ($: Root): Highlight[] => {
   );
 };
 
-const scrapeBookHighlights = async (book: Book): Promise<Highlight[]> => {
-  const region = currentAmazonRegion();
-  const dom = await loadRemoteDom(
-    `${region.notebookUrl}?asin=${book.asin}&contentLimitState=&`
-  );
+const loadAndScrapeHighlights = async (book: Book, url: string) => {
+  const dom = await loadRemoteDom(url);
+  const nextPageState = parseNextPageState(dom);
 
-  return parseHighlights(dom);
+  return {
+    highlights: parseHighlights(dom),
+    nextPageUrl: highlightsUrl(book, nextPageState),
+    hasNextPage: nextPageState !== null,
+  };
+};
+
+const scrapeBookHighlights = async (book: Book): Promise<Highlight[]> => {
+  let results: Highlight[] = [];
+
+  let url = highlightsUrl(book);
+  let hasNextPage = true;
+
+  while (hasNextPage) {
+    const data = await loadAndScrapeHighlights(book, url);
+    console.log('loop', data);
+
+    results = [...results, ...data.highlights];
+
+    url = data.nextPageUrl;
+    hasNextPage = data.hasNextPage;
+  }
+
+  return results;
 };
 
 export default scrapeBookHighlights;
