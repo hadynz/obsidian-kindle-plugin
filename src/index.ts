@@ -8,7 +8,6 @@ import { StatusBar } from '~/components/statusBar';
 import { initialise, settingsStore } from '~/store';
 import { SyncAmazon, SyncClippings } from '~/sync';
 import kindleIcon from '~/assets/kindleIcon.svg';
-import MetaController from './MetaController';
 
 addIcon('kindle', kindleIcon);
 
@@ -22,10 +21,7 @@ export default class KindlePlugin extends Plugin {
     await initialise(this);
 
     const fileManager = new FileManager(this.app.vault, this.app.metadataCache);
-    await fileManager.updateFile(
-      { title: 'ABC', author: 'elo meno pee' },
-      'hello world'
-    );
+    await this.testCode(fileManager);
 
     this.syncAmazon = new SyncAmazon(fileManager);
     this.syncClippings = new SyncClippings(fileManager);
@@ -51,6 +47,16 @@ export default class KindlePlugin extends Plugin {
     if (get(settingsStore).syncOnBoot) {
       await this.startAmazonSync();
     }
+  }
+
+  async testCode(fileManager: FileManager): Promise<void> {
+    const files = await fileManager.getFiles();
+    console.log('files', files);
+
+    await fileManager.updateFile(
+      { title: 'ABC', author: 'elo meno pee' },
+      '# hello world'
+    );
   }
 
   showSyncModal(): void {
