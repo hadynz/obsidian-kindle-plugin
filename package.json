@@ -21,12 +21,12 @@
   "dependencies": {
     "@hadynz/kindle-clippings": "^1.0.9",
     "cheerio": "*",
+    "gray-matter": "^4.0.3",
     "lodash.pickby": "^4.6.0",
     "lodasync": "^1.0.7",
     "nunjucks": "^3.2.3",
     "sanitize-filename": "^1.6.3",
-    "svelte-loading-spinners": "^0.1.4",
-    "yaml": "^1.10.2"
+    "svelte-loading-spinners": "^0.1.4"
   },
   "devDependencies": {
     "@tsconfig/svelte": "^1.0.10",

@@ -1,2 +1,2 @@
 export { santizeTitle, santizeTitleExcess } from './santizeTitle';
-export { addOrReplaceFrontMatter } from './frontmatter';
+export { frontMatter } from './frontmatter';
