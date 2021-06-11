@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@hadynz/kindle-clippings": "^1.0.9",
-    "cheerio": "*",
+    "cheerio": "1.0.0-rc.6",
     "lodash.pickby": "^4.6.0",
     "lodasync": "^1.0.7",
     "nunjucks": "^3.2.3",
