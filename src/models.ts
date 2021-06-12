@@ -46,7 +46,7 @@ export type RenderTemplate = Book &
 
 export type SyncMode = 'amazon' | 'my-clippings';
 
-export type AmazonAccountRegion = 'global' | 'japan';
+export type AmazonAccountRegion = 'global' | 'japan' | 'spain';
 
 export type AmazonAccount = {
   name: string;
