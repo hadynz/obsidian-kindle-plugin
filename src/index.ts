@@ -55,7 +55,8 @@ export default class KindlePlugin extends Plugin {
 
     await fileManager.updateFile(
       { title: 'ABC', author: 'elo meno pee' },
-      '# hello world'
+      '# hello world with some new text',
+      { bookId: '1234' }
     );
   }
 

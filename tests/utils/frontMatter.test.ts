@@ -16,7 +16,7 @@ bookId: ${value}
 
     const newBookId = 'ABC456';
     const fileContent = yamlContent('ABC123');
-    const actual = frontMatter.set(fileContent, { bookId: newBookId });
+    const actual = frontMatter.override(fileContent, { bookId: newBookId });
 
     const expected = yamlContent(newBookId);
     expect(actual).toEqual(expected);
@@ -37,7 +37,7 @@ bookId: ${value2}
     };
 
     const fileContent = yamlContent('My Book', 'Book1234');
-    const actual = frontMatter.set(fileContent, {
+    const actual = frontMatter.override(fileContent, {
       bookName: 'New Book',
       bookId: 'NewBook1234',
     });
@@ -66,7 +66,7 @@ ${key}: ${value}
 `;
     };
 
-    const actual = frontMatter.set(originalYamlContent, {
+    const actual = frontMatter.override(originalYamlContent, {
       bookName: 'New Book',
     });
 

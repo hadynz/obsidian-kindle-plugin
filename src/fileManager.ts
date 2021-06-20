@@ -2,8 +2,8 @@ import type { MetadataCache, TFile, Vault } from 'obsidian';
 import { get } from 'svelte/store';
 
 import { settingsStore } from '~/store';
-import { santizeTitle, frontMatter as fmUtil } from '~/utils';
-import type { Book } from '~/models';
+import { santizeTitle, frontMatter as frontMatterUtil } from '~/utils';
+import type { Book, SyncFrontmatter } from '~/models';
 
 const bookFilePath = (book: Book): string => {
   const fileName = santizeTitle(book.title);
@@ -34,16 +34,37 @@ export default class FileManager {
 
   public async createFile(book: Book, content: string): Promise<void> {
     const filePath = bookFilePath(book);
-    const frontMatterContent = fmUtil.set(content, { hello: 'world' });
+    const frontMatterContent = frontMatterUtil.override(content, {
+      hello: 'world',
+    });
     await this.vault.create(filePath, frontMatterContent);
   }
 
-  public async updateFile(book: Book, _content: string): Promise<void> {
+  public async hady(
+    book: Book,
+    newFrontMatter: SyncFrontmatter
+  ): Promise<void> {
     const filePath = bookFilePath(book);
-    const file = this.vault.getAbstractFileByPath(filePath) as TFile;
-    const content = await this.vault.read(file);
+    const existingFile = this.vault.getAbstractFileByPath(filePath) as TFile;
+    const existingFileContent = await this.vault.read(existingFile);
 
-    const frontMatterContent = fmUtil.set(content, { hello: 'sunshine!' });
-    await this.vault.modify(file, frontMatterContent);
+    const { frontMatter } = frontMatterUtil.read(existingFileContent);
+    const hady = Object.assign({ frontMatter, newFrontMatter });
+  }
+
+  public async updateFile(
+    book: Book,
+    content: string,
+    frontMatter: SyncFrontmatter
+  ): Promise<void> {
+    const filePath = bookFilePath(book);
+    const existingFile = this.vault.getAbstractFileByPath(filePath) as TFile;
+
+    const contentWithFrontMatter = frontMatterUtil.stringify(
+      content,
+      frontMatter
+    );
+
+    await this.vault.modify(existingFile, contentWithFrontMatter);
   }
 }

@@ -54,3 +54,7 @@ export type AmazonAccount = {
   kindleReaderUrl: string;
   notebookUrl: string;
 };
+
+export type SyncFrontmatter = {
+  bookId: string;
+};
