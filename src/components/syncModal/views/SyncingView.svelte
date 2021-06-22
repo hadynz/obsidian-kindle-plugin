@@ -45,7 +45,7 @@
         <span class="kp-syncmodal--progress-current">{doneTotal}</span>
         <span class="kp-syncmodal--progress-total">/ {total}</span>
         <div class="kp-syncmodal--download">
-          Synching
+          Syncing
           <span class="kp-syncmodal--book-name">
             {santizeTitleExcess(currentJob.book.title)}
           </span>
