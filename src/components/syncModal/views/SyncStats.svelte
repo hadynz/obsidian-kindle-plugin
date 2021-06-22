@@ -22,7 +22,7 @@
     </div>
   </div>
   <div class="kp-stats--sync-date">
-    Last sync { setInterval(function(){ moment(lastSyncDate).fromNow(); }, 3000);}
+    Last sync {moment(lastSyncDate).fromNow()}
   </div>
 </div>
 
