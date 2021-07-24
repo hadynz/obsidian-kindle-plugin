@@ -35,7 +35,6 @@ const DEFAULT_SETTINGS: Settings = {
   },
 };
 
-
 const createSettingsStore = () => {
   const store = writable(DEFAULT_SETTINGS as Settings);
 
@@ -169,4 +168,3 @@ const createSettingsStore = () => {
 };
 
 export const settingsStore = createSettingsStore();
-
