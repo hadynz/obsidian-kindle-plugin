@@ -4,10 +4,6 @@
   import CircleTick from '~/assets/circleTick.svg';
   import CircleExclamation from '~/assets/circleExclamation.svg';
   import { statusBarStore, settingsStore } from '~/store';
-  import moment from 'moment';
-
-  let lastSyncText = '';
-  setInterval(() => lastSyncText = `Last sync ${moment($statusBarStore.lastSyncDate).fromNow()}.`, 3000);
 </script>
 
 <div class="kp-statusbar--wrapper">
@@ -25,7 +21,7 @@
     </div>
   {/if}
   <div class="kp-statusbar--status">
-    {lastSyncText}
+    {$statusBarStore.text}
   </div>
 </div>
 

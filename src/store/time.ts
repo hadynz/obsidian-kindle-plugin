@@ -1,6 +1,7 @@
-import { readable, derived } from 'svelte/store';
+import { readable } from 'svelte/store';
 
-export const time = readable(new Date(), function start(set) {
+export const currentTime = readable(new Date(), function start(set) {
+
 	const interval = setInterval(() => {
 		set(new Date());
 	}, 1000);
