@@ -3,6 +3,7 @@ import type { Root } from 'cheerio';
 import type { Book, Highlight } from '~/models';
 import { loadRemoteDom } from './loadRemoteDom';
 import { currentAmazonRegion } from '~/amazonRegion';
+import { br2ln } from '~/utils';
 
 type NextPageState = {
   token: string;
@@ -40,24 +41,22 @@ const parseNextPageState = ($: Root): NextPageState | null => {
 const parseHighlights = ($: Root): Highlight[] => {
   const highlightsEl = $('.a-row.a-spacing-base').toArray();
 
-  return highlightsEl.map(
-    (highlightEl): Highlight => {
-      const pageMatch = $('#annotationNoteHeader', highlightEl)
-        .text()
-        ?.match(/\d+$/);
+  return highlightsEl.map((highlightEl): Highlight => {
+    const pageMatch = $('#annotationNoteHeader', highlightEl)
+      .text()
+      ?.match(/\d+$/);
 
-      return {
-        id: $(highlightEl).attr('id') as string,
-        text: $('#highlight', highlightEl).text()?.trim(),
-        color: mapTextToColor(
-          $('#annotationHighlightHeader', highlightEl).text().split(' ')[0]
-        ),
-        location: $('#kp-annotation-location', highlightEl).val(),
-        page: pageMatch ? pageMatch[0] : null,
-        note: $('#note', highlightEl).text()?.trim(),
-      };
-    }
-  );
+    return {
+      id: $(highlightEl).attr('id') as string,
+      text: $('#highlight', highlightEl).text()?.trim(),
+      color: mapTextToColor(
+        $('#annotationHighlightHeader', highlightEl).text().split(' ')[0]
+      ),
+      location: $('#kp-annotation-location', highlightEl).val(),
+      page: pageMatch ? pageMatch[0] : null,
+      note: br2ln($('#note', highlightEl).html()),
+    };
+  });
 };
 
 const loadAndScrapeHighlights = async (book: Book, url: string) => {
