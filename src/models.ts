@@ -46,15 +46,11 @@ export type RenderTemplate = Book &
 
 export type SyncMode = 'amazon' | 'my-clippings';
 
-export type AmazonAccountRegion = 'global' | 'india'  | 'japan' | 'spain';
+export type AmazonAccountRegion = 'global' | 'india' | 'japan' | 'spain';
 
 export type AmazonAccount = {
   name: string;
   hostname: string;
   kindleReaderUrl: string;
   notebookUrl: string;
-};
-
-export type SyncFrontmatter = {
-  bookId: string;
 };

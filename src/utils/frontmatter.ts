@@ -1,13 +1,6 @@
 import matter from 'gray-matter';
 
-import type { SyncFrontmatter } from '~/models';
-
 export const frontMatter = {
-  read: (text: string): { content: string; frontMatter: SyncFrontmatter } => {
-    const { content, data } = matter(text);
-    return { content, frontMatter: data as SyncFrontmatter };
-  },
-
   override: (
     textWithFrontMatter: string,
     newFrontMatter: Record<string, any>
