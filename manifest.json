@@ -1,7 +1,7 @@
 {
   "id": "obsidian-kindle-plugin",
   "name": "Kindle Highlights",
-  "version": "0.2.18",
+  "version": "0.2.19",
   "minAppVersion": "0.10.2",
   "description": "Sync your Kindle book highlights using your Amazon login or uploading your My Clippings file",
   "author": "Hady Osman",
