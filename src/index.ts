@@ -20,7 +20,7 @@ export default class KindlePlugin extends Plugin {
 
     await initialise(this);
 
-    const fileManager = new FileManager(this.app.vault);
+    const fileManager = new FileManager(this.app.vault, this.app.metadataCache);
 
     this.syncAmazon = new SyncAmazon(fileManager);
     this.syncClippings = new SyncClippings(fileManager);

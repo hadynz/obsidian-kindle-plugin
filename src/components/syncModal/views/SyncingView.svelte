@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Jumper } from 'svelte-loading-spinners';
 
-  import { santizeTitleExcess } from '~/utils';
+  import { sanitizeTitleExcess } from '~/utils';
   import { syncSessionStore } from '~/store';
   import { currentAmazonRegion } from '~/amazonRegion';
 
@@ -47,7 +47,7 @@
         <div class="kp-syncmodal--download">
           Syncing
           <span class="kp-syncmodal--book-name">
-            {santizeTitleExcess(currentJob.book.title)}
+            {sanitizeTitleExcess(currentJob.book.title)}
           </span>
         </div>
       {:else}
