@@ -1,7 +1,7 @@
 import { writable, derived } from 'svelte/store';
 
 import type { Book } from '~/models';
-import { santizeTitle } from '~/utils';
+import { sanitizeTitle } from '~/utils';
 import { settingsStore, syncSessionStore } from './';
 
 const { moment } = window;
@@ -59,7 +59,7 @@ const createStatusBarStore = () => {
   };
 
   const syncingBook = (book: Book) => {
-    config.set(`Syncing "${santizeTitle(book.title)}"`);
+    config.set(`Syncing "${sanitizeTitle(book.title)}"`);
   };
 
   return {

@@ -1,7 +1,7 @@
 import nunjucks from 'nunjucks';
 import { get } from 'svelte/store';
 
-import { santizeTitle } from '~/utils';
+import { sanitizeTitle } from '~/utils';
 import { settingsStore } from '~/store';
 import type { BookHighlight, RenderTemplate } from '~/models';
 
@@ -25,7 +25,7 @@ export class Renderer {
     const context: RenderTemplate = {
       ...book,
       fullTitle: book.title,
-      title: santizeTitle(book.title),
+      title: sanitizeTitle(book.title),
       ...(book.asin
         ? { appLink: `kindle://book?action=open&asin=${book.asin}` }
         : {}),
