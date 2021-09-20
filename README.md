@@ -63,7 +63,7 @@ Configure the settings of the plugin to specify the folder location for your syn
 - **Reset sync**: Wipe your sync history (number of books and highlights synced). Does **not**
   delete any previously synced notes from your vault
 - **Amazon region**: Select the Amazon account region which has your Kindle highlights data. 
-  Currently only global (.com) Japan and Spain are supported
+  Currently only global (.com), India, Japan and Spain are supported
 - **Sign out**: Log out from your Amazon account (appears only if you have logged in)
 
 ## Usage

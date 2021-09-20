@@ -10,6 +10,12 @@ export const AmazonRegions: Record<AmazonAccountRegion, AmazonAccount> = {
     kindleReaderUrl: 'https://read.amazon.com',
     notebookUrl: 'https://read.amazon.com/notebook',
   },
+  india: {
+    name: 'India',
+    hostname: 'amazon.in',
+    kindleReaderUrl: 'https://read.amazon.in',
+    notebookUrl: 'https://read.amazon.in/notebook',
+  },
   japan: {
     name: 'Japan',
     hostname: 'amazon.co.jp',
