@@ -7,11 +7,9 @@ import templateInstructions from './templateInstructions.html';
 import type KindlePlugin from '~/.';
 import type { AmazonAccountRegion } from '~/models';
 import { Renderer } from '~/renderer';
-import { settingsStore } from '~/store';
+import { settingsStore, lastSyncText } from '~/store';
 import { scrapeLogoutUrl } from '~/scraper';
 import { AmazonRegions } from '~/amazonRegion';
-
-const { moment } = window;
 
 export class SettingsTab extends PluginSettingTab {
   public app: App;
@@ -41,13 +39,9 @@ export class SettingsTab extends PluginSettingTab {
   }
 
   private logout(): void {
-    const syncMessage = get(settingsStore).lastSyncDate
-      ? `Last sync ${moment(get(settingsStore).lastSyncDate).fromNow()}`
-      : 'Sync has never run';
-
     const descFragment = document.createRange().createContextualFragment(`
       ${get(settingsStore).history.totalBooks} book(s) synced<br/>
-      ${syncMessage}
+      ${lastSyncText}
     `);
 
     new Setting(this.containerEl)

@@ -1,7 +1,9 @@
-import { writable } from 'svelte/store';
+import { derived, writable } from 'svelte/store';
+import moment from 'moment';
 
 import type { Book, SyncMode } from '~/models';
 import { statusBarStore, settingsStore } from '~/store';
+import { currentTime } from './time';
 
 type SyncJob = {
   status: 'idle' | 'in-progress' | 'done' | 'error';
@@ -127,3 +129,16 @@ const createSyncSessionStore = () => {
 };
 
 export const syncSessionStore = createSyncSessionStore();
+
+export const lastSyncText = derived(
+	[currentTime, settingsStore],
+  ([$currentTime, $settings]) => {
+
+    if ($settings.lastSyncDate) {
+      const syncDate = moment($settings.lastSyncDate);
+      const currDate = moment($currentTime);
+      return `Last sync: ${currDate.from(syncDate, true)} ago.`;
+    }
+    return 'Not yet synced.';
+
+  }, 'Not yet synced.');
