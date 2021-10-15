@@ -1,9 +1,9 @@
-import pickBy from 'lodash.pickby';
+import _ from 'lodash';
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import { get } from 'svelte/store';
 
+import defaultHighlightTemplate from '~/assets/defaultHighlightTemplate.njk';
 import AmazonLogoutModal from '~/components/amazonLogoutModal';
-import templateInstructions from './templateInstructions.html';
 import type KindlePlugin from '~/.';
 import type { AmazonAccountRegion } from '~/models';
 import { Renderer } from '~/renderer';
@@ -35,7 +35,7 @@ export class SettingsTab extends PluginSettingTab {
     this.highlightsFolder();
     this.downloadBookMetadata();
     this.syncOnBoot();
-    this.noteTemplate();
+    this.highlightTemplate();
     this.amazonRegion();
     this.resetSyncHistory();
   }
@@ -100,7 +100,7 @@ export class SettingsTab extends PluginSettingTab {
       .addDropdown((dropdown) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const files = (this.app.vault.adapter as any).files;
-        const folders = pickBy(files, (val) => {
+        const folders = _.pickBy(files, (val) => {
           return val.type === 'folder';
         });
 
@@ -115,25 +115,22 @@ export class SettingsTab extends PluginSettingTab {
       });
   }
 
-  private noteTemplate(): void {
-    const descFragment = document
-      .createRange()
-      .createContextualFragment(templateInstructions);
-
+  private highlightTemplate(): void {
     new Setting(this.containerEl)
-      .setName('Note template')
-      .setDesc(descFragment)
+      .setName('Highlight template')
+      .setDesc('Template for an individual highlight')
       .addTextArea((text) => {
         text.inputEl.style.width = '100%';
         text.inputEl.style.height = '450px';
         text.inputEl.style.fontSize = '0.8em';
+        text.inputEl.placeholder = defaultHighlightTemplate;
         text
-          .setValue(get(settingsStore).noteTemplate)
+          .setValue(get(settingsStore).highlightTemplate)
           .onChange(async (value) => {
             const isValid = this.renderer.validate(value);
 
             if (isValid) {
-              await settingsStore.actions.setNoteTemplate(value);
+              await settingsStore.actions.setHighlightTemplate(value);
             }
 
             text.inputEl.style.border = isValid ? '' : '1px solid red';

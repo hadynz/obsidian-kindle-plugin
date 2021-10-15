@@ -1,7 +1,8 @@
 import * as kc from '@hadynz/kindle-clippings';
 import fs from 'fs';
 
-import type { BookHighlight } from '~/models';
+import { hash } from '~/utils';
+import type { BookHighlight, Highlight } from '~/models';
 
 export const toBookHighlight = (book: kc.Book): BookHighlight => {
   return {
@@ -11,12 +12,15 @@ export const toBookHighlight = (book: kc.Book): BookHighlight => {
     },
     highlights: book.entries
       .filter((entry) => entry.type === 'HIGHLIGHT' || entry.type === 'UNKNOWN')
-      .map((entry) => ({
-        text: entry.content,
-        note: entry.note,
-        location: entry.location,
-        page: entry.page,
-      })),
+      .map(
+        (entry): Highlight => ({
+          id: hash(entry.content),
+          text: entry.content,
+          note: entry.note,
+          location: entry.location,
+          page: entry.page,
+        })
+      ),
   };
 };
 

@@ -47,17 +47,20 @@ export default class SyncKindleClippings {
   }
 
   private async writeBooks(entries: BookHighlight[]): Promise<void> {
+    const vaultBooks = await this.fileManager.getKindleFiles();
+
     for (const entry of entries) {
-      await this.writeBook(entry);
+      const bookExists =
+        vaultBooks.findIndex((v) => v.frontmatter.title === entry.book.title) >
+        -1;
+
+      if (!bookExists) {
+        await this.writeBook(entry);
+      }
     }
   }
 
   private async writeBook(entry: BookHighlight): Promise<void> {
-    // File already exists. Do nothing for now...
-    if (await this.fileManager.fileExists(entry.book)) {
-      return;
-    }
-
     const content = this.renderer.render(entry);
     await this.fileManager.createFile(entry.book, content);
 

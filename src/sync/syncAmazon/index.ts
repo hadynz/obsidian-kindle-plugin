@@ -1,28 +1,30 @@
-import { filterAsync } from 'lodasync';
 import { get } from 'svelte/store';
 
 import AmazonLoginModal from '~/components/amazonLoginModal';
 import type FileManager from '~/fileManager';
+import type { KindleFile } from '~/fileManager';
 import { settingsStore, syncSessionStore } from '~/store';
-import type { Book, BookMetadata } from '~/models';
+import type { Book, BookMetadata, Highlight } from '~/models';
 import {
   scrapeHighlightsForBook,
   scrapeBookMetadata,
   scrapeBooks,
 } from '~/scraper';
+import { SyncDiff } from '~/sync/syncDiff';
 import { Renderer } from '~/renderer';
 import type { SyncState } from '~/sync/syncState';
 
 const initialState = { newBooksSynced: 0, newHighlightsSynced: 0 };
 
 export default class SyncAmazon {
-  private fileManager: FileManager;
   private renderer: Renderer;
+  private diff: SyncDiff;
   private state: SyncState = initialState;
 
-  constructor(fileManager: FileManager) {
+  constructor(private fileManager: FileManager) {
     this.fileManager = fileManager;
     this.renderer = new Renderer();
+    this.diff = new SyncDiff(fileManager);
   }
 
   async startSync(): Promise<void> {
@@ -40,17 +42,12 @@ export default class SyncAmazon {
 
     syncSessionStore.actions.startSync('amazon');
 
-    const allBooks = await scrapeBooks();
+    const remoteBooks = await scrapeBooks();
 
-    const booksToSync = await filterAsync(async (b) => {
-      const exists = await this.fileManager.fileExists(b);
-      return !exists;
-    }, allBooks);
+    syncSessionStore.actions.setJobs(remoteBooks);
 
-    syncSessionStore.actions.setJobs(booksToSync);
-
-    if (booksToSync.length > 0) {
-      await this.syncBooks(booksToSync);
+    if (remoteBooks.length > 0) {
+      await this.syncBooks([remoteBooks[0]]);
     }
 
     syncSessionStore.actions.completeSync({
@@ -84,13 +81,35 @@ export default class SyncAmazon {
       return; // No highlights for book. Skip sync
     }
 
+    const file = await this.fileManager.getFile(book);
+    const fileExists = file != null;
+
+    if (fileExists) {
+      await this.resyncBook(file, populatedHighlights);
+    } else {
+      await this.createBook(book, populatedHighlights);
+    }
+
+    this.state.newBooksSynced += 1;
+    this.state.newHighlightsSynced += populatedHighlights.length;
+  }
+
+  private async resyncBook(
+    file: KindleFile,
+    highlights: Highlight[]
+  ): Promise<void> {
+    const diffs = await this.diff.diff(file, highlights);
+
+    if (diffs.length > 0) {
+      await this.diff.applyDiffs(file, diffs);
+    }
+  }
+
+  private async createBook(book: Book, highlights: Highlight[]): Promise<void> {
     const metadata = await this.syncBookMetadata(book);
 
     const content = this.renderer.render({ book, highlights, metadata });
     await this.fileManager.createFile(book, content);
-
-    this.state.newBooksSynced += 1;
-    this.state.newHighlightsSynced += populatedHighlights.length;
   }
 
   private async syncBookMetadata(book: Book): Promise<BookMetadata> {

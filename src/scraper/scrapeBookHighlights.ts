@@ -3,7 +3,7 @@ import type { Root } from 'cheerio';
 import type { Book, Highlight } from '~/models';
 import { loadRemoteDom } from './loadRemoteDom';
 import { currentAmazonRegion } from '~/amazonRegion';
-import { br2ln } from '~/utils';
+import { br2ln, hash } from '~/utils';
 
 type NextPageState = {
   token: string;
@@ -46,9 +46,10 @@ const parseHighlights = ($: Root): Highlight[] => {
       .text()
       ?.match(/\d+$/);
 
+    const text = $('#highlight', highlightEl).text()?.trim();
     return {
-      id: $(highlightEl).attr('id') as string,
-      text: $('#highlight', highlightEl).text()?.trim(),
+      id: hash(text),
+      text,
       color: mapTextToColor(
         $('#annotationHighlightHeader', highlightEl).text().split(' ')[0]
       ),

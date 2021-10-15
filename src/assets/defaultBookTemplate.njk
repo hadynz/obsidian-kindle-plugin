@@ -9,8 +9,4 @@
 {% if url %}* Reference: [[{{url}}]]{% endif %}
 {% if appLink %}* [Kindle link]({{appLink}}){% endif %}
 
-{% for highlight in highlights %}
----
-{{highlight.text}} — location: [{{highlight.location}}]({{highlight.appLink}})
-{%- if highlight.note %}{{highlight.note}}{% endif %}
-{% endfor %}
+{{highlights}}

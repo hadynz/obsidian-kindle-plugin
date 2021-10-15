@@ -1,7 +1,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
 declare module '*.njk' {
-  const content: any;
+  const content: string;
   export default content;
 }
 
@@ -23,4 +23,9 @@ declare module 'svelte-loading-spinners' {
     size: string;
     duration: string;
   }
+}
+
+declare module 'fletcher' {
+  const fletcher16: (buffer: Buffer) => number;
+  export default fletcher16;
 }

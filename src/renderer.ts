@@ -1,16 +1,20 @@
 import nunjucks from 'nunjucks';
 import { get } from 'svelte/store';
 
+import defaultBookTemplate from '~/assets/defaultBookTemplate.njk';
+import defaultHighlightTemplate from '~/assets/defaultHighlightTemplate.njk';
 import { sanitizeTitle } from '~/utils';
 import { settingsStore } from '~/store';
-import type { BookHighlight, RenderTemplate } from '~/models';
+import type { Book, BookHighlight, Highlight, RenderTemplate } from '~/models';
+
+export const HighlightIdBlockRefPrefix = '^ref-';
 
 export class Renderer {
   constructor() {
     nunjucks.configure({ autoescape: false });
   }
 
-  validate(template: string): boolean {
+  public validate(template: string): boolean {
     try {
       nunjucks.renderString(template, {});
       return true;
@@ -19,30 +23,42 @@ export class Renderer {
     }
   }
 
-  render(entry: BookHighlight): string {
+  public render(entry: BookHighlight): string {
     const { book, highlights } = entry;
 
-    const context: RenderTemplate = {
+    const appLink = book.asin
+      ? `kindle://book?action=open&asin=${book.asin}`
+      : null;
+
+    const params: RenderTemplate = {
       ...book,
       fullTitle: book.title,
       title: sanitizeTitle(book.title),
-      ...(book.asin
-        ? { appLink: `kindle://book?action=open&asin=${book.asin}` }
-        : {}),
+      appLink,
       ...entry.metadata,
-      highlights: highlights.map((h) => ({
-        ...h,
-        ...(book.asin
-          ? {
-              appLink: `kindle://book?action=open&asin=${book.asin}&location=${h.location}`,
-            }
-          : {}),
-      })),
+      highlights: this.renderHighlights(book, highlights),
     };
 
-    const template = get(settingsStore).noteTemplate;
-    const content = nunjucks.renderString(template, context);
+    return nunjucks.renderString(defaultBookTemplate, params);
+  }
 
-    return content;
+  public renderHighlight(book: Book, highlight: Highlight): string {
+    const appLink = book.asin
+      ? `kindle://book?action=open&asin=${book.asin}&location=${highlight.location}`
+      : null;
+
+    const highlightParams = { ...highlight, appLink };
+
+    const template =
+      get(settingsStore).highlightTemplate || defaultHighlightTemplate;
+
+    const renderedHighlight = nunjucks.renderString(template, highlightParams);
+
+    // Surround all highlights with a block reference to enable re-sync functionality
+    return `${HighlightIdBlockRefPrefix}${highlight.id}\n${renderedHighlight}`;
+  }
+
+  private renderHighlights(book: Book, highlights: Highlight[]): string {
+    return highlights.map((h) => this.renderHighlight(book, h)).join('\n');
   }
 }

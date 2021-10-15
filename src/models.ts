@@ -8,7 +8,7 @@ export type Book = {
 };
 
 export type Highlight = {
-  id?: string;
+  id: string;
   text: string;
   location?: string;
   page?: string;
@@ -34,14 +34,7 @@ export type RenderTemplate = Book &
   BookMetadata & {
     fullTitle: string;
     appLink?: string;
-    highlights: {
-      text: string;
-      location?: string;
-      page?: string;
-      note?: string;
-      appLink?: string;
-      color?: string;
-    }[];
+    highlights: string;
   };
 
 export type SyncMode = 'amazon' | 'my-clippings';

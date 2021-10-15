@@ -16,7 +16,10 @@ export default class KindlePlugin extends Plugin {
   private syncClippings!: SyncClippings;
 
   async onload(): Promise<void> {
-    console.log('loading plugin', new Date().toLocaleString());
+    console.log(
+      'Kindle Highlights plugin: loading plugin',
+      new Date().toLocaleString()
+    );
 
     await initialise(this);
 
@@ -60,6 +63,9 @@ export default class KindlePlugin extends Plugin {
   }
 
   async onunload(): Promise<void> {
-    console.log('unloading plugin', new Date().toLocaleString());
+    console.log(
+      'Kindle Highlights plugin: unloading plugin',
+      new Date().toLocaleString()
+    );
   }
 }

@@ -16,23 +16,27 @@ type SyncingState = {
   title: string;
 };
 
-type KindleFile = {
+export type KindleFile = {
   file: TFile;
-  frontmatter?: SyncingState;
+  frontmatter: SyncingState;
+  book?: Book;
 };
 
 export default class FileManager {
-  private vault: Vault;
-  private metadataCache: MetadataCache;
+  constructor(private vault: Vault, private metadataCache: MetadataCache) {}
 
-  constructor(vault: Vault, metadataCache: MetadataCache) {
-    this.vault = vault;
-    this.metadataCache = metadataCache;
+  public async readFile(file: KindleFile): Promise<string> {
+    return await this.vault.cachedRead(file.file);
   }
 
-  public async fileExists(book: Book): Promise<boolean> {
+  public async getFile(book: Book): Promise<KindleFile | undefined> {
     const allSyncedFiles = await this.getKindleFiles();
-    return allSyncedFiles.some((file) => file.frontmatter.title === book.title);
+
+    const kindleFile = allSyncedFiles.find(
+      (file) => file.frontmatter.title === book.title
+    );
+
+    return kindleFile == null ? undefined : { ...kindleFile, book };
   }
 
   public async getKindleFiles(): Promise<KindleFile[]> {
@@ -54,5 +58,9 @@ export default class FileManager {
     });
 
     await this.vault.create(filePath, frontMatterContent);
+  }
+
+  public async updateFile(file: KindleFile, content: string): Promise<void> {
+    await this.vault.modify(file.file, content);
   }
 }
