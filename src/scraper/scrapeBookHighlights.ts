@@ -86,7 +86,7 @@ const scrapeBookHighlights = async (book: Book): Promise<Highlight[]> => {
     hasNextPage = data.hasNextPage;
   }
 
-  return results;
+  return results.filter((h) => h.text);
 };
 
 export default scrapeBookHighlights;

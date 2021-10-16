@@ -6,7 +6,7 @@ import SyncModal from '~/components/syncModal';
 import { SettingsTab } from '~/settingsTab';
 import { StatusBar } from '~/components/statusBar';
 import { initialise, settingsStore } from '~/store';
-import { SyncAmazon, SyncClippings } from '~/sync';
+import { SyncAmazon, SyncClippings, SyncManager } from '~/sync';
 import kindleIcon from '~/assets/kindleIcon.svg';
 
 addIcon('kindle', kindleIcon);
@@ -24,9 +24,10 @@ export default class KindlePlugin extends Plugin {
     await initialise(this);
 
     const fileManager = new FileManager(this.app.vault, this.app.metadataCache);
+    const syncManager = new SyncManager(this.app, fileManager);
 
-    this.syncAmazon = new SyncAmazon(fileManager);
-    this.syncClippings = new SyncClippings(fileManager);
+    this.syncAmazon = new SyncAmazon(syncManager);
+    this.syncClippings = new SyncClippings(syncManager);
 
     new StatusBar(this.addStatusBarItem(), () => {
       this.showSyncModal();

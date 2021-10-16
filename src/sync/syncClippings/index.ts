@@ -1,70 +1,26 @@
-import type FileManager from '~/fileManager';
-import type { BookHighlight } from '~/models';
-import type { SyncState } from '~/sync/syncState';
-import { Renderer } from '~/renderer';
 import { openDialog } from './openDialog';
 import { parseBooks } from './parseBooks';
-import { syncSessionStore } from '~/store';
-
-const initialState = { newBooksSynced: 0, newHighlightsSynced: 0 };
+import type { SyncManager } from '~/sync';
 
 export default class SyncKindleClippings {
-  private fileManager: FileManager;
-  private renderer: Renderer;
-  private state: SyncState = initialState;
+  constructor(private syncManager: SyncManager) {}
 
-  constructor(fileManager: FileManager) {
-    this.fileManager = fileManager;
-    this.renderer = new Renderer();
-  }
-
-  async startSync(): Promise<void> {
-    this.state = initialState;
-
+  public async startSync(): Promise<void> {
     const [clippingsFile, canceled] = await openDialog();
 
     if (canceled) {
       return; // Do nothing...
     }
 
-    syncSessionStore.actions.startSync('my-clippings');
-
     try {
       const bookHighlights = await parseBooks(clippingsFile);
-      await this.writeBooks(bookHighlights);
 
-      syncSessionStore.actions.completeSync({
-        newBookCount: this.state.newBooksSynced,
-        newHighlightsCount: this.state.newHighlightsSynced,
-        updatedBookCount: 0,
-        updatedHighlightsCount: 0,
-      });
+      for (const { book, highlights } of bookHighlights) {
+        await this.syncManager.syncBook(book, highlights);
+      }
     } catch (error) {
       const errorMessage = `Error parsing ${clippingsFile}.`;
-      syncSessionStore.actions.errorSync(errorMessage);
       console.error(errorMessage, error);
     }
-  }
-
-  private async writeBooks(entries: BookHighlight[]): Promise<void> {
-    const vaultBooks = await this.fileManager.getKindleFiles();
-
-    for (const entry of entries) {
-      const bookExists =
-        vaultBooks.findIndex((v) => v.frontmatter.title === entry.book.title) >
-        -1;
-
-      if (!bookExists) {
-        await this.writeBook(entry);
-      }
-    }
-  }
-
-  private async writeBook(entry: BookHighlight): Promise<void> {
-    const content = this.renderer.render(entry);
-    await this.fileManager.createFile(entry.book, content);
-
-    this.state.newBooksSynced += 1;
-    this.state.newHighlightsSynced += entry.highlights.length;
   }
 }

@@ -1,10 +1,10 @@
-import * as kc from '@hadynz/kindle-clippings';
 import fs from 'fs';
+import * as kc from '@hadynz/kindle-clippings';
 
 import { hash } from '~/utils';
 import type { BookHighlight, Highlight } from '~/models';
 
-export const toBookHighlight = (book: kc.Book): BookHighlight => {
+const toBookHighlight = (book: kc.Book): BookHighlight => {
   return {
     book: {
       title: book.title,
