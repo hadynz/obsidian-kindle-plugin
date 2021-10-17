@@ -15,7 +15,7 @@ export default class SyncAmazon {
 
     const remoteBooks = await scrapeBooks();
     if (remoteBooks.length > 0) {
-      await this.syncBooks([remoteBooks[0]]);
+      await this.syncBooks(remoteBooks);
     }
   }
 

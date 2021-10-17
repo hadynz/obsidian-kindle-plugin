@@ -50,7 +50,7 @@ export class Renderer {
     const highlightParams = { ...highlight, appLink };
 
     const template =
-      get(settingsStore).highlightTemplate || defaultHighlightTemplate;
+      get(settingsStore).highlightTemplate || defaultHighlightTemplate.trim();
 
     const renderedHighlight = nunjucks.renderString(template, highlightParams);
 
