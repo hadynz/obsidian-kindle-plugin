@@ -5,6 +5,9 @@
 # npm
 node_modules
 
+# nunjucks file
+main.js.LICENSE.txt
+
 # obsidian plugin files
 main.js
 main.js.map
