@@ -13,7 +13,10 @@ const bookFilePath = (book: Book): string => {
 const SyncingStateKey = 'kindle-sync';
 
 type SyncingState = {
+  bookId: string;
   title: string;
+  asin: string;
+  bookImageUrl: string;
 };
 
 export type KindleFile = {
@@ -33,7 +36,7 @@ export default class FileManager {
     const allSyncedFiles = await this.getKindleFiles();
 
     const kindleFile = allSyncedFiles.find(
-      (file) => file.frontmatter.title === book.title
+      (file) => file.frontmatter.bookId === book.id
     );
 
     return kindleFile == null ? undefined : { ...kindleFile, book };
@@ -53,8 +56,15 @@ export default class FileManager {
   public async createFile(book: Book, content: string): Promise<void> {
     const filePath = bookFilePath(book);
 
+    const frontmatterState: SyncingState = {
+      bookId: book.id,
+      title: book.title,
+      asin: book.asin,
+      bookImageUrl: book.imageUrl,
+    };
+
     const frontMatterContent = frontMatterUtil.stringify(content, {
-      [SyncingStateKey]: { title: book.title },
+      [SyncingStateKey]: frontmatterState,
     });
 
     await this.vault.create(filePath, frontMatterContent);

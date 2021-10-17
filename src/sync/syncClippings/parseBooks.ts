@@ -7,6 +7,7 @@ import type { BookHighlight, Highlight } from '~/models';
 const toBookHighlight = (book: kc.Book): BookHighlight => {
   return {
     book: {
+      id: hash(book.title),
       title: book.title,
       author: book.author,
     },
