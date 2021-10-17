@@ -14,7 +14,9 @@ export default class SyncAmazon {
     }
 
     const remoteBooks = await scrapeBooks();
-    await this.syncBooks([remoteBooks[0]]);
+    if (remoteBooks.length > 0) {
+      await this.syncBooks([remoteBooks[0]]);
+    }
   }
 
   private async login(): Promise<boolean> {
