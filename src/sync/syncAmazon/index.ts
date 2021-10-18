@@ -2,6 +2,7 @@ import AmazonLoginModal from '~/components/amazonLoginModal';
 import { scrapeHighlightsForBook, scrapeBooks } from '~/scraper';
 import type { SyncManager } from '~/sync';
 import type { Book } from '~/models';
+import type { KindleFile } from '~/fileManager';
 
 export default class SyncAmazon {
   constructor(private syncManager: SyncManager) {}
@@ -17,6 +18,17 @@ export default class SyncAmazon {
     if (remoteBooks.length > 0) {
       await this.syncBooks(remoteBooks);
     }
+  }
+
+  public async resync(file: KindleFile): Promise<void> {
+    const success = await this.login();
+
+    if (!success) {
+      return; // Do nothing...
+    }
+
+    const highlights = await scrapeHighlightsForBook(file.book);
+    await this.syncManager.resyncBook(file, highlights);
   }
 
   private async login(): Promise<boolean> {

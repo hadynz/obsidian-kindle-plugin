@@ -39,7 +39,7 @@ export default class SyncManager {
     }
   }
 
-  private async resyncBook(
+  public async resyncBook(
     file: KindleFile,
     highlights: Highlight[]
   ): Promise<void> {

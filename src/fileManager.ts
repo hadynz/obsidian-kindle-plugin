@@ -1,4 +1,4 @@
-import type { MetadataCache, TFile, Vault } from 'obsidian';
+import { MetadataCache, TAbstractFile, TFile, TFolder, Vault } from 'obsidian';
 import { get } from 'svelte/store';
 
 import { settingsStore } from '~/store';
@@ -15,6 +15,7 @@ const SyncingStateKey = 'kindle-sync';
 type SyncingState = {
   bookId: string;
   title: string;
+  author: string;
   asin: string;
   bookImageUrl: string;
 };
@@ -42,15 +43,35 @@ export default class FileManager {
     return kindleFile == null ? undefined : { ...kindleFile, book };
   }
 
-  public async getKindleFiles(): Promise<KindleFile[]> {
-    const files = this.vault.getMarkdownFiles();
+  public getKindleFile(fileOrFolder: TAbstractFile): KindleFile | undefined {
+    if (fileOrFolder instanceof TFolder) {
+      return undefined;
+    }
 
-    return files
-      .map((file): KindleFile => {
-        const { frontmatter } = this.metadataCache.getFileCache(file);
-        return { file, frontmatter: frontmatter?.[SyncingStateKey] };
-      })
-      .filter((file) => file.frontmatter !== undefined);
+    const file = fileOrFolder as TFile;
+    const { frontmatter } = this.metadataCache.getFileCache(file);
+    const kindleFrontmatter: SyncingState = frontmatter?.[SyncingStateKey];
+
+    if (kindleFrontmatter == null) {
+      return undefined;
+    }
+
+    const book: Book = {
+      id: kindleFrontmatter.bookId,
+      title: kindleFrontmatter.title,
+      author: kindleFrontmatter.author,
+      asin: kindleFrontmatter.asin,
+      imageUrl: kindleFrontmatter.bookImageUrl,
+    };
+
+    return { file, frontmatter: kindleFrontmatter, book };
+  }
+
+  public async getKindleFiles(): Promise<KindleFile[]> {
+    return this.vault
+      .getMarkdownFiles()
+      .map(this.getKindleFile)
+      .filter((file) => file != null);
   }
 
   public async createFile(book: Book, content: string): Promise<void> {
@@ -59,6 +80,7 @@ export default class FileManager {
     const frontmatterState: SyncingState = {
       bookId: book.id,
       title: book.title,
+      author: book.author,
       asin: book.asin,
       bookImageUrl: book.imageUrl,
     };
