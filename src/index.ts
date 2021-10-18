@@ -8,6 +8,7 @@ import { StatusBar } from '~/components/statusBar';
 import { initialise, settingsStore } from '~/store';
 import { SyncAmazon, SyncClippings, SyncManager } from '~/sync';
 import kindleIcon from '~/assets/kindleIcon.svg';
+import { sanitizeTitle } from '~/utils';
 
 addIcon('kindle', kindleIcon);
 
@@ -67,7 +68,9 @@ export default class KindlePlugin extends Plugin {
             .setTitle('Resync Kindle highlights')
             .setIcon('kindle')
             .onClick(async () => {
-              new Notice(`Resyncing "${kindleFile.book.title}" highlights`);
+              new Notice(
+                `Resyncing "${sanitizeTitle(kindleFile.book.title)}" highlights`
+              );
               await this.syncAmazon.resync(kindleFile);
               new Notice(`Resync complete`);
             });
