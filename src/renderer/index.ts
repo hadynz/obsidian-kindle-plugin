@@ -3,7 +3,10 @@ import { get } from 'svelte/store';
 
 import defaultBookTemplate from '~/assets/defaultBookTemplate.njk';
 import defaultHighlightTemplate from '~/assets/defaultHighlightTemplate.njk';
-import TrimEmptyLinesExtension from './nunjucks.trimEmptyLines';
+import {
+  TrimEmptyLinesExtension,
+  TrimLinesExtension,
+} from './nunjucks.extensions';
 import { sanitizeTitle } from '~/utils';
 import { settingsStore } from '~/store';
 import type { Book, BookHighlight, Highlight, RenderTemplate } from '~/models';
@@ -15,7 +18,8 @@ export class Renderer {
 
   constructor() {
     this.nunjucks = new nunjucks.Environment(null, { autoescape: false });
-    this.nunjucks.addExtension('TrimExtension', new TrimEmptyLinesExtension());
+    this.nunjucks.addExtension('TrimEmptyLines', new TrimEmptyLinesExtension());
+    this.nunjucks.addExtension('Trim', new TrimLinesExtension());
   }
 
   public validate(template: string): boolean {

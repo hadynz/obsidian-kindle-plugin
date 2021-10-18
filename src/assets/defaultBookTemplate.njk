@@ -1,6 +1,6 @@
 # {{title}}
 ## Metadata
-{% trim %}
+{% trimEmptyLines %}
 {% if author %}* Author: [{{author}}]({{authorUrl}}){% endif %}
 {% if asin %}* ASIN: {{asin}}{% endif %}
 {% if isbn %}* ISBN: {{isbn}}{% endif %}
@@ -9,7 +9,7 @@
 {% if publisher %}* Publisher: {{publisher}}{% endif %}
 {% if url %}* Reference: [[{{url}}]]{% endif %}
 {% if appLink %}* [Kindle link]({{appLink}}){% endif %}
-{% endtrim %}
+{% endtrimEmptyLines %}
 
 ## Highlights
 {{highlights}}
