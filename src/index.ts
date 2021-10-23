@@ -9,6 +9,7 @@ import { initializeStores, settingsStore } from '~/store';
 import { SyncAmazon, SyncClippings, SyncManager } from '~/sync';
 import { registerNotifications } from '~/notifications';
 import kindleIcon from '~/assets/kindleIcon.svg';
+import { ee } from '~/eventEmitter';
 
 addIcon('kindle', kindleIcon);
 
@@ -75,6 +76,10 @@ export default class KindlePlugin extends Plugin {
         });
       })
     );
+
+    this.app.workspace.onLayoutReady(() => {
+      ee.emit('obsidianReady');
+    });
   }
 
   private showSyncModal(): void {
@@ -89,6 +94,8 @@ export default class KindlePlugin extends Plugin {
   }
 
   public async onunload(): Promise<void> {
+    ee.removeAllListeners();
+
     console.log(
       'Kindle Highlights plugin: unloading plugin',
       new Date().toLocaleString()

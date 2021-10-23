@@ -5,6 +5,7 @@ import type { Book, Highlight, SyncMode } from '~/models';
 import type { KindleFile } from '~/fileManager';
 
 interface MessageEvents {
+  obsidianReady: () => void;
   login: () => void;
   loginComplete: (success: boolean) => void;
   syncStart: (mode: SyncMode) => void;
