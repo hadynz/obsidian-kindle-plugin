@@ -1,5 +1,6 @@
 import { writable } from 'svelte/store';
 
+import { ee } from '~/eventEmitter';
 import type KindlePlugin from '~/.';
 import type { SyncMode, AmazonAccountRegion } from '~/models';
 
@@ -42,6 +43,20 @@ const createSettingsStore = () => {
     _plugin = plugin;
   };
 
+  ee.on('resyncComplete', () => {
+    store.update((state) => {
+      state.lastSyncDate = new Date();
+      return state;
+    });
+  });
+
+  ee.on('syncSuccess', () => {
+    store.update((state) => {
+      state.lastSyncDate = new Date();
+      return state;
+    });
+  });
+
   // Listen to any change to store, and write to disk
   store.subscribe(async (settings) => {
     if (_plugin) {
@@ -67,13 +82,6 @@ const createSettingsStore = () => {
   const resetSyncHistory = () => {
     store.update((state) => {
       state.lastSyncDate = undefined;
-      return state;
-    });
-  };
-
-  const setSyncDateToNow = () => {
-    store.update((state) => {
-      state.lastSyncDate = new Date();
       return state;
     });
   };
@@ -133,7 +141,6 @@ const createSettingsStore = () => {
     actions: {
       setHighlightsFolder,
       resetSyncHistory,
-      setSyncDateToNow,
       login,
       logout,
       setHighlightTemplate,
