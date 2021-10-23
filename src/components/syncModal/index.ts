@@ -4,6 +4,7 @@ import { get } from 'svelte/store';
 import SyncModalContent from './SyncModalContent.svelte';
 import { settingsStore, syncSessionStore } from '~/store';
 import type { SyncMode } from '~/models';
+import type FileManager from '~/fileManager';
 
 export type SyncModalState =
   | 'first-time'
@@ -23,21 +24,26 @@ type SyncModalProps = {
   onMyClippingsSync: () => void;
 };
 
+// TODO: This class needs to be refactored
 export default class SyncModal extends Modal {
-  public waitForClose: Promise<void>;
-  private resolvePromise!: () => void;
   private modalContent: SyncModalContent;
 
-  constructor(app: App, props: SyncModalProps) {
+  constructor(
+    app: App,
+    private fileManager: FileManager,
+    private props: SyncModalProps
+  ) {
     super(app);
+  }
 
-    this.waitForClose = new Promise(
-      (resolve) => (this.resolvePromise = resolve)
-    );
+  public async show(): Promise<void> {
+    const kindleFiles = await this.fileManager.getKindleFiles();
 
     this.modalContent = new SyncModalContent({
       target: this.contentEl,
       props: {
+        modalState: this.getSyncModalState(),
+        booksCount: kindleFiles.length,
         setModalTitle: (modalState: SyncModalState) => {
           this.setModalTitle(modalState);
         },
@@ -47,9 +53,9 @@ export default class SyncModal extends Modal {
         },
         onClick: (mode: SyncMode) => {
           if (mode === 'amazon') {
-            props.onOnlineSync();
+            this.props.onOnlineSync();
           } else {
-            props.onMyClippingsSync();
+            this.props.onMyClippingsSync();
           }
         },
       },
@@ -84,6 +90,5 @@ export default class SyncModal extends Modal {
   onClose(): void {
     super.onClose();
     this.modalContent.$destroy();
-    this.resolvePromise();
   }
 }

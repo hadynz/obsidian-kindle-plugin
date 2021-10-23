@@ -3,19 +3,19 @@
 
   import CircleTick from '~/assets/circleTick.svg';
   import CircleExclamation from '~/assets/circleExclamation.svg';
-  import { statusBarStore, settingsStore } from '~/store';
+  import { statusBarStore } from '~/store';
 </script>
 
 <div class="kp-statusbar--wrapper">
-  {#if $statusBarStore.isSyncing}
+  {#if $statusBarStore.status === 'syncing'}
     <div class="kp-statusbar--icon">
       <Jumper color="#7f6df2" size="18" duration="1.2s" />
     </div>
-  {:else if !$settingsStore.isLoggedIn && $settingsStore.lastSyncDate}
+  {:else if $statusBarStore.status === 'error'}
     <div class="kb-statusbar--circleExclamationIcon">
       {@html CircleExclamation}
     </div>
-  {:else if $settingsStore.lastSyncDate}
+  {:else if $statusBarStore.status === 'ready'}
     <div class="kb-statusbar--circleIcon">
       {@html CircleTick}
     </div>

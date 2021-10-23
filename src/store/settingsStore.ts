@@ -3,11 +3,6 @@ import { writable } from 'svelte/store';
 import type KindlePlugin from '~/.';
 import type { SyncMode, AmazonAccountRegion } from '~/models';
 
-type SyncHistory = {
-  totalBooks: number;
-  totalHighlights: number;
-};
-
 type Settings = {
   amazonRegion: AmazonAccountRegion;
   highlightsFolder: string;
@@ -17,7 +12,6 @@ type Settings = {
   highlightTemplate?: string;
   syncOnBoot: boolean;
   downloadBookMetadata: boolean;
-  history: SyncHistory;
 };
 
 const DEFAULT_SETTINGS: Settings = {
@@ -27,10 +21,6 @@ const DEFAULT_SETTINGS: Settings = {
   isLoggedIn: false,
   syncOnBoot: false,
   downloadBookMetadata: true,
-  history: {
-    totalBooks: 0,
-    totalHighlights: 0,
-  },
 };
 
 const createSettingsStore = () => {
@@ -39,7 +29,7 @@ const createSettingsStore = () => {
   let _plugin!: KindlePlugin;
 
   // Load settings data from disk into store
-  const initialise = async (plugin: KindlePlugin): Promise<void> => {
+  const initialize = async (plugin: KindlePlugin): Promise<void> => {
     const data = Object.assign({}, DEFAULT_SETTINGS, await plugin.loadData());
 
     const settings: Settings = {
@@ -76,7 +66,6 @@ const createSettingsStore = () => {
 
   const resetSyncHistory = () => {
     store.update((state) => {
-      state.history = DEFAULT_SETTINGS.history;
       state.lastSyncDate = undefined;
       return state;
     });
@@ -131,14 +120,6 @@ const createSettingsStore = () => {
     });
   };
 
-  const incrementHistory = (delta: SyncHistory) => {
-    store.update((state) => {
-      state.history.totalBooks += delta.totalBooks;
-      state.history.totalHighlights += delta.totalHighlights;
-      return state;
-    });
-  };
-
   const setAmazonRegion = (value: AmazonAccountRegion) => {
     store.update((state) => {
       state.amazonRegion = value;
@@ -148,7 +129,7 @@ const createSettingsStore = () => {
 
   return {
     subscribe: store.subscribe,
-    initialise,
+    initialize,
     actions: {
       setHighlightsFolder,
       resetSyncHistory,
@@ -159,7 +140,6 @@ const createSettingsStore = () => {
       setSyncOnBoot,
       setLastSyncMode,
       setDownloadBookMetadata,
-      incrementHistory,
       setAmazonRegion,
     },
   };

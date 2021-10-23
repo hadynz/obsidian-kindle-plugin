@@ -49,6 +49,7 @@ export default class FileManager {
     }
 
     const file = fileOrFolder as TFile;
+
     const { frontmatter } = this.metadataCache.getFileCache(file);
     const kindleFrontmatter: SyncingState = frontmatter?.[SyncingStateKey];
 
@@ -70,7 +71,7 @@ export default class FileManager {
   public async getKindleFiles(): Promise<KindleFile[]> {
     return this.vault
       .getMarkdownFiles()
-      .map(this.getKindleFile)
+      .map((file) => this.getKindleFile(file))
       .filter((file) => file != null);
   }
 

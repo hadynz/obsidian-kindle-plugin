@@ -1,4 +1,23 @@
-export { settingsStore } from './settings';
-export { syncSessionStore } from './syncSession';
-export { statusBarStore } from './statusBar';
-export { initialise } from './initialise';
+import { fileStore } from './fileStore';
+import { settingsStore } from './settingsStore';
+import { syncSessionStore } from './syncSessionStore';
+import { statusBarStore } from './statusBar';
+
+import type KindlePlugin from '~/.';
+import type FileManager from '~/fileManager';
+
+const initializeStores = async (
+  plugin: KindlePlugin,
+  fileManager: FileManager
+): Promise<void> => {
+  await settingsStore.initialize(plugin);
+  await fileStore.initialize(fileManager);
+};
+
+export {
+  initializeStores,
+  fileStore,
+  settingsStore,
+  syncSessionStore,
+  statusBarStore,
+};

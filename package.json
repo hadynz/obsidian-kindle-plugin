@@ -26,7 +26,8 @@
     "lodash": "^4.17.21",
     "nunjucks": "^3.2.3",
     "sanitize-filename": "^1.6.3",
-    "svelte-loading-spinners": "^0.1.4"
+    "svelte-loading-spinners": "^0.1.4",
+    "typed-emitter": "^1.4.0"
   },
   "devDependencies": {
     "@tsconfig/svelte": "^1.0.10",

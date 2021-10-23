@@ -7,7 +7,6 @@
 
   export let lastSyncDate: Date;
   export let totalBooks: number;
-  export let totalHighlights: number;
 </script>
 
 <div class="kp-stats--wrapper">
@@ -15,10 +14,6 @@
     <div class="kp-stats--item">
       <div>Books</div>
       <div class="kp-stats--value">{numberWithCommas(totalBooks)}</div>
-    </div>
-    <div class="kp-stats--item">
-      <div>Highlights</div>
-      <div class="kp-stats--value">{numberWithCommas(totalHighlights)}</div>
     </div>
   </div>
   <div class="kp-stats--sync-date">

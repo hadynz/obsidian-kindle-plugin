@@ -1,14 +1,15 @@
 import type { App } from 'obsidian';
 import { get } from 'svelte/store';
 
-import type FileManager from '~/fileManager';
-import type { KindleFile } from '~/fileManager';
 import { settingsStore } from '~/store';
-import type { Book, BookMetadata, Highlight } from '~/models';
 import { scrapeBookMetadata } from '~/scraper';
 import { SyncDiff } from '~/sync/syncDiff';
 import { Renderer } from '~/renderer';
 import { ResyncBookModal } from '~/components/resyncModal';
+import type FileManager from '~/fileManager';
+import type { KindleFile } from '~/fileManager';
+import type { Book, BookMetadata, Highlight } from '~/models';
+import type { DiffResult } from '~/sync/syncDiff';
 
 export default class SyncManager {
   private diff: SyncDiff;
@@ -42,12 +43,14 @@ export default class SyncManager {
   public async resyncBook(
     file: KindleFile,
     highlights: Highlight[]
-  ): Promise<void> {
+  ): Promise<DiffResult[]> {
     const diffs = await this.diff.diff(file, highlights);
 
     if (diffs.length > 0) {
       await this.diff.applyDiffs(file, diffs);
     }
+
+    return diffs;
   }
 
   private async createBook(book: Book, highlights: Highlight[]): Promise<void> {

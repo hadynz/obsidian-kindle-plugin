@@ -9,14 +9,14 @@
   import type { SyncModalState } from './index';
 
   export let modalState: SyncModalState;
+  export let booksCount: number;
   export let onDone: () => void;
   export let onClick: (mode: SyncMode) => void;
   export let setModalTitle: (modalState: SyncModalState) => void;
 
   const idleViewProps = {
     lastSyncDate: $settingsStore.lastSyncDate,
-    totalBooks: $settingsStore.history.totalBooks,
-    totalHighlights: $settingsStore.history.totalHighlights,
+    totalBooks: booksCount,
   };
 </script>
 

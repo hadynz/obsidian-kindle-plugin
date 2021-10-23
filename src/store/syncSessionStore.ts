@@ -1,18 +1,11 @@
 import { writable } from 'svelte/store';
 
 import type { Book, SyncMode } from '~/models';
-import { statusBarStore, settingsStore } from '~/store';
+import { settingsStore } from '~/store';
 
 type SyncJob = {
   status: 'idle' | 'in-progress' | 'done' | 'error';
   book: Book;
-};
-
-type SyncResult = {
-  newBookCount: number;
-  newHighlightsCount: number;
-  updatedBookCount: number;
-  updatedHighlightsCount: number;
 };
 
 type SyncSession = {
@@ -20,10 +13,6 @@ type SyncSession = {
   errorMessage?: string;
   method?: SyncMode;
   jobs: SyncJob[];
-};
-
-const getBooks = (state: SyncSession): Book[] => {
-  return state.jobs.map((j) => j.book);
 };
 
 const createSyncSessionStore = () => {
@@ -44,7 +33,6 @@ const createSyncSessionStore = () => {
 
   const startSync = (method: SyncMode) => {
     store.update((state) => {
-      statusBarStore.actions.syncStarted();
       settingsStore.actions.setLastSyncMode(method);
       state.status = 'loading';
       state.method = method;
@@ -72,14 +60,9 @@ const createSyncSessionStore = () => {
     });
   };
 
-  const completeSync = (result: SyncResult) => {
+  const completeSync = () => {
     store.update((state) => {
-      statusBarStore.actions.syncComplete(getBooks(state));
       settingsStore.actions.setSyncDateToNow();
-      settingsStore.actions.incrementHistory({
-        totalBooks: result.newBookCount,
-        totalHighlights: result.newHighlightsCount,
-      });
       reset();
       return state;
     });
@@ -88,7 +71,6 @@ const createSyncSessionStore = () => {
   const setJobs = (books: Book[]) => {
     store.update((state) => {
       state.jobs = books.map((book) => ({ status: 'idle', book }));
-      statusBarStore.actions.booksFound(books);
       return state;
     });
   };
@@ -97,10 +79,6 @@ const createSyncSessionStore = () => {
     store.update((state) => {
       const job = state.jobs.filter((job) => job.book.asin === book.asin)[0];
       job.status = status;
-
-      if (status === 'in-progress') {
-        statusBarStore.actions.syncingBook(book);
-      }
 
       if (status === 'done') {
         settingsStore.actions.setSyncDateToNow();

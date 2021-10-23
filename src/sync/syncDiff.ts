@@ -11,7 +11,7 @@ type RenderedHighlight = {
   highlightId: string;
 };
 
-type DiffResult = {
+export type DiffResult = {
   remoteHighlight: Highlight;
   prevRenderedHighlight: RenderedHighlight;
   nextRenderedHighlight: RenderedHighlight;

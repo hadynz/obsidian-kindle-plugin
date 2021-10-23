@@ -5,6 +5,7 @@ import { get } from 'svelte/store';
 import defaultHighlightTemplate from '~/assets/defaultHighlightTemplate.njk';
 import AmazonLogoutModal from '~/components/amazonLogoutModal';
 import type KindlePlugin from '~/.';
+import type FileManager from '~/fileManager';
 import type { AmazonAccountRegion } from '~/models';
 import { Renderer } from '~/renderer';
 import { settingsStore } from '~/store';
@@ -14,10 +15,13 @@ import { AmazonRegions } from '~/amazonRegion';
 const { moment } = window;
 
 export class SettingsTab extends PluginSettingTab {
-  public app: App;
   private renderer: Renderer;
 
-  constructor(app: App, plugin: KindlePlugin) {
+  constructor(
+    app: App,
+    plugin: KindlePlugin,
+    private fileManager: FileManager
+  ) {
     super(app, plugin);
     this.app = app;
     this.renderer = new Renderer();
@@ -29,7 +33,7 @@ export class SettingsTab extends PluginSettingTab {
     containerEl.empty();
 
     if (get(settingsStore).isLoggedIn) {
-      this.logout();
+      await this.logout();
     }
 
     this.highlightsFolder();
@@ -40,13 +44,15 @@ export class SettingsTab extends PluginSettingTab {
     this.resetSyncHistory();
   }
 
-  private logout(): void {
+  private async logout(): Promise<void> {
     const syncMessage = get(settingsStore).lastSyncDate
       ? `Last sync ${moment(get(settingsStore).lastSyncDate).fromNow()}`
       : 'Sync has never run';
 
+    const kindleFiles = await this.fileManager.getKindleFiles();
+
     const descFragment = document.createRange().createContextualFragment(`
-      ${get(settingsStore).history.totalBooks} book(s) synced<br/>
+      ${kindleFiles.length} book(s) synced<br/>
       ${syncMessage}
     `);
 
