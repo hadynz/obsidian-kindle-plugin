@@ -32,9 +32,9 @@ export default class KindlePlugin extends Plugin {
     this.syncAmazon = new SyncAmazon(syncManager);
     this.syncClippings = new SyncClippings(syncManager);
 
-    new StatusBar(this.addStatusBarItem(), () => {
-      this.showSyncModal();
-    });
+    // new StatusBar(this.addStatusBarItem(), () => {
+    //   this.showSyncModal();
+    // });
 
     this.addRibbonIcon('kindle', 'Sync your Kindle highlights', () => {
       this.showSyncModal();

@@ -9,7 +9,7 @@ import { ee } from '~/eventEmitter';
 const _setInterval = new SetInterval();
 const _setTimeout = new SetTimeout();
 
-const intervalInMs = 1000 * 60 * 5; // 5 minute
+const intervalInMs = 1000 * 2; // 5 minute
 const timeoutInMs = 1000 * 30; // 30 seconds
 
 type StatusBarMessage = {
@@ -46,7 +46,8 @@ class DefaultMessage {
 }
 
 const createStatusBarStore = () => {
-  let setMessage: (StatusBarMessage) => void = () => {
+  let setMessage: (message: StatusBarMessage) => void = () => {
+    console.log('n00p is running :\\');
     // Do nothing...
   };
 
@@ -59,11 +60,12 @@ const createStatusBarStore = () => {
   };
 
   ee.on('resyncBook', (file) => {
+    _setTimeout.clear();
     _setInterval.clear();
-    setMessage({
-      status: 'syncing',
-      text: `Resyncing ${sanitizeTitle(file.book.title)}`,
-    });
+    // setMessage({
+    //   status: 'syncing',
+    //   text: `Resyncing ${sanitizeTitle(file.book.title)}`,
+    // });
   });
 
   ee.on('resyncFailure', async (file) => {
@@ -71,15 +73,41 @@ const createStatusBarStore = () => {
       status: 'error',
       text: `Error resyncing ${sanitizeTitle(file.book.title)}`,
     });
-    waitThenResumeDefaultMessage();
+    // waitThenResumeDefaultMessage();
   });
 
   ee.on('resyncComplete', (_file, diffCount) => {
+    // setMessage({
+    //   status: 'ready',
+    //   text: `${diffCount} highlight(s) were imported`,
+    // });
+    // waitThenResumeDefaultMessage();
+  });
+
+  ee.on('syncStart', () => {
+    console.log('sync has started');
+    _setInterval.clear();
+    _setTimeout.clear();
+    setMessage({
+      status: 'syncing',
+      text: 'Starting sync...',
+    });
+  });
+
+  ee.on('syncFailure', async (message) => {
+    setMessage({
+      status: 'error',
+      text: `Sync error: ${message}`,
+    });
+    // waitThenResumeDefaultMessage();
+  });
+
+  ee.on('syncSuccess', () => {
     setMessage({
       status: 'ready',
-      text: `${diffCount} highlight(s) were imported`,
+      text: 'Sync is complete',
     });
-    waitThenResumeDefaultMessage();
+    // waitThenResumeDefaultMessage();
   });
 
   const store = derived(
@@ -89,20 +117,25 @@ const createStatusBarStore = () => {
       defaultMessage.set($settings.lastSyncDate, $file);
 
       // Expose store's set method to closure
-      setMessage = set;
-
-      // Set default message on initial load of plugin
-      setMessage(defaultMessage.get());
-
-      // Update default message regularly
-      _setInterval.reset(() => setMessage(defaultMessage.get()), intervalInMs);
+      setMessage = (value: StatusBarMessage) => {
+        console.log('Status bar being set', value, moment().format('LTS'));
+        set(value);
+      };
 
       return () => {
         _setTimeout.clear();
         _setInterval.clear();
       };
-    }
+    },
+    FirstTimeMessage
   );
+
+  // Set default message on initial load of plugin
+  setMessage(defaultMessage.get());
+
+  // Update default message regularly
+  console.log('Setting interval message');
+  _setInterval.reset(() => setMessage(defaultMessage.get()), intervalInMs);
 
   return {
     subscribe: store.subscribe,

@@ -8,6 +8,8 @@ interface MessageEvents {
   obsidianReady: () => void;
   login: () => void;
   loginComplete: (success: boolean) => void;
+  fetchingBooks: () => void;
+  fetchingBooksSuccess: (books: Book[]) => void;
   syncStart: (mode: SyncMode) => void;
   syncSuccess: () => void;
   syncFailure: (message: string) => void;

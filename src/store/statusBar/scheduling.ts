@@ -1,5 +1,5 @@
 class SetInterval {
-  private key: { [key: string]: NodeJS.Timer } = {};
+  private key: { [key: string]: number } = {};
 
   public reset(fn: () => void, intervalInMs: number, key = 'default'): void {
     this.clear(key);
@@ -7,10 +7,13 @@ class SetInterval {
   }
 
   public start(fn: () => void, intervalInMs: number, key = 'default'): void {
+    console.log('Checking for key', key, this.key, this.key[key]);
     if (!this.key[key]) {
-      this.key[key] = setInterval(function () {
+      this.key[key] = window.setInterval(function () {
         fn();
+        console.log('Recurring message');
       }, intervalInMs);
+      console.log('setting setInterval', this.key);
     }
   }
 
@@ -23,7 +26,7 @@ class SetInterval {
 }
 
 class SetTimeout {
-  private key: { [key: string]: NodeJS.Timeout } = {};
+  private key: { [key: string]: number } = {};
 
   public reset(fn: () => void, timeoutInMs: number, key = 'default'): void {
     this.clear(key);
@@ -32,7 +35,7 @@ class SetTimeout {
 
   public start(fn: () => void, timeoutInMs: number, key = 'default'): void {
     if (!this.key[key]) {
-      this.key[key] = setTimeout(function () {
+      this.key[key] = window.setTimeout(function () {
         fn();
       }, timeoutInMs);
     }

@@ -9,6 +9,8 @@ export default class SyncAmazon {
   constructor(private syncManager: SyncManager) {}
 
   public async startSync(): Promise<void> {
+    ee.emit('syncStart', 'amazon');
+
     const success = await this.login();
 
     if (!success) {
@@ -16,12 +18,14 @@ export default class SyncAmazon {
     }
 
     try {
-      ee.emit('syncStart', 'amazon');
+      ee.emit('fetchingBooks');
 
       const remoteBooks = await scrapeBooks();
 
+      ee.emit('fetchingBooksSuccess', remoteBooks);
+
       if (remoteBooks.length > 0) {
-        await this.syncBooks([remoteBooks[0]]);
+        await this.syncBooks(remoteBooks.slice(0, 5));
       }
 
       ee.emit('syncSuccess');
