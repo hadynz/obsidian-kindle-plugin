@@ -47,16 +47,7 @@ Line 3`;
       }).toThrow('Line numbers must start from 1');
     });
 
-    it('Line numbers must be unique', () => {
-      expect(() => {
-        sb(faker.datatype.string()).insertLinesAt([
-          { line: 2, content: faker.datatype.string() },
-          { line: 2, content: faker.datatype.string() },
-        ]);
-      }).toThrow('Line numbers must be unique');
-    });
-
-    it('Inserting multiple lines out of order work as expected', () => {
+    it('Inserting multiple lines in document', () => {
       const content = `Line 1
 Line 2
 Line 3`;
@@ -70,9 +61,30 @@ Line 3`;
 
       const actual = sb(content)
         .insertLinesAt([
+          { line: 1, content: 'Before Line 1' },
           { line: 2, content: 'After Line 1' },
           { line: 3, content: 'After Line 2' },
-          { line: 1, content: 'Before Line 1' },
+        ])
+        .toString();
+
+      expect(actual).toEqual(expected);
+    });
+
+    it('Inserting multiple subsequent lines at the same location', () => {
+      const content = `Line 1
+Line 2
+Line 3`;
+
+      const expected = `Line 1
+Line 2
+Line 2a
+Line 2b
+Line 3`;
+
+      const actual = sb(content)
+        .insertLinesAt([
+          { line: 3, content: 'Line 2a' },
+          { line: 3, content: 'Line 2b' },
         ])
         .toString();
 

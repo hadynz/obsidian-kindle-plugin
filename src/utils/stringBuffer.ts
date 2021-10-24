@@ -29,13 +29,8 @@ export class StringBuffer {
       throw new Error('Line numbers must start from 1');
     }
 
-    if (new Set(newLines.map((l) => l.line)).size !== newLines.length) {
-      throw new Error('Line numbers must be unique');
-    }
-
-    const reversedNewLines = [...newLines].sort((a, b) => b.line - a.line);
-
-    for (const newLine of reversedNewLines) {
+    for (let i = newLines.length - 1; i >= 0; i--) {
+      const newLine = newLines[i];
       this.lines.splice(newLine.line - 1, 0, newLine.content);
     }
 
