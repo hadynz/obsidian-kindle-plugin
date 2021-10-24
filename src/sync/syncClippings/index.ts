@@ -14,7 +14,7 @@ export default class SyncKindleClippings {
     }
 
     try {
-      ee.emit('syncStart', 'my-clippings');
+      ee.emit('syncSessionStart', 'my-clippings');
 
       const bookHighlights = await parseBooks(clippingsFile);
 
@@ -22,9 +22,10 @@ export default class SyncKindleClippings {
         await this.syncManager.syncBook(book, highlights);
       }
 
-      ee.emit('syncSuccess');
+      ee.emit('syncSessionSuccess');
     } catch (error) {
-      ee.emit('syncFailure', `Error parsing ${clippingsFile}.\n\n${error}`);
+      const message = `Error parsing ${clippingsFile}.\n\n${error}`;
+      ee.emit('syncSessionFailure', message);
     }
   }
 }

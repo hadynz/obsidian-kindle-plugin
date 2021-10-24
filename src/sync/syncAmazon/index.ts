@@ -9,7 +9,7 @@ export default class SyncAmazon {
   constructor(private syncManager: SyncManager) {}
 
   public async startSync(): Promise<void> {
-    ee.emit('syncStart', 'amazon');
+    ee.emit('syncSessionStart', 'amazon');
 
     const success = await this.login();
 
@@ -28,9 +28,9 @@ export default class SyncAmazon {
         await this.syncBooks(remoteBooks.slice(0, 5));
       }
 
-      ee.emit('syncSuccess');
+      ee.emit('syncSessionSuccess');
     } catch (error) {
-      ee.emit('syncFailure', String(error));
+      ee.emit('syncSessionFailure', String(error));
     }
   }
 

@@ -83,7 +83,7 @@ const createStatusBarStore = () => {
     // waitThenResumeDefaultMessage();
   });
 
-  ee.on('syncStart', () => {
+  ee.on('syncSessionStart', () => {
     _setInterval.clear();
     _setTimeout.clear();
     setMessage({
@@ -92,7 +92,7 @@ const createStatusBarStore = () => {
     });
   });
 
-  ee.on('syncFailure', async (message) => {
+  ee.on('syncSessionFailure', async (message) => {
     setMessage({
       status: 'error',
       text: `Sync error: ${message}`,
@@ -100,7 +100,7 @@ const createStatusBarStore = () => {
     // waitThenResumeDefaultMessage();
   });
 
-  ee.on('syncSuccess', () => {
+  ee.on('syncSessionSuccess', () => {
     setMessage({
       status: 'ready',
       text: 'Sync is complete',

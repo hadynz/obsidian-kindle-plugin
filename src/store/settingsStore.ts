@@ -50,14 +50,14 @@ const createSettingsStore = () => {
     });
   });
 
-  ee.on('syncStart', (mode) => {
+  ee.on('syncSessionStart', (mode) => {
     store.update((state) => {
       state.lastSyncMode = mode;
       return state;
     });
   });
 
-  ee.on('syncSuccess', () => {
+  ee.on('syncSessionSuccess', () => {
     store.update((state) => {
       state.lastSyncDate = new Date();
       return state;

@@ -23,7 +23,7 @@ export const registerNotifications = (): void => {
     new Notice(message);
   });
 
-  ee.on('syncFailure', (message: string) => {
+  ee.on('syncSessionFailure', (message: string) => {
     new Notice(message);
   });
 

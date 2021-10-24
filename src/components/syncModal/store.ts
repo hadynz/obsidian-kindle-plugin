@@ -53,7 +53,7 @@ const createSyncModalStore = () => {
     }));
   });
 
-  ee.on('syncStart', (mode: SyncMode) => {
+  ee.on('syncSessionStart', (mode: SyncMode) => {
     store.update((state) => ({
       ...state,
       status: 'sync:syncing',
@@ -77,11 +77,11 @@ const createSyncModalStore = () => {
     }));
   });
 
-  ee.on('syncSuccess', () => syncing('idle'));
+  ee.on('syncSessionSuccess', () => syncing('idle'));
 
   ee.on('resyncComplete', () => syncing('idle'));
 
-  ee.on('syncFailure', (message: string) => {
+  ee.on('syncSessionFailure', (message: string) => {
     store.update((state) => ({
       ...state,
       status: 'idle',

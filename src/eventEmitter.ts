@@ -10,9 +10,9 @@ interface MessageEvents {
   loginComplete: (success: boolean) => void;
   fetchingBooks: () => void;
   fetchingBooksSuccess: (books: Book[]) => void;
-  syncStart: (mode: SyncMode) => void;
-  syncSuccess: () => void;
-  syncFailure: (message: string) => void;
+  syncSessionStart: (mode: SyncMode) => void;
+  syncSessionSuccess: () => void;
+  syncSessionFailure: (message: string) => void;
   syncBook: (book: Book, index: number) => void;
   syncBookSuccess: (book: Book, highlights: Highlight[]) => void;
   syncBookFailure: (book: Book, message: string) => void;
@@ -23,6 +23,6 @@ interface MessageEvents {
 
 export const ee = new EventEmitter() as TypedEmitter<MessageEvents>;
 
-ee.on('syncFailure', console.error);
+ee.on('syncSessionFailure', console.error);
 ee.on('syncBookFailure', console.error);
 ee.on('resyncFailure', console.error);
