@@ -11,21 +11,20 @@ const createFileStore = () => {
   };
 
   const store = readable(0, (set) => {
-    const updateFileCount = () =>
+    const updateFileCount = () => {
       _fileManager?.getKindleFiles().then((files) => {
         set(files.length);
       });
+    };
 
     // Initial seed when Obsidian is loaded
     updateFileCount();
 
-    ee.on('obsidianReady', () => {
-      updateFileCount();
-    });
+    ee.on('obsidianReady', updateFileCount);
 
-    // Update file count state after every successful book sync
+    // Delay fetching of latest count to give Obsidian time to cache newly created file
     ee.on('syncBookSuccess', () => {
-      updateFileCount();
+      window.setTimeout(updateFileCount, 500);
     });
   });
 

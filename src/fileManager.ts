@@ -50,8 +50,11 @@ export default class FileManager {
 
     const file = fileOrFolder as TFile;
 
-    const { frontmatter } = this.metadataCache.getFileCache(file);
-    const kindleFrontmatter: SyncingState = frontmatter?.[SyncingStateKey];
+    const fileCache = this.metadataCache.getFileCache(file);
+
+    // File cache can be undefined if this file was just created and not yet cached by Obsidian
+    const kindleFrontmatter: SyncingState =
+      fileCache?.frontmatter?.[SyncingStateKey];
 
     if (kindleFrontmatter == null) {
       return undefined;
