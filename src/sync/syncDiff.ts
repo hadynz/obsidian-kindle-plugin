@@ -13,8 +13,7 @@ type RenderedHighlight = {
 
 export type DiffResult = {
   remoteHighlight: Highlight;
-  prevRenderedHighlight: RenderedHighlight;
-  nextRenderedHighlight: RenderedHighlight;
+  nextRenderedHighlight?: RenderedHighlight;
 };
 
 type DiffIndex = {
@@ -22,23 +21,14 @@ type DiffIndex = {
   exists: boolean;
 };
 
-const getNeighbours = (
+const getNextNeighbour = (
   state: Map<string, DiffIndex>,
   needle: string
-): [Highlight, Highlight] => {
+): Highlight => {
   const keys = Array.from(state.keys());
   const needleIndex = keys.indexOf(needle);
 
-  let prev = null;
-  let next = null;
-
-  for (let i = needleIndex - 1; i >= 0; i--) {
-    const diffIndex = state.get(keys[i]);
-    if (diffIndex.exists) {
-      prev = diffIndex.highlight;
-      break;
-    }
-  }
+  let next: Highlight = null;
 
   for (let i = needleIndex + 1; i < keys.length; i++) {
     const diffIndex = state.get(keys[i]);
@@ -48,7 +38,7 @@ const getNeighbours = (
     }
   }
 
-  return [prev, next];
+  return next;
 };
 
 export const diffLists = (
@@ -74,14 +64,12 @@ export const diffLists = (
   );
 
   return diff.map((remote): DiffResult => {
-    const [prev, next] = getNeighbours(syncState, remote.id);
-    const prevRendered = renders.find((r) => r.highlightId === prev?.id);
+    const next = getNextNeighbour(syncState, remote.id);
     const nextRendered = renders.find((r) => r.highlightId === next?.id);
 
     return {
       remoteHighlight: remote,
       nextRenderedHighlight: nextRendered,
-      prevRenderedHighlight: prevRendered,
     };
   });
 };
@@ -128,16 +116,25 @@ export class SyncDiff {
   ): Promise<void> {
     const fileContents = await this.fileManager.readFile(kindleFile);
 
+    const insertList = diffs
+      .filter((d) => d.nextRenderedHighlight)
+      .map((d) => ({
+        line: d.nextRenderedHighlight?.line,
+        content: this.renderer.renderHighlight(
+          kindleFile.book,
+          d.remoteHighlight
+        ),
+      }));
+
+    const appendList = diffs
+      .filter((d) => d.nextRenderedHighlight == null)
+      .map((d) =>
+        this.renderer.renderHighlight(kindleFile.book, d.remoteHighlight)
+      );
+
     const modifiedFileContents = sb(fileContents)
-      .insertLinesAt(
-        diffs.map((d) => ({
-          line: d.nextRenderedHighlight.line,
-          content: this.renderer.renderHighlight(
-            kindleFile.book,
-            d.remoteHighlight
-          ),
-        }))
-      )
+      .insertLinesAt(insertList)
+      .append(appendList)
       .toString();
 
     this.fileManager.updateFile(kindleFile, modifiedFileContents);
