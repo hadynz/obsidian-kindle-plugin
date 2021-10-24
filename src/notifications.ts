@@ -2,6 +2,7 @@ import { Notice } from 'obsidian';
 import { sanitizeTitle } from '~/utils';
 
 import { ee } from '~/eventEmitter';
+import type { KindleFile } from '~/fileManager';
 
 export const registerNotifications = (): void => {
   ee.on('resyncBook', (kindleFile) => {
@@ -19,6 +20,14 @@ export const registerNotifications = (): void => {
       message = `${diffCount} highlights imported`;
     }
 
+    new Notice(message);
+  });
+
+  ee.on('syncFailure', (message: string) => {
+    new Notice(message);
+  });
+
+  ee.on('resyncFailure', (_file: KindleFile, message: string) => {
     new Notice(message);
   });
 };

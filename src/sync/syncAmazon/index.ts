@@ -30,7 +30,7 @@ export default class SyncAmazon {
 
       ee.emit('syncSuccess');
     } catch (error) {
-      ee.emit('syncFailure', error);
+      ee.emit('syncFailure', String(error));
     }
   }
 
@@ -49,7 +49,7 @@ export default class SyncAmazon {
 
       ee.emit('resyncComplete', file, diffs.length);
     } catch (error) {
-      ee.emit('resyncFailure', file, error);
+      ee.emit('resyncFailure', file, String(error));
     }
   }
 
@@ -74,7 +74,7 @@ export default class SyncAmazon {
 
         ee.emit('syncBookSuccess', book, highlights);
       } catch (error) {
-        ee.emit('syncBookFailure', book, error);
+        ee.emit('syncBookFailure', book, String(error));
       }
     }
   }
