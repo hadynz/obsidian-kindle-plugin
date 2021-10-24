@@ -2,7 +2,6 @@
   import SyncButtons from './SyncButtons.svelte';
   import type { SyncMode } from '~/models';
 
-  export let lastSyncMode: SyncMode;
   export let onClick: (mode: SyncMode) => void;
 </script>
 
@@ -16,7 +15,7 @@
     </p>
   </div>
   <div>
-    <SyncButtons {lastSyncMode} {onClick} />
+    <SyncButtons {onClick} />
   </div>
 </div>
 

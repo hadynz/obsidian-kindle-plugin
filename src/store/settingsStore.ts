@@ -50,6 +50,13 @@ const createSettingsStore = () => {
     });
   });
 
+  ee.on('syncStart', (mode) => {
+    store.update((state) => {
+      state.lastSyncMode = mode;
+      return state;
+    });
+  });
+
   ee.on('syncSuccess', () => {
     store.update((state) => {
       state.lastSyncDate = new Date();
@@ -114,13 +121,6 @@ const createSettingsStore = () => {
     });
   };
 
-  const setLastSyncMode = (value: SyncMode) => {
-    store.update((state) => {
-      state.lastSyncMode = value;
-      return state;
-    });
-  };
-
   const setDownloadBookMetadata = (value: boolean) => {
     store.update((state) => {
       state.downloadBookMetadata = value;
@@ -145,7 +145,6 @@ const createSettingsStore = () => {
       logout,
       setHighlightTemplate,
       setSyncOnBoot,
-      setLastSyncMode,
       setDownloadBookMetadata,
       setAmazonRegion,
     },

@@ -1,6 +1,5 @@
 import { fileStore } from './fileStore';
 import { settingsStore } from './settingsStore';
-import { syncSessionStore } from './syncSessionStore';
 import { statusBarStore } from './statusBar';
 
 import type KindlePlugin from '~/.';
@@ -14,10 +13,4 @@ const initializeStores = async (
   await fileStore.initialize(fileManager);
 };
 
-export {
-  initializeStores,
-  fileStore,
-  settingsStore,
-  syncSessionStore,
-  statusBarStore,
-};
+export { initializeStores, fileStore, settingsStore, statusBarStore };

@@ -3,35 +3,23 @@
   import SyncingView from './views/SyncingView.svelte';
   import FirstTimeView from './views/FirstTimeView.svelte';
   import SyncButtons from './views/SyncButtons.svelte';
-
-  import { settingsStore } from '~/store';
+  import { store } from './store';
   import type { SyncMode } from '~/models';
-  import type { SyncModalState } from './index';
 
-  export let modalState: SyncModalState;
-  export let booksCount: number;
   export let onDone: () => void;
   export let onClick: (mode: SyncMode) => void;
-  export let setModalTitle: (modalState: SyncModalState) => void;
-
-  const idleViewProps = {
-    lastSyncDate: $settingsStore.lastSyncDate,
-    totalBooks: booksCount,
-  };
 </script>
 
-{#if modalState === 'idle'}
+{#if $store.status === 'idle'}
   <IdleView
-    {...idleViewProps}
     onClick={() => {
-      modalState = 'choose-sync-method';
-      setModalTitle(modalState);
+      store.update((p) => ({ ...p, status: 'choose-sync-method' }));
     }}
   />
-{:else if modalState === 'syncing'}
+{:else if $store.status.startsWith('sync:')}
   <SyncingView {onDone} />
-{:else if modalState === 'choose-sync-method'}
-  <SyncButtons lastSyncMode={$settingsStore.lastSyncMode} {onClick} />
-{:else if modalState === 'first-time'}
-  <FirstTimeView lastSyncMode={$settingsStore.lastSyncMode} {onClick} />
+{:else if $store.status === 'choose-sync-method'}
+  <SyncButtons {onClick} />
+{:else if $store.status === 'first-time'}
+  <FirstTimeView {onClick} />
 {/if}

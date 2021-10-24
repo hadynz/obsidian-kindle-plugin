@@ -47,7 +47,6 @@ class DefaultMessage {
 
 const createStatusBarStore = () => {
   let setMessage: (message: StatusBarMessage) => void = () => {
-    console.log('n00p is running :\\');
     // Do nothing...
   };
 
@@ -85,7 +84,6 @@ const createStatusBarStore = () => {
   });
 
   ee.on('syncStart', () => {
-    console.log('sync has started');
     _setInterval.clear();
     _setTimeout.clear();
     setMessage({
@@ -134,8 +132,8 @@ const createStatusBarStore = () => {
   setMessage(defaultMessage.get());
 
   // Update default message regularly
-  console.log('Setting interval message');
-  _setInterval.reset(() => setMessage(defaultMessage.get()), intervalInMs);
+  // console.log('Setting interval message');
+  // _setInterval.reset(() => setMessage(defaultMessage.get()), intervalInMs);
 
   return {
     subscribe: store.subscribe,

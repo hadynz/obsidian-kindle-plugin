@@ -17,7 +17,11 @@ const createFileStore = () => {
       });
 
     // Initial seed when Obsidian is loaded
-    ee.on('obsidianReady', () => updateFileCount());
+    updateFileCount();
+
+    ee.on('obsidianReady', () => {
+      updateFileCount();
+    });
 
     // Update file count state after every successful book sync
     ee.on('syncBookSuccess', () => {

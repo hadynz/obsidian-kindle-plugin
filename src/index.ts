@@ -50,8 +50,8 @@ export default class KindlePlugin extends Plugin {
 
     this.addSettingTab(new SettingsTab(this.app, this, this.fileManager));
 
-    this.registerEvents();
     registerNotifications();
+    this.registerEvents();
 
     if (get(settingsStore).syncOnBoot) {
       await this.startAmazonSync();
@@ -83,7 +83,7 @@ export default class KindlePlugin extends Plugin {
   }
 
   private showSyncModal(): void {
-    new SyncModal(this.app, this.fileManager, {
+    new SyncModal(this.app, {
       onOnlineSync: () => this.startAmazonSync(),
       onMyClippingsSync: () => this.syncClippings.startSync(),
     }).show();
