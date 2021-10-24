@@ -54,11 +54,7 @@ const createSyncModalStore = () => {
   });
 
   ee.on('syncSessionStart', (mode: SyncMode) => {
-    store.update((state) => ({
-      ...state,
-      status: 'sync:syncing',
-      syncMode: mode,
-    }));
+    store.set({ ...InitialState, status: 'sync:syncing', syncMode: mode });
   });
 
   ee.on('syncBook', (book: Book, index: number) => {
@@ -70,14 +66,16 @@ const createSyncModalStore = () => {
   });
 
   ee.on('resyncBook', (file: KindleFile) => {
-    store.update((state) => ({
-      ...state,
+    store.set({
+      ...InitialState,
       status: 'sync:syncing',
-      currentBook: file.book,
-    }));
+      currentJob: { book: file.book, index: 0 },
+    });
   });
 
-  ee.on('syncSessionSuccess', () => syncing('idle'));
+  ee.on('syncSessionSuccess', () => {
+    store.set(InitialState);
+  });
 
   ee.on('resyncComplete', () => syncing('idle'));
 
