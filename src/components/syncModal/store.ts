@@ -4,7 +4,11 @@ import { ee } from '~/eventEmitter';
 import type { Book, SyncMode } from '~/models';
 import type { KindleFile } from '~/fileManager';
 
-type ErroredBook = {
+type Job = {
+  book: Book;
+};
+
+type JobError = {
   book: Book;
   reason: string;
 };
@@ -12,21 +16,22 @@ type ErroredBook = {
 export type SyncModalState = {
   status:
     | 'first-time'
+    | 'idle'
+    | 'choose-sync-method'
     | 'sync:login'
     | 'sync:fetching-books'
-    | 'sync:syncing'
-    | 'idle'
-    | 'choose-sync-method';
+    | 'sync:syncing';
   syncMode?: SyncMode;
-  currentBook?: Book;
+  currentJob?: { book: Book; index: number };
   syncError: string | undefined;
-  erroredBooks: ErroredBook[];
+  jobs?: Job[] | undefined;
+  erroredJobs: JobError[];
 };
 
 const InitialState: SyncModalState = {
   status: 'idle',
   syncError: undefined,
-  erroredBooks: [],
+  erroredJobs: [],
 };
 
 const createSyncModalStore = () => {
@@ -40,6 +45,14 @@ const createSyncModalStore = () => {
 
   ee.on('fetchingBooks', () => syncing('sync:fetching-books'));
 
+  ee.on('fetchingBooksSuccess', (books: Book[]) => {
+    store.update((state) => ({
+      ...state,
+      status: 'sync:fetching-books',
+      jobs: books.map((book) => ({ book, status: 'idle' })),
+    }));
+  });
+
   ee.on('syncStart', (mode: SyncMode) => {
     store.update((state) => ({
       ...state,
@@ -48,11 +61,11 @@ const createSyncModalStore = () => {
     }));
   });
 
-  ee.on('syncBook', (book: Book) => {
+  ee.on('syncBook', (book: Book, index: number) => {
     store.update((state) => ({
       ...state,
       status: 'sync:syncing',
-      currentBook: book,
+      currentJob: { book, index },
     }));
   });
 
@@ -80,14 +93,14 @@ const createSyncModalStore = () => {
     store.update((state) => ({
       ...state,
       status: 'idle',
-      erroredBooks: [{ book: file.book, reason: message }],
+      erroredJobs: [{ book: file.book, reason: message }],
     }));
   });
 
   ee.on('syncBookFailure', (book: Book, message: string) => {
     store.update((state) => ({
       ...state,
-      erroredBooks: [...state.erroredBooks, { book, reason: message }],
+      erroredJobs: [...state.erroredJobs, { book, reason: message }],
     }));
   });
 

@@ -14,18 +14,17 @@
     progressMessage = 'Looking for new Kindle highlights to sync...';
   } else {
     progressMessage =
-      'Parsing your Clippings files for highlights and notes...';
+      'Parsing your My Clippings files for highlights and notes...';
   }
 
-  $: doneTotal = 5;
-  $: total = 10;
+  $: total = $store.jobs?.length;
 
   export let onDone: () => void;
 </script>
 
-{#if $store.erroredBooks.length > 0}
+{#if $store.erroredJobs.length > 0}
   <div class="kp-syncmodal--error">
-    {`${$store.erroredBooks.length} books(s) could not be synced because of errors`}
+    {`${$store.erroredJobs.length} books(s) could not be synced because of errors`}
   </div>
   <div class="setting-item-control">
     <button class="mod-cta" on:click={onDone}>OK</button>
@@ -35,13 +34,15 @@
     <Jumper color="#7f6df2" size="90" duration="1.6s" />
 
     <div class="kp-syncmodal--progress">
-      {#if $store.currentBook}
-        <span class="kp-syncmodal--progress-current">{doneTotal}</span>
+      {#if $store.currentJob}
+        <span class="kp-syncmodal--progress-current">
+          {$store.currentJob.index + 1}
+        </span>
         <span class="kp-syncmodal--progress-total">/ {total}</span>
         <div class="kp-syncmodal--download">
           Syncing
           <span class="kp-syncmodal--book-name">
-            {sanitizeTitleExcess($store.currentBook.title)}
+            {sanitizeTitleExcess($store.currentJob.book.title)}
           </span>
         </div>
       {:else}

@@ -65,9 +65,9 @@ export default class SyncAmazon {
   }
 
   private async syncBooks(books: Book[]): Promise<void> {
-    for (const book of books) {
+    for (const [index, book] of books.entries()) {
       try {
-        ee.emit('syncBook', book);
+        ee.emit('syncBook', book, index);
 
         const highlights = await scrapeHighlightsForBook(book);
         await this.syncManager.syncBook(book, highlights);

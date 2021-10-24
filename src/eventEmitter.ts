@@ -13,7 +13,7 @@ interface MessageEvents {
   syncStart: (mode: SyncMode) => void;
   syncSuccess: () => void;
   syncFailure: (message: string) => void;
-  syncBook: (book: Book) => void;
+  syncBook: (book: Book, index: number) => void;
   syncBookSuccess: (book: Book, highlights: Highlight[]) => void;
   syncBookFailure: (book: Book, message: string) => void;
   resyncBook: (file: KindleFile) => void;
