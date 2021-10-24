@@ -3,21 +3,19 @@ import { get } from 'svelte/store';
 
 import { settingsStore } from '~/store';
 import { scrapeBookMetadata } from '~/scraper';
-import { SyncDiff } from '~/sync/syncDiff';
+import { DiffManager } from './diffManager';
 import { Renderer } from '~/renderer';
 import { ResyncBookModal } from '~/components/resyncModal';
 import type FileManager from '~/fileManager';
 import type { KindleFile } from '~/fileManager';
 import type { Book, BookMetadata, Highlight } from '~/models';
-import type { DiffResult } from '~/sync/syncDiff';
+import type { DiffResult } from './diffManager';
 
 export default class SyncManager {
-  private diff: SyncDiff;
   private renderer: Renderer;
 
   constructor(private app: App, private fileManager: FileManager) {
     this.fileManager = fileManager;
-    this.diff = new SyncDiff(fileManager);
     this.renderer = new Renderer();
   }
 
@@ -44,10 +42,12 @@ export default class SyncManager {
     file: KindleFile,
     highlights: Highlight[]
   ): Promise<DiffResult[]> {
-    const diffs = await this.diff.diff(file, highlights);
+    const diffManager = await DiffManager.create(this.fileManager, file);
+
+    const diffs = await diffManager.diff(highlights);
 
     if (diffs.length > 0) {
-      await this.diff.applyDiffs(file, diffs);
+      await diffManager.applyDiffs(diffs);
     }
 
     return diffs;

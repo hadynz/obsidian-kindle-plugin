@@ -3,14 +3,14 @@ type LineEntry = {
   content: string;
 };
 
-class StringBuffer {
+export class StringBuffer {
   private lines: string[];
 
   constructor(content: string) {
     this.lines = content.split('\n');
   }
 
-  getLine(line: number): string {
+  public getLine(line: number): string {
     if (line <= 0) {
       throw new Error('Line numbers must start from 1');
     }
@@ -18,13 +18,13 @@ class StringBuffer {
     return this.lines[line - 1];
   }
 
-  find(predicate: (entry: LineEntry) => boolean): LineEntry[] {
+  public find(predicate: (entry: LineEntry) => boolean): LineEntry[] {
     return this.lines
       .map((content, index): LineEntry => ({ line: index + 1, content }))
       .filter(predicate);
   }
 
-  insertLinesAt(newLines: LineEntry[]) {
+  public insertLinesAt(newLines: LineEntry[]): StringBuffer {
     if (newLines.some((l) => l.line <= 0)) {
       throw new Error('Line numbers must start from 1');
     }
@@ -42,12 +42,12 @@ class StringBuffer {
     return this;
   }
 
-  append(newLines: string[]) {
+  public append(newLines: string[]): StringBuffer {
     this.lines.push(...newLines);
     return this;
   }
 
-  toString(): string {
+  public toString(): string {
     return this.lines.join('\n');
   }
 }
