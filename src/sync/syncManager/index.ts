@@ -5,7 +5,7 @@ import { settingsStore } from '~/store';
 import { scrapeBookMetadata } from '~/scraper';
 import { DiffManager } from '../diffManager';
 import { Renderer } from '~/renderer';
-import { ResyncBookModal, OverwriteFileModal } from '~/components/resyncModal';
+import { OverwriteFileModal } from '~/components/overwriteFileModal';
 import { diffBooks } from './diffBooks';
 import type FileManager from '~/fileManager';
 import type { KindleFile } from '~/fileManager';
