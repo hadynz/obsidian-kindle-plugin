@@ -40,12 +40,7 @@ export default class SyncManager {
 
     if (file == null) {
       await this.createBook(book, highlights);
-      return;
-    }
-
-    const result = await new ResyncBookModal(this.app).show(book);
-
-    if (result === 'resync') {
+    } else {
       await this.resyncBook(file, highlights);
     }
   }
