@@ -1,13 +1,21 @@
 import { MetadataCache, TAbstractFile, TFile, TFolder, Vault } from 'obsidian';
 import { get } from 'svelte/store';
+import path from 'path';
 
 import { settingsStore } from '~/store';
 import { sanitizeTitle, frontMatter as frontMatterUtil } from '~/utils';
 import type { Book } from '~/models';
 
+/**
+ * Returns a file path for a given book relative to the current Obsidian
+ * vault directory. The method also trims leading slashes to help with
+ * internal path matching with Obsidian's vault.getFiles method
+ */
 const bookFilePath = (book: Book): string => {
   const fileName = sanitizeTitle(book.title);
-  return `${get(settingsStore).highlightsFolder}/${fileName}.md`;
+  return path
+    .join(get(settingsStore).highlightsFolder, `${fileName}.md`)
+    .replace(/\//, '');
 };
 
 const SyncingStateKey = 'kindle-sync';
@@ -33,7 +41,13 @@ export default class FileManager {
     return await this.vault.cachedRead(file.file);
   }
 
-  public async getFile(book: Book): Promise<KindleFile | undefined> {
+  public fileExists(book: Book): [boolean, TFile | undefined] {
+    const filePath = bookFilePath(book);
+    const file = this.vault.getFiles().find((f) => f.path === filePath);
+    return [file != null, file];
+  }
+
+  public async getKindleFile(book: Book): Promise<KindleFile | undefined> {
     const allSyncedFiles = await this.getKindleFiles();
 
     const kindleFile = allSyncedFiles.find(
@@ -43,7 +57,7 @@ export default class FileManager {
     return kindleFile == null ? undefined : { ...kindleFile, book };
   }
 
-  public getKindleFile(fileOrFolder: TAbstractFile): KindleFile | undefined {
+  public mapToKindleFile(fileOrFolder: TAbstractFile): KindleFile | undefined {
     if (fileOrFolder instanceof TFolder) {
       return undefined;
     }
@@ -74,13 +88,26 @@ export default class FileManager {
   public async getKindleFiles(): Promise<KindleFile[]> {
     return this.vault
       .getMarkdownFiles()
-      .map((file) => this.getKindleFile(file))
+      .map((file) => this.mapToKindleFile(file))
       .filter((file) => file != null);
   }
 
   public async createFile(book: Book, content: string): Promise<void> {
     const filePath = bookFilePath(book);
+    const frontMatterContent = this.generateFileFrontmatter(book, content);
+    await this.vault.create(filePath, frontMatterContent);
+  }
 
+  public async overrideFile(
+    file: TFile,
+    book: Book,
+    content: string
+  ): Promise<void> {
+    const frontMatterContent = this.generateFileFrontmatter(book, content);
+    this.updateFile(file, frontMatterContent);
+  }
+
+  private generateFileFrontmatter(book: Book, content: string): string {
     const frontmatterState: SyncingState = {
       bookId: book.id,
       title: book.title,
@@ -93,10 +120,10 @@ export default class FileManager {
       [SyncingStateKey]: frontmatterState,
     });
 
-    await this.vault.create(filePath, frontMatterContent);
+    return frontMatterContent;
   }
 
-  public async updateFile(file: KindleFile, content: string): Promise<void> {
-    await this.vault.modify(file.file, content);
+  public async updateFile(file: TFile, content: string): Promise<void> {
+    await this.vault.modify(file, content);
   }
 }

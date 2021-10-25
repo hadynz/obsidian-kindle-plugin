@@ -61,7 +61,7 @@ export default class KindlePlugin extends Plugin {
   private registerEvents(): void {
     this.registerEvent(
       this.app.workspace.on('file-menu', (menu, file) => {
-        const kindleFile = this.fileManager.getKindleFile(file);
+        const kindleFile = this.fileManager.mapToKindleFile(file);
         if (kindleFile == null) {
           return;
         }

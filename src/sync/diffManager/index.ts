@@ -81,6 +81,6 @@ export class DiffManager {
       .append(appendList)
       .toString();
 
-    this.fileManager.updateFile(this.kindleFile, modifiedFileContents);
+    this.fileManager.updateFile(this.kindleFile.file, modifiedFileContents);
   }
 }
