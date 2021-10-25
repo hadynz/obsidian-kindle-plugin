@@ -20,7 +20,7 @@ const bookFilePath = (book: Book): string => {
 
 const SyncingStateKey = 'kindle-sync';
 
-type SyncingState = {
+type KindleFrontmatter = {
   bookId: string;
   title: string;
   author: string;
@@ -30,7 +30,7 @@ type SyncingState = {
 
 export type KindleFile = {
   file: TFile;
-  frontmatter: SyncingState;
+  frontmatter: KindleFrontmatter;
   book?: Book;
 };
 
@@ -67,7 +67,7 @@ export default class FileManager {
     const fileCache = this.metadataCache.getFileCache(file);
 
     // File cache can be undefined if this file was just created and not yet cached by Obsidian
-    const kindleFrontmatter: SyncingState =
+    const kindleFrontmatter: KindleFrontmatter =
       fileCache?.frontmatter?.[SyncingStateKey];
 
     if (kindleFrontmatter == null) {
@@ -94,8 +94,11 @@ export default class FileManager {
 
   public async createFile(book: Book, content: string): Promise<void> {
     const filePath = bookFilePath(book);
-    const frontMatterContent = this.generateFileFrontmatter(book, content);
-    await this.vault.create(filePath, frontMatterContent);
+    const contentWithFrontmatter = this.generateContentWithFrontmatter(
+      book,
+      content
+    );
+    await this.vault.create(filePath, contentWithFrontmatter);
   }
 
   public async overrideFile(
@@ -103,12 +106,15 @@ export default class FileManager {
     book: Book,
     content: string
   ): Promise<void> {
-    const frontMatterContent = this.generateFileFrontmatter(book, content);
-    this.updateFile(file, frontMatterContent);
+    const contentWithFrontmatter = this.generateContentWithFrontmatter(
+      book,
+      content
+    );
+    this.updateFile(file, contentWithFrontmatter);
   }
 
-  private generateFileFrontmatter(book: Book, content: string): string {
-    const frontmatterState: SyncingState = {
+  private generateContentWithFrontmatter(book: Book, content: string): string {
+    const frontmatterState: KindleFrontmatter = {
       bookId: book.id,
       title: book.title,
       author: book.author,
@@ -116,11 +122,11 @@ export default class FileManager {
       bookImageUrl: book.imageUrl,
     };
 
-    const frontMatterContent = frontMatterUtil.stringify(content, {
+    const contentWithFrontmatter = frontMatterUtil.stringify(content, {
       [SyncingStateKey]: frontmatterState,
     });
 
-    return frontMatterContent;
+    return contentWithFrontmatter;
   }
 
   public async updateFile(file: TFile, content: string): Promise<void> {
