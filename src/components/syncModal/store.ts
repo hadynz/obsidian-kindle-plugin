@@ -45,11 +45,11 @@ const createSyncModalStore = () => {
 
   ee.on('fetchingBooks', () => syncing('sync:fetching-books'));
 
-  ee.on('fetchingBooksSuccess', (books: Book[]) => {
+  ee.on('fetchingBooksSuccess', (booksToSync: Book[]) => {
     store.update((state) => ({
       ...state,
       status: 'sync:fetching-books',
-      jobs: books.map((book) => ({ book, status: 'idle' })),
+      jobs: booksToSync.map((book) => ({ book, status: 'idle' })),
     }));
   });
 

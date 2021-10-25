@@ -9,7 +9,7 @@ interface MessageEvents {
   login: () => void;
   loginComplete: (success: boolean) => void;
   fetchingBooks: () => void;
-  fetchingBooksSuccess: (books: Book[]) => void;
+  fetchingBooksSuccess: (booksToSync: Book[], remoteBooks: Book[]) => void;
   syncSessionStart: (mode: SyncMode) => void;
   syncSessionSuccess: () => void;
   syncSessionFailure: (message: string) => void;

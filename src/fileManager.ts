@@ -25,6 +25,7 @@ type KindleFrontmatter = {
   title: string;
   author: string;
   asin: string;
+  lastAnnotatedDate: string;
   bookImageUrl: string;
 };
 
@@ -79,6 +80,7 @@ export default class FileManager {
       title: kindleFrontmatter.title,
       author: kindleFrontmatter.author,
       asin: kindleFrontmatter.asin,
+      lastAnnotatedDate: kindleFrontmatter.lastAnnotatedDate,
       imageUrl: kindleFrontmatter.bookImageUrl,
     };
 
@@ -119,6 +121,7 @@ export default class FileManager {
       title: book.title,
       author: book.author,
       asin: book.asin,
+      lastAnnotatedDate: book.lastAnnotatedDate,
       bookImageUrl: book.imageUrl,
     };
 

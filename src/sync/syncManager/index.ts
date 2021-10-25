@@ -1,15 +1,16 @@
-import type { App } from 'obsidian';
 import { get } from 'svelte/store';
+import type { App } from 'obsidian';
 
 import { settingsStore } from '~/store';
 import { scrapeBookMetadata } from '~/scraper';
-import { DiffManager } from './diffManager';
+import { DiffManager } from '../diffManager';
 import { Renderer } from '~/renderer';
 import { ResyncBookModal, OverwriteFileModal } from '~/components/resyncModal';
+import { diffBooks } from './diffBooks';
 import type FileManager from '~/fileManager';
 import type { KindleFile } from '~/fileManager';
 import type { Book, BookMetadata, Highlight } from '~/models';
-import type { DiffResult } from './diffManager';
+import type { DiffResult } from '../diffManager';
 
 export default class SyncManager {
   private renderer: Renderer;
@@ -17,6 +18,17 @@ export default class SyncManager {
   constructor(private app: App, private fileManager: FileManager) {
     this.fileManager = fileManager;
     this.renderer = new Renderer();
+  }
+
+  public async filterBooksToSync(remoteBooks: Book[]): Promise<Book[]> {
+    const lastSyncDate = get(settingsStore).lastSyncDate;
+    const vaultBooks = await this.fileManager.getKindleFiles();
+
+    return diffBooks(
+      remoteBooks,
+      vaultBooks.map((v) => v.book),
+      lastSyncDate
+    );
   }
 
   public async syncBook(book: Book, highlights: Highlight[]): Promise<void> {
