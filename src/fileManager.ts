@@ -3,7 +3,7 @@ import { get } from 'svelte/store';
 import path from 'path';
 
 import { settingsStore } from '~/store';
-import { sanitizeTitle, frontMatter as frontMatterUtil } from '~/utils';
+import { sanitizeTitle, mergeFrontmatter } from '~/utils';
 import type { Book } from '~/models';
 
 /**
@@ -16,6 +16,17 @@ const bookFilePath = (book: Book): string => {
   return path
     .join(get(settingsStore).highlightsFolder, `${fileName}.md`)
     .replace(/\//, '');
+};
+
+const bookFrontMatter = (book: Book): KindleFrontmatter => {
+  return {
+    bookId: book.id,
+    title: book.title,
+    author: book.author,
+    asin: book.asin,
+    lastAnnotatedDate: book.lastAnnotatedDate,
+    bookImageUrl: book.imageUrl,
+  };
 };
 
 const SyncingStateKey = 'kindle-sync';
@@ -88,6 +99,31 @@ export default class FileManager {
       .filter((file) => file != null);
   }
 
+  public async createFile(book: Book, content: string): Promise<void> {
+    const filePath = this.generateUniqueFilePath(book);
+    const frontmatterContent = this.generateBookContent(book, content);
+    await this.vault.create(filePath, frontmatterContent);
+  }
+
+  public async updateFile(
+    kindleFile: KindleFile,
+    remoteBook: Book,
+    content: string
+  ): Promise<void> {
+    const frontmatterContent = this.generateBookContent(remoteBook, content);
+    await this.vault.modify(kindleFile.file, frontmatterContent);
+  }
+
+  /**
+   * Generate book content by combining both book (a) book markdown and
+   * (b) rendered book highlights
+   */
+  private generateBookContent(book: Book, content: string): string {
+    return mergeFrontmatter(content, {
+      [SyncingStateKey]: bookFrontMatter(book),
+    });
+  }
+
   private generateUniqueFilePath(book: Book): string {
     const filePath = bookFilePath(book);
     const isDuplicate = this.vault
@@ -100,52 +136,5 @@ export default class FileManager {
     }
 
     return filePath;
-  }
-
-  public async createFile(book: Book, content: string): Promise<void> {
-    const filePath = this.generateUniqueFilePath(book);
-    const contentWithFrontmatter = this.generateContentWithFrontmatter(
-      book,
-      content
-    );
-    await this.vault.create(filePath, contentWithFrontmatter);
-  }
-
-  private generateContentWithFrontmatter(book: Book, content: string): string {
-    const frontmatterState: KindleFrontmatter = {
-      bookId: book.id,
-      title: book.title,
-      author: book.author,
-      asin: book.asin,
-      lastAnnotatedDate: book.lastAnnotatedDate,
-      bookImageUrl: book.imageUrl,
-    };
-
-    const contentWithFrontmatter = frontMatterUtil.stringify(content, {
-      [SyncingStateKey]: frontmatterState,
-    });
-
-    return contentWithFrontmatter;
-  }
-
-  public async updateFile(
-    kindleFile: KindleFile,
-    remoteBook: Book,
-    content: string
-  ): Promise<void> {
-    const frontmatterState: KindleFrontmatter = {
-      bookId: remoteBook.id,
-      title: remoteBook.title,
-      author: remoteBook.author,
-      asin: remoteBook.asin,
-      lastAnnotatedDate: remoteBook.lastAnnotatedDate,
-      bookImageUrl: remoteBook.imageUrl,
-    };
-
-    const contentWithFrontmatter = frontMatterUtil.merge(content, {
-      [SyncingStateKey]: frontmatterState,
-    });
-
-    await this.vault.modify(kindleFile.file, contentWithFrontmatter);
   }
 }
