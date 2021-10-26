@@ -1,7 +1,7 @@
 import matter from 'gray-matter';
 
 export const frontMatter = {
-  override: (
+  merge: (
     textWithFrontMatter: string,
     newFrontMatter: Record<string, any>
   ): string => {

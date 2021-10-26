@@ -103,18 +103,6 @@ export default class FileManager {
     await this.vault.create(filePath, contentWithFrontmatter);
   }
 
-  public async overrideFile(
-    file: TFile,
-    book: Book,
-    content: string
-  ): Promise<void> {
-    const contentWithFrontmatter = this.generateContentWithFrontmatter(
-      book,
-      content
-    );
-    this.updateFile(file, contentWithFrontmatter);
-  }
-
   private generateContentWithFrontmatter(book: Book, content: string): string {
     const frontmatterState: KindleFrontmatter = {
       bookId: book.id,
@@ -132,7 +120,28 @@ export default class FileManager {
     return contentWithFrontmatter;
   }
 
-  public async updateFile(file: TFile, content: string): Promise<void> {
-    await this.vault.modify(file, content);
+  public async deleteFile(file: TFile): Promise<void> {
+    await this.vault.delete(file);
+  }
+
+  public async updateFile(
+    kindleFile: KindleFile,
+    remoteBook: Book,
+    content: string
+  ): Promise<void> {
+    const frontmatterState: KindleFrontmatter = {
+      bookId: remoteBook.id,
+      title: remoteBook.title,
+      author: remoteBook.author,
+      asin: remoteBook.asin,
+      lastAnnotatedDate: remoteBook.lastAnnotatedDate,
+      bookImageUrl: remoteBook.imageUrl,
+    };
+
+    const contentWithFrontmatter = frontMatterUtil.merge(content, {
+      [SyncingStateKey]: frontmatterState,
+    });
+
+    await this.vault.modify(kindleFile.file, contentWithFrontmatter);
   }
 }

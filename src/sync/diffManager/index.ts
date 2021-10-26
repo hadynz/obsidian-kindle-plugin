@@ -3,6 +3,7 @@ import { HighlightIdBlockRefPrefix, Renderer } from '~/renderer';
 import { diffLists } from './helpers';
 import type { Highlight } from '~/models';
 import type FileManager from '~/fileManager';
+import type { Book } from '~/models';
 import type { KindleFile } from '~/fileManager';
 
 export type RenderedHighlight = {
@@ -59,7 +60,10 @@ export class DiffManager {
       });
   }
 
-  public async applyDiffs(diffs: DiffResult[]): Promise<void> {
+  public async applyDiffs(
+    remoteBook: Book,
+    diffs: DiffResult[]
+  ): Promise<void> {
     const insertList = diffs
       .filter((d) => d.nextRenderedHighlight)
       .map((d) => ({
@@ -81,6 +85,10 @@ export class DiffManager {
       .append(appendList)
       .toString();
 
-    this.fileManager.updateFile(this.kindleFile.file, modifiedFileContents);
+    this.fileManager.updateFile(
+      this.kindleFile,
+      remoteBook,
+      modifiedFileContents
+    );
   }
 }

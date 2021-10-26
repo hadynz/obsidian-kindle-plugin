@@ -54,4 +54,13 @@ describe('diffBooks', () => {
     const actualBooks = diffBooks(remoteBooks, vaultBooks, lastSyncDate);
     expect(actualBooks.map((a) => a.id)).toEqual(['1']);
   });
+
+  it('Books 1 day older than last sync date (with time) is still filtered for sync', () => {
+    const remoteBooks = [book('1', 'October 25, 2021')];
+    const vaultBooks = [book('1', 'October 22, 2021')];
+    const lastSyncDate = new Date('Tue Oct 26 2021 18:58:18 GMT+1300');
+
+    const actualBooks = diffBooks(remoteBooks, vaultBooks, lastSyncDate);
+    expect(actualBooks.map((a) => a.id)).toEqual(['1']);
+  });
 });

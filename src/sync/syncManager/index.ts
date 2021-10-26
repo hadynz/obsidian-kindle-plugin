@@ -41,12 +41,13 @@ export default class SyncManager {
     if (file == null) {
       await this.createBook(book, highlights);
     } else {
-      await this.resyncBook(file, highlights);
+      await this.resyncBook(file, book, highlights);
     }
   }
 
   public async resyncBook(
     file: KindleFile,
+    remoteBook: Book,
     highlights: Highlight[]
   ): Promise<DiffResult[]> {
     const diffManager = await DiffManager.create(this.fileManager, file);
@@ -54,15 +55,13 @@ export default class SyncManager {
     const diffs = await diffManager.diff(highlights);
 
     if (diffs.length > 0) {
-      await diffManager.applyDiffs(diffs);
+      await diffManager.applyDiffs(remoteBook, diffs);
     }
 
     return diffs;
   }
 
   private async createBook(book: Book, highlights: Highlight[]): Promise<void> {
-    let createFile = true;
-
     // Does a non-Kindle file with the same name already exist?
     const [exists, existingFile] = this.fileManager.fileExists(book);
 
@@ -73,17 +72,14 @@ export default class SyncManager {
         return; //  Skip creation of this book
       }
 
-      createFile = false;
+      await this.fileManager.deleteFile(existingFile);
     }
 
     const metadata = await this.syncMetadata(book);
+
     const content = this.renderer.render({ book, highlights, metadata });
 
-    if (createFile) {
-      await this.fileManager.createFile(book, content);
-    } else {
-      await this.fileManager.overrideFile(existingFile, book, content);
-    }
+    await this.fileManager.createFile(book, content);
   }
 
   private async syncMetadata(book: Book): Promise<BookMetadata> {

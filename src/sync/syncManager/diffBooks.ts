@@ -7,10 +7,10 @@ const isEqual = (book1: Book, book2: Book): boolean => {
 
 const updatedSince = (book: Book, lastSyncDate: Date): boolean => {
   if (book.lastAnnotatedDate != null) {
-    return (
-      moment(book.lastAnnotatedDate, 'MMM DD, YYYY') >=
-      moment(lastSyncDate, 'MMM DD, YYYY').subtract(1, 'd')
-    );
+    return moment(lastSyncDate)
+      .startOf('day')
+      .subtract(1, 'd')
+      .isSameOrBefore(moment(book.lastAnnotatedDate, 'MMM DD, YYYY'));
   }
   return false;
 };
