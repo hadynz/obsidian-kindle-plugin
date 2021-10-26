@@ -47,14 +47,14 @@ export default class SyncManager {
   public async resyncBook(
     file: KindleFile,
     remoteBook: Book,
-    highlights: Highlight[]
+    remoteHighlights: Highlight[]
   ): Promise<DiffResult[]> {
     const diffManager = await DiffManager.create(this.fileManager, file);
 
-    const diffs = await diffManager.diff(highlights);
+    const diffs = await diffManager.diff(remoteHighlights);
 
     if (diffs.length > 0) {
-      await diffManager.applyDiffs(remoteBook, diffs);
+      await diffManager.applyDiffs(remoteBook, remoteHighlights, diffs);
     }
 
     return diffs;
@@ -65,7 +65,7 @@ export default class SyncManager {
 
     const content = this.renderer.render({ book, highlights, metadata });
 
-    await this.fileManager.createFile(book, content);
+    await this.fileManager.createFile(book, content, highlights.length);
   }
 
   private async syncMetadata(book: Book): Promise<BookMetadata> {

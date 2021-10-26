@@ -18,7 +18,10 @@ const bookFilePath = (book: Book): string => {
     .replace(/\//, '');
 };
 
-const bookFrontMatter = (book: Book): KindleFrontmatter => {
+const bookFrontMatter = (
+  book: Book,
+  highlightsCount: number
+): KindleFrontmatter => {
   return {
     bookId: book.id,
     title: book.title,
@@ -26,6 +29,7 @@ const bookFrontMatter = (book: Book): KindleFrontmatter => {
     asin: book.asin,
     lastAnnotatedDate: book.lastAnnotatedDate,
     bookImageUrl: book.imageUrl,
+    highlightsCount,
   };
 };
 
@@ -38,6 +42,7 @@ type KindleFrontmatter = {
   asin: string;
   lastAnnotatedDate: string;
   bookImageUrl: string;
+  highlightsCount: number;
 };
 
 export type KindleFile = {
@@ -99,18 +104,31 @@ export default class FileManager {
       .filter((file) => file != null);
   }
 
-  public async createFile(book: Book, content: string): Promise<void> {
+  public async createFile(
+    book: Book,
+    content: string,
+    highlightsCount: number
+  ): Promise<void> {
     const filePath = this.generateUniqueFilePath(book);
-    const frontmatterContent = this.generateBookContent(book, content);
+    const frontmatterContent = this.generateBookContent(
+      book,
+      content,
+      highlightsCount
+    );
     await this.vault.create(filePath, frontmatterContent);
   }
 
   public async updateFile(
     kindleFile: KindleFile,
     remoteBook: Book,
-    content: string
+    content: string,
+    highlightsCount: number
   ): Promise<void> {
-    const frontmatterContent = this.generateBookContent(remoteBook, content);
+    const frontmatterContent = this.generateBookContent(
+      remoteBook,
+      content,
+      highlightsCount
+    );
     await this.vault.modify(kindleFile.file, frontmatterContent);
   }
 
@@ -118,9 +136,13 @@ export default class FileManager {
    * Generate book content by combining both book (a) book markdown and
    * (b) rendered book highlights
    */
-  private generateBookContent(book: Book, content: string): string {
+  private generateBookContent(
+    book: Book,
+    content: string,
+    highlightsCount: number
+  ): string {
     return mergeFrontmatter(content, {
-      [SyncingStateKey]: bookFrontMatter(book),
+      [SyncingStateKey]: bookFrontMatter(book, highlightsCount),
     });
   }
 

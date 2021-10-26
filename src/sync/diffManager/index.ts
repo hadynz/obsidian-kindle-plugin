@@ -62,6 +62,7 @@ export class DiffManager {
 
   public async applyDiffs(
     remoteBook: Book,
+    remoteHighlights: Highlight[],
     diffs: DiffResult[]
   ): Promise<void> {
     const insertList = diffs
@@ -88,7 +89,8 @@ export class DiffManager {
     this.fileManager.updateFile(
       this.kindleFile,
       remoteBook,
-      modifiedFileContents
+      modifiedFileContents,
+      remoteHighlights.length
     );
   }
 }
