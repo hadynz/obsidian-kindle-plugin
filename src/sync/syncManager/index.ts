@@ -5,7 +5,6 @@ import { settingsStore } from '~/store';
 import { scrapeBookMetadata } from '~/scraper';
 import { DiffManager } from '../diffManager';
 import { Renderer } from '~/renderer';
-import { OverwriteFileModal } from '~/components/overwriteFileModal';
 import { diffBooks } from './diffBooks';
 import type FileManager from '~/fileManager';
 import type { KindleFile } from '~/fileManager';
@@ -62,19 +61,6 @@ export default class SyncManager {
   }
 
   private async createBook(book: Book, highlights: Highlight[]): Promise<void> {
-    // Does a non-Kindle file with the same name already exist?
-    const [exists, existingFile] = this.fileManager.fileExists(book);
-
-    if (exists) {
-      const result = await new OverwriteFileModal(this.app).show(book);
-
-      if (result === 'skip') {
-        return; //  Skip creation of this book
-      }
-
-      await this.fileManager.deleteFile(existingFile);
-    }
-
     const metadata = await this.syncMetadata(book);
 
     const content = this.renderer.render({ book, highlights, metadata });

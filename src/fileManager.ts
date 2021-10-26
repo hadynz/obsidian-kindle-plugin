@@ -42,12 +42,6 @@ export default class FileManager {
     return await this.vault.cachedRead(file.file);
   }
 
-  public fileExists(book: Book): [boolean, TFile | undefined] {
-    const filePath = bookFilePath(book);
-    const file = this.vault.getFiles().find((f) => f.path === filePath);
-    return [file != null, file];
-  }
-
   public async getKindleFile(book: Book): Promise<KindleFile | undefined> {
     const allSyncedFiles = await this.getKindleFiles();
 
@@ -94,8 +88,22 @@ export default class FileManager {
       .filter((file) => file != null);
   }
 
-  public async createFile(book: Book, content: string): Promise<void> {
+  private generateUniqueFilePath(book: Book): string {
     const filePath = bookFilePath(book);
+    const isDuplicate = this.vault
+      .getMarkdownFiles()
+      .some((v) => v.path === filePath);
+
+    if (isDuplicate) {
+      const currentTime = new Date().getTime().toString();
+      return filePath.replace('.md', `-${currentTime}.md`);
+    }
+
+    return filePath;
+  }
+
+  public async createFile(book: Book, content: string): Promise<void> {
+    const filePath = this.generateUniqueFilePath(book);
     const contentWithFrontmatter = this.generateContentWithFrontmatter(
       book,
       content
@@ -118,10 +126,6 @@ export default class FileManager {
     });
 
     return contentWithFrontmatter;
-  }
-
-  public async deleteFile(file: TFile): Promise<void> {
-    await this.vault.delete(file);
   }
 
   public async updateFile(
