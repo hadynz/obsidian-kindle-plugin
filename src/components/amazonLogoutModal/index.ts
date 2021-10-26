@@ -14,7 +14,7 @@ export default class AmazonLogoutModal {
     this.url = url;
 
     this.waitForSignIn = new Promise(
-      (resolve: () => void) => (this.resolvePromise = resolve),
+      (resolve: () => void) => (this.resolvePromise = resolve)
     );
 
     this.modal = new BrowserWindow({

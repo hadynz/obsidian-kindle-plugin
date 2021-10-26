@@ -11,6 +11,7 @@
   "author": "Hady Osman",
   "license": "MIT",
   "scripts": {
+    "prettier": "prettier --write '**/*.{ts,js,css,html}'",
     "clean": "rimraf dist main.js",
     "test": "jest",
     "test-watch": "jest --watch",
