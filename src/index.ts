@@ -4,7 +4,7 @@ import { get } from 'svelte/store';
 import FileManager from '~/fileManager';
 import SyncModal from '~/components/syncModal';
 import { SettingsTab } from '~/settingsTab';
-import { StatusBar } from '~/components/statusBar';
+//import { StatusBar } from '~/components/statusBar';
 import { initializeStores, settingsStore } from '~/store';
 import { SyncAmazon, SyncClippings, SyncManager } from '~/sync';
 import { registerNotifications } from '~/notifications';
@@ -19,10 +19,7 @@ export default class KindlePlugin extends Plugin {
   private syncClippings!: SyncClippings;
 
   public async onload(): Promise<void> {
-    console.log(
-      'Kindle Highlights plugin: loading plugin',
-      new Date().toLocaleString()
-    );
+    console.log('Kindle Highlights plugin: loading plugin', new Date().toLocaleString());
 
     this.fileManager = new FileManager(this.app.vault, this.app.metadataCache);
     const syncManager = new SyncManager(this.app, this.fileManager);
@@ -96,9 +93,6 @@ export default class KindlePlugin extends Plugin {
   public async onunload(): Promise<void> {
     ee.removeAllListeners();
 
-    console.log(
-      'Kindle Highlights plugin: unloading plugin',
-      new Date().toLocaleString()
-    );
+    console.log('Kindle Highlights plugin: unloading plugin', new Date().toLocaleString());
   }
 }

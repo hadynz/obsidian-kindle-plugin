@@ -29,10 +29,7 @@ export class DiffManager {
     return manager;
   }
 
-  private constructor(
-    private fileManager: FileManager,
-    private kindleFile: KindleFile
-  ) {
+  private constructor(private fileManager: FileManager, private kindleFile: KindleFile) {
     this.renderer = new Renderer();
   }
 
@@ -48,9 +45,7 @@ export class DiffManager {
 
   private async parseRenderedHighlights(): Promise<RenderedHighlight[]> {
     return this.fileBuffer
-      .find((lineEntry) =>
-        lineEntry.content.startsWith(HighlightIdBlockRefPrefix)
-      )
+      .find((lineEntry) => lineEntry.content.startsWith(HighlightIdBlockRefPrefix))
       .map((lineEntry): RenderedHighlight => {
         const { line, content } = lineEntry;
         return {
@@ -69,17 +64,12 @@ export class DiffManager {
       .filter((d) => d.nextRenderedHighlight)
       .map((d) => ({
         line: d.nextRenderedHighlight?.line,
-        content: this.renderer.renderHighlight(
-          this.kindleFile.book,
-          d.remoteHighlight
-        ),
+        content: this.renderer.renderHighlight(this.kindleFile.book, d.remoteHighlight),
       }));
 
     const appendList = diffs
       .filter((d) => d.nextRenderedHighlight == null)
-      .map((d) =>
-        this.renderer.renderHighlight(this.kindleFile.book, d.remoteHighlight)
-      );
+      .map((d) => this.renderer.renderHighlight(this.kindleFile.book, d.remoteHighlight));
 
     const modifiedFileContents = this.fileBuffer
       .insertLinesAt(insertList)

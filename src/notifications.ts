@@ -6,9 +6,7 @@ import type { KindleFile } from '~/fileManager';
 
 export const registerNotifications = (): void => {
   ee.on('resyncBook', (kindleFile) => {
-    new Notice(
-      `Resyncing "${sanitizeTitle(kindleFile.book.title)}" highlights`
-    );
+    new Notice(`Resyncing "${sanitizeTitle(kindleFile.book.title)}" highlights`);
   });
 
   ee.on('resyncComplete', (_kindleFile, diffCount) => {

@@ -19,10 +19,7 @@ export const parseBooks = ($: Root): Book[] => {
   return booksEl.map((bookEl): Book => {
     const title = $('h2.kp-notebook-searchable', bookEl).text()?.trim();
 
-    const lastAnnotatedDate = $(
-      '[id^="kp-notebook-annotated-date"]',
-      bookEl
-    ).val();
+    const lastAnnotatedDate = $('[id^="kp-notebook-annotated-date"]', bookEl).val();
 
     return {
       id: hash(title),

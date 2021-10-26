@@ -50,11 +50,7 @@ export default class SyncAmazon {
 
       const highlights = await scrapeHighlightsForBook(file.book);
 
-      const diffs = await this.syncManager.resyncBook(
-        file,
-        remoteBook,
-        highlights
-      );
+      const diffs = await this.syncManager.resyncBook(file, remoteBook, highlights);
 
       ee.emit('resyncComplete', file, diffs.length);
     } catch (error) {

@@ -17,11 +17,7 @@ const { moment } = window;
 export class SettingsTab extends PluginSettingTab {
   private renderer: Renderer;
 
-  constructor(
-    app: App,
-    plugin: KindlePlugin,
-    private fileManager: FileManager
-  ) {
+  constructor(app: App, plugin: KindlePlugin, private fileManager: FileManager) {
     super(app, plugin);
     this.app = app;
     this.renderer = new Renderer();
@@ -64,10 +60,7 @@ export class SettingsTab extends PluginSettingTab {
           .setButtonText('Sign out')
           .setCta()
           .onClick(async () => {
-            button
-              .removeCta()
-              .setButtonText('Signing out...')
-              .setDisabled(true);
+            button.removeCta().setButtonText('Signing out...').setDisabled(true);
 
             const signoutLink = await scrapeLogoutUrl();
 
@@ -130,17 +123,15 @@ export class SettingsTab extends PluginSettingTab {
         text.inputEl.style.height = '450px';
         text.inputEl.style.fontSize = '0.8em';
         text.inputEl.placeholder = defaultHighlightTemplate;
-        text
-          .setValue(get(settingsStore).highlightTemplate)
-          .onChange(async (value) => {
-            const isValid = this.renderer.validate(value);
+        text.setValue(get(settingsStore).highlightTemplate).onChange(async (value) => {
+          const isValid = this.renderer.validate(value);
 
-            if (isValid) {
-              await settingsStore.actions.setHighlightTemplate(value);
-            }
+          if (isValid) {
+            await settingsStore.actions.setHighlightTemplate(value);
+          }
 
-            text.inputEl.style.border = isValid ? '' : '1px solid red';
-          });
+          text.inputEl.style.border = isValid ? '' : '1px solid red';
+        });
         return text;
       });
   }
@@ -152,11 +143,9 @@ export class SettingsTab extends PluginSettingTab {
         'Download extra book metadata from Amazon.com (Amazon sync only). Switch off to speed sync'
       )
       .addToggle((toggle) =>
-        toggle
-          .setValue(get(settingsStore).downloadBookMetadata)
-          .onChange(async (value) => {
-            await settingsStore.actions.setDownloadBookMetadata(value);
-          })
+        toggle.setValue(get(settingsStore).downloadBookMetadata).onChange(async (value) => {
+          await settingsStore.actions.setDownloadBookMetadata(value);
+        })
       );
   }
 
@@ -167,11 +156,9 @@ export class SettingsTab extends PluginSettingTab {
         'Automatically sync new Kindle highlights when Obsidian starts  (Amazon sync only)'
       )
       .addToggle((toggle) =>
-        toggle
-          .setValue(get(settingsStore).syncOnBoot)
-          .onChange(async (value) => {
-            await settingsStore.actions.setSyncOnBoot(value);
-          })
+        toggle.setValue(get(settingsStore).syncOnBoot).onChange(async (value) => {
+          await settingsStore.actions.setSyncOnBoot(value);
+        })
       );
   }
 

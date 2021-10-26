@@ -42,17 +42,13 @@ const parseHighlights = ($: Root): Highlight[] => {
   const highlightsEl = $('.a-row.a-spacing-base').toArray();
 
   return highlightsEl.map((highlightEl): Highlight => {
-    const pageMatch = $('#annotationNoteHeader', highlightEl)
-      .text()
-      ?.match(/\d+$/);
+    const pageMatch = $('#annotationNoteHeader', highlightEl).text()?.match(/\d+$/);
 
     const text = $('#highlight', highlightEl).text()?.trim();
     return {
       id: hash(text),
       text,
-      color: mapTextToColor(
-        $('#annotationHighlightHeader', highlightEl).text().split(' ')[0]
-      ),
+      color: mapTextToColor($('#annotationHighlightHeader', highlightEl).text().split(' ')[0]),
       location: $('#kp-annotation-location', highlightEl).val(),
       page: pageMatch ? pageMatch[0] : null,
       note: br2ln($('#note', highlightEl).html()),

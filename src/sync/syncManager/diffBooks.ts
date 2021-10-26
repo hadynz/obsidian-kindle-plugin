@@ -20,14 +20,10 @@ export const diffBooks = (
   vaultBooks: Book[],
   lastSyncDate: Date
 ): Book[] => {
-  const newBooks = remoteBooks.filter(
-    (remote) => !vaultBooks.some((v) => isEqual(v, remote))
-  );
+  const newBooks = remoteBooks.filter((remote) => !vaultBooks.some((v) => isEqual(v, remote)));
 
   const updatedBooks = remoteBooks.filter((remote) =>
-    vaultBooks.some(
-      (v) => isEqual(v, remote) && updatedSince(remote, lastSyncDate)
-    )
+    vaultBooks.some((v) => isEqual(v, remote) && updatedSince(remote, lastSyncDate))
   );
 
   return [...newBooks, ...updatedBooks];

@@ -3,10 +3,7 @@ import { get } from 'svelte/store';
 
 import defaultBookTemplate from '~/assets/defaultBookTemplate.njk';
 import defaultHighlightTemplate from '~/assets/defaultHighlightTemplate.njk';
-import {
-  TrimEmptyLinesExtension,
-  TrimLinesExtension,
-} from './nunjucks.extensions';
+import { TrimEmptyLinesExtension, TrimLinesExtension } from './nunjucks.extensions';
 import { sanitizeTitle } from '~/utils';
 import { settingsStore } from '~/store';
 import type { Book, BookHighlight, Highlight, RenderTemplate } from '~/models';
@@ -34,9 +31,7 @@ export class Renderer {
   public render(entry: BookHighlight): string {
     const { book, highlights } = entry;
 
-    const appLink = book.asin
-      ? `kindle://book?action=open&asin=${book.asin}`
-      : null;
+    const appLink = book.asin ? `kindle://book?action=open&asin=${book.asin}` : null;
 
     const params: RenderTemplate = {
       ...book,
@@ -57,13 +52,9 @@ export class Renderer {
 
     const highlightParams = { ...highlight, appLink };
 
-    const template =
-      get(settingsStore).highlightTemplate || defaultHighlightTemplate.trim();
+    const template = get(settingsStore).highlightTemplate || defaultHighlightTemplate.trim();
 
-    const renderedHighlight = this.nunjucks.renderString(
-      template,
-      highlightParams
-    );
+    const renderedHighlight = this.nunjucks.renderString(template, highlightParams);
 
     // Surround all highlights with a block reference to enable re-sync functionality
     return `${HighlightIdBlockRefPrefix}${highlight.id}\n${renderedHighlight}`;

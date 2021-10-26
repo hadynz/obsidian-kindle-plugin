@@ -70,9 +70,7 @@ const createSettingsStore = () => {
       // Transform settings fields for serialization
       const data = {
         ...settings,
-        lastSyncDate: settings.lastSyncDate
-          ? settings.lastSyncDate.toJSON()
-          : undefined,
+        lastSyncDate: settings.lastSyncDate ? settings.lastSyncDate.toJSON() : undefined,
       };
 
       await _plugin.saveData(data);

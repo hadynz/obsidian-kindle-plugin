@@ -13,15 +13,10 @@ import type { Book } from '~/models';
  */
 const bookFilePath = (book: Book): string => {
   const fileName = sanitizeTitle(book.title);
-  return path
-    .join(get(settingsStore).highlightsFolder, `${fileName}.md`)
-    .replace(/\//, '');
+  return path.join(get(settingsStore).highlightsFolder, `${fileName}.md`).replace(/\//, '');
 };
 
-const bookFrontMatter = (
-  book: Book,
-  highlightsCount: number
-): KindleFrontmatter => {
+const bookFrontMatter = (book: Book, highlightsCount: number): KindleFrontmatter => {
   return {
     bookId: book.id,
     title: book.title,
@@ -61,9 +56,7 @@ export default class FileManager {
   public async getKindleFile(book: Book): Promise<KindleFile | undefined> {
     const allSyncedFiles = await this.getKindleFiles();
 
-    const kindleFile = allSyncedFiles.find(
-      (file) => file.frontmatter.bookId === book.id
-    );
+    const kindleFile = allSyncedFiles.find((file) => file.frontmatter.bookId === book.id);
 
     return kindleFile == null ? undefined : { ...kindleFile, book };
   }
@@ -78,8 +71,7 @@ export default class FileManager {
     const fileCache = this.metadataCache.getFileCache(file);
 
     // File cache can be undefined if this file was just created and not yet cached by Obsidian
-    const kindleFrontmatter: KindleFrontmatter =
-      fileCache?.frontmatter?.[SyncingStateKey];
+    const kindleFrontmatter: KindleFrontmatter = fileCache?.frontmatter?.[SyncingStateKey];
 
     if (kindleFrontmatter == null) {
       return undefined;
@@ -110,11 +102,7 @@ export default class FileManager {
     highlightsCount: number
   ): Promise<void> {
     const filePath = this.generateUniqueFilePath(book);
-    const frontmatterContent = this.generateBookContent(
-      book,
-      content,
-      highlightsCount
-    );
+    const frontmatterContent = this.generateBookContent(book, content, highlightsCount);
     await this.vault.create(filePath, frontmatterContent);
   }
 
@@ -124,11 +112,7 @@ export default class FileManager {
     content: string,
     highlightsCount: number
   ): Promise<void> {
-    const frontmatterContent = this.generateBookContent(
-      remoteBook,
-      content,
-      highlightsCount
-    );
+    const frontmatterContent = this.generateBookContent(remoteBook, content, highlightsCount);
     await this.vault.modify(kindleFile.file, frontmatterContent);
   }
 
@@ -136,11 +120,7 @@ export default class FileManager {
    * Generate book content by combining both book (a) book markdown and
    * (b) rendered book highlights
    */
-  private generateBookContent(
-    book: Book,
-    content: string,
-    highlightsCount: number
-  ): string {
+  private generateBookContent(book: Book, content: string, highlightsCount: number): string {
     return mergeFrontmatter(content, {
       [SyncingStateKey]: bookFrontMatter(book, highlightsCount),
     });
@@ -148,9 +128,7 @@ export default class FileManager {
 
   private generateUniqueFilePath(book: Book): string {
     const filePath = bookFilePath(book);
-    const isDuplicate = this.vault
-      .getMarkdownFiles()
-      .some((v) => v.path === filePath);
+    const isDuplicate = this.vault.getMarkdownFiles().some((v) => v.path === filePath);
 
     if (isDuplicate) {
       const currentTime = new Date().getTime().toString();
