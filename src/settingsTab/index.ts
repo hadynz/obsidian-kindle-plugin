@@ -2,7 +2,6 @@ import _ from 'lodash';
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import { get } from 'svelte/store';
 
-import defaultHighlightTemplate from '~/assets/defaultHighlightTemplate.njk';
 import AmazonLogoutModal from '~/components/amazonLogoutModal';
 import type KindlePlugin from '~/.';
 import type FileManager from '~/fileManager';
@@ -122,7 +121,7 @@ export class SettingsTab extends PluginSettingTab {
         text.inputEl.style.width = '100%';
         text.inputEl.style.height = '450px';
         text.inputEl.style.fontSize = '0.8em';
-        text.inputEl.placeholder = defaultHighlightTemplate;
+        text.inputEl.placeholder = this.renderer.defaultHighlightTemplate();
         text.setValue(get(settingsStore).highlightTemplate).onChange(async (value) => {
           const isValid = this.renderer.validate(value);
 
