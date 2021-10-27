@@ -67,6 +67,7 @@ export default class KindlePlugin extends Plugin {
           item
             .setTitle('Resync Kindle highlights')
             .setIcon('kindle')
+            .setDisabled(kindleFile.book.asin == null)
             .onClick(async () => {
               await this.syncAmazon.resync(kindleFile);
             });
