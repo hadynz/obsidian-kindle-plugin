@@ -94,4 +94,14 @@ bookName: New Book
 
     expect(actual).toEqual(expectedYamlContent);
   });
+
+  it('Frontmatter with undefined values does not throw exception', () => {
+    expect(() => {
+      mergeFrontmatter('', {
+        'kindle-sync': {
+          lastAnnotatedDate: undefined,
+        },
+      });
+    }).not.toThrow();
+  });
 });
