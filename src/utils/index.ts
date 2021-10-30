@@ -1,3 +1,5 @@
-export { sanitizeTitle, sanitizeTitleExcess } from './sanitizeTitle';
-export { frontMatter } from './frontmatter';
-export {br2ln} from './br2ln';
+export * from './sanitizeTitle';
+export * from './frontmatter';
+export * from './br2ln';
+export * from './hash';
+export * from './stringBuffer';

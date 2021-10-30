@@ -1,10 +1,10 @@
-import pickBy from 'lodash.pickby';
+import _ from 'lodash';
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import { get } from 'svelte/store';
 
 import AmazonLogoutModal from '~/components/amazonLogoutModal';
-import templateInstructions from './templateInstructions.html';
 import type KindlePlugin from '~/.';
+import type FileManager from '~/fileManager';
 import type { AmazonAccountRegion } from '~/models';
 import { Renderer } from '~/renderer';
 import { settingsStore } from '~/store';
@@ -14,10 +14,9 @@ import { AmazonRegions } from '~/amazonRegion';
 const { moment } = window;
 
 export class SettingsTab extends PluginSettingTab {
-  public app: App;
   private renderer: Renderer;
 
-  constructor(app: App, plugin: KindlePlugin) {
+  constructor(app: App, plugin: KindlePlugin, private fileManager: FileManager) {
     super(app, plugin);
     this.app = app;
     this.renderer = new Renderer();
@@ -29,24 +28,26 @@ export class SettingsTab extends PluginSettingTab {
     containerEl.empty();
 
     if (get(settingsStore).isLoggedIn) {
-      this.logout();
+      await this.logout();
     }
 
     this.highlightsFolder();
     this.downloadBookMetadata();
     this.syncOnBoot();
-    this.noteTemplate();
+    this.highlightTemplate();
     this.amazonRegion();
     this.resetSyncHistory();
   }
 
-  private logout(): void {
+  private async logout(): Promise<void> {
     const syncMessage = get(settingsStore).lastSyncDate
       ? `Last sync ${moment(get(settingsStore).lastSyncDate).fromNow()}`
       : 'Sync has never run';
 
+    const kindleFiles = await this.fileManager.getKindleFiles();
+
     const descFragment = document.createRange().createContextualFragment(`
-      ${get(settingsStore).history.totalBooks} book(s) synced<br/>
+      ${kindleFiles.length} book(s) synced<br/>
       ${syncMessage}
     `);
 
@@ -58,10 +59,7 @@ export class SettingsTab extends PluginSettingTab {
           .setButtonText('Sign out')
           .setCta()
           .onClick(async () => {
-            button
-              .removeCta()
-              .setButtonText('Signing out...')
-              .setDisabled(true);
+            button.removeCta().setButtonText('Signing out...').setDisabled(true);
 
             const signoutLink = await scrapeLogoutUrl();
 
@@ -100,7 +98,7 @@ export class SettingsTab extends PluginSettingTab {
       .addDropdown((dropdown) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const files = (this.app.vault.adapter as any).files;
-        const folders = pickBy(files, (val) => {
+        const folders = _.pickBy(files, (val) => {
           return val.type === 'folder';
         });
 
@@ -115,29 +113,24 @@ export class SettingsTab extends PluginSettingTab {
       });
   }
 
-  private noteTemplate(): void {
-    const descFragment = document
-      .createRange()
-      .createContextualFragment(templateInstructions);
-
+  private highlightTemplate(): void {
     new Setting(this.containerEl)
-      .setName('Note template')
-      .setDesc(descFragment)
+      .setName('Highlight template')
+      .setDesc('Template for an individual highlight')
       .addTextArea((text) => {
         text.inputEl.style.width = '100%';
         text.inputEl.style.height = '450px';
         text.inputEl.style.fontSize = '0.8em';
-        text
-          .setValue(get(settingsStore).noteTemplate)
-          .onChange(async (value) => {
-            const isValid = this.renderer.validate(value);
+        text.inputEl.placeholder = this.renderer.defaultHighlightTemplate();
+        text.setValue(get(settingsStore).highlightTemplate).onChange(async (value) => {
+          const isValid = this.renderer.validate(value);
 
-            if (isValid) {
-              await settingsStore.actions.setNoteTemplate(value);
-            }
+          if (isValid) {
+            await settingsStore.actions.setHighlightTemplate(value);
+          }
 
-            text.inputEl.style.border = isValid ? '' : '1px solid red';
-          });
+          text.inputEl.style.border = isValid ? '' : '1px solid red';
+        });
         return text;
       });
   }
@@ -149,11 +142,9 @@ export class SettingsTab extends PluginSettingTab {
         'Download extra book metadata from Amazon.com (Amazon sync only). Switch off to speed sync'
       )
       .addToggle((toggle) =>
-        toggle
-          .setValue(get(settingsStore).downloadBookMetadata)
-          .onChange(async (value) => {
-            await settingsStore.actions.setDownloadBookMetadata(value);
-          })
+        toggle.setValue(get(settingsStore).downloadBookMetadata).onChange(async (value) => {
+          await settingsStore.actions.setDownloadBookMetadata(value);
+        })
       );
   }
 
@@ -164,11 +155,9 @@ export class SettingsTab extends PluginSettingTab {
         'Automatically sync new Kindle highlights when Obsidian starts  (Amazon sync only)'
       )
       .addToggle((toggle) =>
-        toggle
-          .setValue(get(settingsStore).syncOnBoot)
-          .onChange(async (value) => {
-            await settingsStore.actions.setSyncOnBoot(value);
-          })
+        toggle.setValue(get(settingsStore).syncOnBoot).onChange(async (value) => {
+          await settingsStore.actions.setSyncOnBoot(value);
+        })
       );
   }
 

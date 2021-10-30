@@ -3,7 +3,7 @@ import type { Root } from 'cheerio';
 import type { Book, Highlight } from '~/models';
 import { loadRemoteDom } from './loadRemoteDom';
 import { currentAmazonRegion } from '~/amazonRegion';
-import { br2ln } from '~/utils';
+import { br2ln, hash } from '~/utils';
 
 type NextPageState = {
   token: string;
@@ -42,16 +42,13 @@ const parseHighlights = ($: Root): Highlight[] => {
   const highlightsEl = $('.a-row.a-spacing-base').toArray();
 
   return highlightsEl.map((highlightEl): Highlight => {
-    const pageMatch = $('#annotationNoteHeader', highlightEl)
-      .text()
-      ?.match(/\d+$/);
+    const pageMatch = $('#annotationNoteHeader', highlightEl).text()?.match(/\d+$/);
 
+    const text = $('#highlight', highlightEl).text()?.trim();
     return {
-      id: $(highlightEl).attr('id') as string,
-      text: $('#highlight', highlightEl).text()?.trim(),
-      color: mapTextToColor(
-        $('#annotationHighlightHeader', highlightEl).text().split(' ')[0]
-      ),
+      id: hash(text),
+      text,
+      color: mapTextToColor($('#annotationHighlightHeader', highlightEl).text().split(' ')[0]),
       location: $('#kp-annotation-location', highlightEl).val(),
       page: pageMatch ? pageMatch[0] : null,
       note: br2ln($('#note', highlightEl).html()),
@@ -85,7 +82,7 @@ const scrapeBookHighlights = async (book: Book): Promise<Highlight[]> => {
     hasNextPage = data.hasNextPage;
   }
 
-  return results;
+  return results.filter((h) => h.text);
 };
 
 export default scrapeBookHighlights;

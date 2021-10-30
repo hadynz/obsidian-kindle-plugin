@@ -40,9 +40,7 @@ const parseIsbn = ($: Root): string | null => {
   }
 
   // Attempt 2 - Look for ISBN feature on page
-  const isbnFeature = $(
-    '#printEditionIsbn_feature_div .a-row:first-child span:nth-child(2)'
-  )
+  const isbnFeature = $('#printEditionIsbn_feature_div .a-row:first-child span:nth-child(2)')
     ?.text()
     .trim();
 
@@ -65,10 +63,7 @@ export const parseBookMetadata = ($: Root): BookMetadata => {
 };
 
 const scrapeBookMetadata = async (book: Book): Promise<BookMetadata> => {
-  const dom = await loadRemoteDom(
-    `https://www.amazon.com/dp/${book.asin}`,
-    1000
-  );
+  const dom = await loadRemoteDom(`https://www.amazon.com/dp/${book.asin}`, 1000);
 
   return parseBookMetadata(dom);
 };

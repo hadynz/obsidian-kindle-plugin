@@ -32,10 +32,6 @@ export default class AmazonLoginModal {
       this.modal.show();
     });
 
-    this.modal.on('closed', () => {
-      this.resolvePromise(false);
-    });
-
     // If user is on the read.amazon.com url, we can safely assume they are logged in
     this.modal.webContents.on('did-navigate', async (_event, url) => {
       if (url.startsWith(this.region.kindleReaderUrl)) {
@@ -46,10 +42,20 @@ export default class AmazonLoginModal {
         this.resolvePromise(true);
       }
     });
+
+    this.modal.on('closed', () => {
+      this.resolvePromise(false);
+    });
   }
 
   async doLogin(): Promise<boolean> {
-    this.modal.loadURL(this.region.notebookUrl);
+    try {
+      await this.modal.loadURL(this.region.notebookUrl);
+    } catch (error) {
+      // Swallow error. `loadUrl` is interrupted on successful
+      // login as we immediately redirect if user is logged in
+    }
+
     return this.waitForSignIn;
   }
 }

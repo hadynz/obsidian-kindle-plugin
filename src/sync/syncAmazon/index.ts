@@ -1,109 +1,86 @@
-import { filterAsync } from 'lodasync';
-import { get } from 'svelte/store';
-
 import AmazonLoginModal from '~/components/amazonLoginModal';
-import type FileManager from '~/fileManager';
-import { settingsStore, syncSessionStore } from '~/store';
-import type { Book, BookMetadata } from '~/models';
-import {
-  scrapeHighlightsForBook,
-  scrapeBookMetadata,
-  scrapeBooks,
-} from '~/scraper';
-import { Renderer } from '~/renderer';
-import type { SyncState } from '~/sync/syncState';
-
-const initialState = { newBooksSynced: 0, newHighlightsSynced: 0 };
+import { scrapeHighlightsForBook, scrapeBooks } from '~/scraper';
+import { ee } from '~/eventEmitter';
+import type { SyncManager } from '~/sync';
+import type { Book } from '~/models';
+import type { KindleFile } from '~/fileManager';
 
 export default class SyncAmazon {
-  private fileManager: FileManager;
-  private renderer: Renderer;
-  private state: SyncState = initialState;
+  constructor(private syncManager: SyncManager) {}
 
-  constructor(fileManager: FileManager) {
-    this.fileManager = fileManager;
-    this.renderer = new Renderer();
+  public async startSync(): Promise<void> {
+    ee.emit('syncSessionStart', 'amazon');
+
+    const success = await this.login();
+
+    if (!success) {
+      return; // Do nothing...
+    }
+
+    try {
+      ee.emit('fetchingBooks');
+
+      const remoteBooks = await scrapeBooks();
+      const booksToSync = await this.syncManager.filterBooksToSync(remoteBooks);
+
+      ee.emit('fetchingBooksSuccess', booksToSync, remoteBooks);
+
+      if (booksToSync.length > 0) {
+        await this.syncBooks(booksToSync);
+      }
+
+      ee.emit('syncSessionSuccess');
+    } catch (error) {
+      ee.emit('syncSessionFailure', String(error));
+    }
   }
 
-  async startSync(): Promise<void> {
-    this.state = initialState;
+  public async resync(file: KindleFile): Promise<void> {
+    const success = await this.login();
 
-    syncSessionStore.actions.login();
+    if (!success) {
+      return; // Do nothing...
+    }
+
+    try {
+      ee.emit('resyncBook', file);
+
+      const remoteBooks = await scrapeBooks();
+      const remoteBook = remoteBooks.find((r) => r.id === file.book.id);
+
+      const highlights = await scrapeHighlightsForBook(file.book);
+
+      const diffs = await this.syncManager.resyncBook(file, remoteBook, highlights);
+
+      ee.emit('resyncComplete', file, diffs.length);
+    } catch (error) {
+      ee.emit('resyncFailure', file, String(error));
+    }
+  }
+
+  private async login(): Promise<boolean> {
+    ee.emit('login');
 
     const modal = new AmazonLoginModal();
     const success = await modal.doLogin();
 
-    if (!success) {
-      syncSessionStore.actions.reset();
-      return; // Do nothing...
-    }
+    ee.emit('loginComplete', success);
 
-    syncSessionStore.actions.startSync('amazon');
-
-    const allBooks = await scrapeBooks();
-
-    const booksToSync = await filterAsync(async (b) => {
-      const exists = await this.fileManager.fileExists(b);
-      return !exists;
-    }, allBooks);
-
-    syncSessionStore.actions.setJobs(booksToSync);
-
-    if (booksToSync.length > 0) {
-      await this.syncBooks(booksToSync);
-    }
-
-    syncSessionStore.actions.completeSync({
-      newBookCount: this.state.newBooksSynced,
-      newHighlightsCount: this.state.newHighlightsSynced,
-      updatedBookCount: 0,
-      updatedHighlightsCount: 0,
-    });
+    return success;
   }
 
   private async syncBooks(books: Book[]): Promise<void> {
-    for (const book of books) {
+    for (const [index, book] of books.entries()) {
       try {
-        syncSessionStore.actions.startJob(book);
+        ee.emit('syncBook', book, index);
 
-        await this.syncBook(book);
+        const highlights = await scrapeHighlightsForBook(book);
+        await this.syncManager.syncBook(book, highlights);
 
-        syncSessionStore.actions.completeJob(book);
+        ee.emit('syncBookSuccess', book, highlights);
       } catch (error) {
-        console.error(`Error syncing ${book.title}`, error);
-        syncSessionStore.actions.errorJob(book);
+        ee.emit('syncBookFailure', book, String(error));
       }
     }
-  }
-
-  private async syncBook(book: Book): Promise<void> {
-    const highlights = await scrapeHighlightsForBook(book);
-    const populatedHighlights = highlights.filter((h) => h.text);
-
-    if (populatedHighlights.length === 0) {
-      return; // No highlights for book. Skip sync
-    }
-
-    const metadata = await this.syncBookMetadata(book);
-
-    const content = this.renderer.render({ book, highlights, metadata });
-    await this.fileManager.createFile(book, content);
-
-    this.state.newBooksSynced += 1;
-    this.state.newHighlightsSynced += populatedHighlights.length;
-  }
-
-  private async syncBookMetadata(book: Book): Promise<BookMetadata> {
-    let metadata: BookMetadata;
-
-    try {
-      if (get(settingsStore).downloadBookMetadata && book.asin) {
-        metadata = await scrapeBookMetadata(book);
-      }
-    } catch (error) {
-      console.error(`Couldn't download metadata for ${book.title}`, error);
-    }
-
-    return metadata;
   }
 }

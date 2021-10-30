@@ -1,33 +1,37 @@
-import { Plugin, addIcon } from 'obsidian';
+import { addIcon, Plugin } from 'obsidian';
 import { get } from 'svelte/store';
 
 import FileManager from '~/fileManager';
 import SyncModal from '~/components/syncModal';
 import { SettingsTab } from '~/settingsTab';
-import { StatusBar } from '~/components/statusBar';
-import { initialise, settingsStore } from '~/store';
-import { SyncAmazon, SyncClippings } from '~/sync';
+//import { StatusBar } from '~/components/statusBar';
+import { initializeStores, settingsStore } from '~/store';
+import { SyncAmazon, SyncClippings, SyncManager } from '~/sync';
+import { registerNotifications } from '~/notifications';
 import kindleIcon from '~/assets/kindleIcon.svg';
+import { ee } from '~/eventEmitter';
 
 addIcon('kindle', kindleIcon);
 
 export default class KindlePlugin extends Plugin {
+  private fileManager!: FileManager;
   private syncAmazon!: SyncAmazon;
   private syncClippings!: SyncClippings;
 
-  async onload(): Promise<void> {
-    console.log('loading plugin', new Date().toLocaleString());
+  public async onload(): Promise<void> {
+    console.log('Kindle Highlights plugin: loading plugin', new Date().toLocaleString());
 
-    await initialise(this);
+    this.fileManager = new FileManager(this.app.vault, this.app.metadataCache);
+    const syncManager = new SyncManager(this.app, this.fileManager);
 
-    const fileManager = new FileManager(this.app.vault, this.app.metadataCache);
+    await initializeStores(this, this.fileManager);
 
-    this.syncAmazon = new SyncAmazon(fileManager);
-    this.syncClippings = new SyncClippings(fileManager);
+    this.syncAmazon = new SyncAmazon(syncManager);
+    this.syncClippings = new SyncClippings(syncManager);
 
-    new StatusBar(this.addStatusBarItem(), () => {
-      this.showSyncModal();
-    });
+    // new StatusBar(this.addStatusBarItem(), () => {
+    //   this.showSyncModal();
+    // });
 
     this.addRibbonIcon('kindle', 'Sync your Kindle highlights', () => {
       this.showSyncModal();
@@ -41,25 +45,55 @@ export default class KindlePlugin extends Plugin {
       },
     });
 
-    this.addSettingTab(new SettingsTab(this.app, this));
+    this.addSettingTab(new SettingsTab(this.app, this, this.fileManager));
+
+    registerNotifications();
+    this.registerEvents();
 
     if (get(settingsStore).syncOnBoot) {
       await this.startAmazonSync();
     }
   }
 
-  showSyncModal(): void {
-    new SyncModal(this.app, {
-      onOnlineSync: () => this.startAmazonSync(),
-      onMyClippingsSync: () => this.syncClippings.startSync(),
+  private registerEvents(): void {
+    this.registerEvent(
+      this.app.workspace.on('file-menu', (menu, file) => {
+        const kindleFile = this.fileManager.mapToKindleFile(file);
+        if (kindleFile == null) {
+          return;
+        }
+
+        menu.addItem((item) => {
+          item
+            .setTitle('Resync Kindle highlights')
+            .setIcon('kindle')
+            .setDisabled(kindleFile.book.asin == null)
+            .onClick(async () => {
+              await this.syncAmazon.resync(kindleFile);
+            });
+        });
+      })
+    );
+
+    this.app.workspace.onLayoutReady(() => {
+      ee.emit('obsidianReady');
     });
   }
 
-  startAmazonSync(): void {
+  private showSyncModal(): void {
+    new SyncModal(this.app, {
+      onOnlineSync: () => this.startAmazonSync(),
+      onMyClippingsSync: () => this.syncClippings.startSync(),
+    }).show();
+  }
+
+  private startAmazonSync(): void {
     this.syncAmazon.startSync();
   }
 
-  async onunload(): Promise<void> {
-    console.log('unloading plugin', new Date().toLocaleString());
+  public async onunload(): Promise<void> {
+    ee.removeAllListeners();
+
+    console.log('Kindle Highlights plugin: unloading plugin', new Date().toLocaleString());
   }
 }

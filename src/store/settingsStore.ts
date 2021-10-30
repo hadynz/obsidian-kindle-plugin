@@ -1,13 +1,8 @@
 import { writable } from 'svelte/store';
 
-import defaultTemplate from '~/assets/defaultTemplate.njk';
+import { ee } from '~/eventEmitter';
 import type KindlePlugin from '~/.';
 import type { SyncMode, AmazonAccountRegion } from '~/models';
-
-type SyncHistory = {
-  totalBooks: number;
-  totalHighlights: number;
-};
 
 type Settings = {
   amazonRegion: AmazonAccountRegion;
@@ -15,10 +10,9 @@ type Settings = {
   lastSyncDate?: Date;
   lastSyncMode: SyncMode;
   isLoggedIn: boolean;
-  noteTemplate: string;
+  highlightTemplate?: string;
   syncOnBoot: boolean;
   downloadBookMetadata: boolean;
-  history: SyncHistory;
 };
 
 const DEFAULT_SETTINGS: Settings = {
@@ -26,22 +20,18 @@ const DEFAULT_SETTINGS: Settings = {
   highlightsFolder: '/',
   lastSyncMode: 'amazon',
   isLoggedIn: false,
-  noteTemplate: defaultTemplate,
   syncOnBoot: false,
   downloadBookMetadata: true,
-  history: {
-    totalBooks: 0,
-    totalHighlights: 0,
-  },
 };
 
 const createSettingsStore = () => {
   const store = writable(DEFAULT_SETTINGS as Settings);
 
   let _plugin!: KindlePlugin;
+  let isLegacy: boolean;
 
   // Load settings data from disk into store
-  const initialise = async (plugin: KindlePlugin): Promise<void> => {
+  const initialize = async (plugin: KindlePlugin): Promise<void> => {
     const data = Object.assign({}, DEFAULT_SETTINGS, await plugin.loadData());
 
     const settings: Settings = {
@@ -51,8 +41,32 @@ const createSettingsStore = () => {
 
     store.set(settings);
 
+    // Legacy is when user's data.json contains legacy state information
+    isLegacy = data.history != null;
+
     _plugin = plugin;
   };
+
+  ee.on('resyncComplete', () => {
+    store.update((state) => {
+      state.lastSyncDate = new Date();
+      return state;
+    });
+  });
+
+  ee.on('syncSessionStart', (mode) => {
+    store.update((state) => {
+      state.lastSyncMode = mode;
+      return state;
+    });
+  });
+
+  ee.on('syncSessionSuccess', () => {
+    store.update((state) => {
+      state.lastSyncDate = new Date();
+      return state;
+    });
+  });
 
   // Listen to any change to store, and write to disk
   store.subscribe(async (settings) => {
@@ -60,14 +74,22 @@ const createSettingsStore = () => {
       // Transform settings fields for serialization
       const data = {
         ...settings,
-        lastSyncDate: settings.lastSyncDate
-          ? settings.lastSyncDate.toJSON()
-          : undefined,
+        lastSyncDate: settings.lastSyncDate ? settings.lastSyncDate.toJSON() : undefined,
       };
 
       await _plugin.saveData(data);
     }
   });
+
+  const upgradeStoreState = async () => {
+    const data = Object.assign({}, DEFAULT_SETTINGS, await _plugin.loadData());
+
+    // Remove deprecated settings field
+    delete data.noteTemplate;
+    delete data.history;
+
+    await _plugin.saveData(data);
+  };
 
   const setHighlightsFolder = (value: string) => {
     store.update((state) => {
@@ -78,15 +100,7 @@ const createSettingsStore = () => {
 
   const resetSyncHistory = () => {
     store.update((state) => {
-      state.history = DEFAULT_SETTINGS.history;
       state.lastSyncDate = undefined;
-      return state;
-    });
-  };
-
-  const setSyncDateToNow = () => {
-    store.update((state) => {
-      state.lastSyncDate = new Date();
       return state;
     });
   };
@@ -105,9 +119,9 @@ const createSettingsStore = () => {
     });
   };
 
-  const setNoteTemplate = (value: string) => {
+  const setHighlightTemplate = (value: string) => {
     store.update((state) => {
-      state.noteTemplate = value;
+      state.highlightTemplate = value;
       return state;
     });
   };
@@ -119,24 +133,9 @@ const createSettingsStore = () => {
     });
   };
 
-  const setLastSyncMode = (value: SyncMode) => {
-    store.update((state) => {
-      state.lastSyncMode = value;
-      return state;
-    });
-  };
-
   const setDownloadBookMetadata = (value: boolean) => {
     store.update((state) => {
       state.downloadBookMetadata = value;
-      return state;
-    });
-  };
-
-  const incrementHistory = (delta: SyncHistory) => {
-    store.update((state) => {
-      state.history.totalBooks += delta.totalBooks;
-      state.history.totalHighlights += delta.totalHighlights;
       return state;
     });
   };
@@ -150,19 +149,18 @@ const createSettingsStore = () => {
 
   return {
     subscribe: store.subscribe,
-    initialise,
+    initialize,
+    isLegacy: () => isLegacy,
     actions: {
       setHighlightsFolder,
       resetSyncHistory,
-      setSyncDateToNow,
       login,
       logout,
-      setNoteTemplate,
+      setHighlightTemplate,
       setSyncOnBoot,
-      setLastSyncMode,
       setDownloadBookMetadata,
-      incrementHistory,
       setAmazonRegion,
+      upgradeStoreState,
     },
   };
 };

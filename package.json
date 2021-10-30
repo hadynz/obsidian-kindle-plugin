@@ -1,6 +1,6 @@
 {
   "name": "obsidian-kindle-plugin",
-  "version": "0.2.19",
+  "version": "1.0.0",
   "description": "Sync your Kindle book highlights using your Amazon login or uploading your My Clippings file",
   "main": "src/index.ts",
   "repository": {
@@ -11,27 +11,31 @@
   "author": "Hady Osman",
   "license": "MIT",
   "scripts": {
+    "prettier": "prettier --write '**/*.{ts,js,css,html}'",
     "clean": "rimraf dist main.js",
     "test": "jest",
     "test-watch": "jest --watch",
     "build": "npm run lint && webpack",
     "lint": "tsc --noemit && svelte-check && eslint . --ext .ts",
-    "dev": "NODE_ENV=development webpack && cp ./dist/main.js* ."
+    "dev": "NODE_ENV=development webpack && cp ./dist/main.js* .",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@hadynz/kindle-clippings": "^1.0.10",
     "cheerio": "1.0.0-rc.6",
+    "fletcher": "0.0.3",
     "gray-matter": "^4.0.3",
-    "lodash.pickby": "^4.6.0",
-    "lodasync": "^1.0.7",
+    "lodash": "^4.17.21",
     "nunjucks": "^3.2.3",
     "sanitize-filename": "^1.6.3",
-    "svelte-loading-spinners": "^0.1.4"
+    "svelte-loading-spinners": "^0.1.4",
+    "typed-emitter": "^1.4.0"
   },
   "devDependencies": {
     "@tsconfig/svelte": "^1.0.10",
+    "@types/faker": "^5.5.8",
     "@types/jest": "^26.0.22",
-    "@types/lodash.pickby": "^4.6.6",
+    "@types/lodash": "^4.14.175",
     "@types/nunjucks": "^3.1.4",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
@@ -39,7 +43,10 @@
     "copy-webpack-plugin": "^8.1.1",
     "electron": "^12.0.4",
     "eslint": "^7.24.0",
+    "faker": "^5.5.3",
+    "husky": "^7.0.4",
     "jest": "^26.6.3",
+    "lint-staged": "^11.2.4",
     "moment": "^2.29.1",
     "obsidian": "^0.12.0",
     "prettier": "^2.2.1",
@@ -55,5 +62,9 @@
     "webpack": "^5.30.0",
     "webpack-cli": "^4.6.0",
     "webpack-node-externals": "^2.5.2"
+  },
+  "lint-staged": {
+    "*.ts": "eslint --cache --fix",
+    "*.{js,css,md}": "prettier --write"
   }
 }

@@ -2,36 +2,29 @@
   import { Jumper } from 'svelte-loading-spinners';
 
   import { sanitizeTitleExcess } from '~/utils';
-  import { syncSessionStore } from '~/store';
   import { currentAmazonRegion } from '~/amazonRegion';
+  import { store } from '../store';
 
   let progressMessage: string;
 
-  $: if ($syncSessionStore.status === 'login') {
+  $: if ($store.status === 'sync:login') {
     const region = currentAmazonRegion();
     progressMessage = `Logging into ${region.hostname}`;
-  } else if ($syncSessionStore?.method === 'amazon') {
+  } else if ($store?.syncMode === 'amazon') {
     progressMessage = 'Looking for new Kindle highlights to sync...';
   } else {
     progressMessage =
-      'Parsing your Clippings files for highlights and notes...';
+      'Parsing your My Clippings files for highlights and notes...';
   }
 
-  $: doneTotal =
-    $syncSessionStore.jobs.filter((j) => j.status === 'done').length + 1;
-
-  $: total = $syncSessionStore.jobs.length;
-
-  $: currentJob = $syncSessionStore.jobs.find(
-    (job) => job.status === 'in-progress'
-  );
+  $: total = $store.jobs?.length;
 
   export let onDone: () => void;
 </script>
 
-{#if $syncSessionStore.status === 'error'}
+{#if $store.erroredJobs.length > 0}
   <div class="kp-syncmodal--error">
-    {$syncSessionStore.errorMessage}
+    {`${$store.erroredJobs.length} books(s) could not be synced because of errors`}
   </div>
   <div class="setting-item-control">
     <button class="mod-cta" on:click={onDone}>OK</button>
@@ -41,13 +34,15 @@
     <Jumper color="#7f6df2" size="90" duration="1.6s" />
 
     <div class="kp-syncmodal--progress">
-      {#if currentJob}
-        <span class="kp-syncmodal--progress-current">{doneTotal}</span>
+      {#if $store.currentJob}
+        <span class="kp-syncmodal--progress-current">
+          {$store.currentJob.index + 1}
+        </span>
         <span class="kp-syncmodal--progress-total">/ {total}</span>
         <div class="kp-syncmodal--download">
           Syncing
           <span class="kp-syncmodal--book-name">
-            {sanitizeTitleExcess(currentJob.book.title)}
+            {sanitizeTitleExcess($store.currentJob.book.title)}
           </span>
         </div>
       {:else}

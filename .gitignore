@@ -5,6 +5,12 @@
 # npm
 node_modules
 
+# nunjucks file
+main.js.LICENSE.txt
+
+# eslint
+.eslintcache
+
 # obsidian plugin files
 main.js
 main.js.map
