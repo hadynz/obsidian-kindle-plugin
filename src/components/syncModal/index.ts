@@ -28,9 +28,10 @@ export default class SyncModal extends Modal {
   }
 
   public async show(): Promise<void> {
-    if (settingsStore.isLegacy()) {
-      store.update((state) => ({ ...state, status: 'upgrade-warning' }));
-    }
+    // TODO: Remove after proliferation of v1.0.0
+    const isLegacy = await settingsStore.isLegacy();
+    const initialState: SyncModalState['status'] = isLegacy ? 'upgrade-warning' : 'idle';
+    store.update((state) => ({ ...state, status: initialState }));
 
     this.modalContent = new SyncModalContent({
       target: this.contentEl,
