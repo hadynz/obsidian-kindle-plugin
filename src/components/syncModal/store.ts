@@ -15,6 +15,7 @@ type JobError = {
 
 export type SyncModalState = {
   status:
+    | 'upgrade-warning'
     | 'first-time'
     | 'idle'
     | 'choose-sync-method'
@@ -37,7 +38,7 @@ const InitialState: SyncModalState = {
 const createSyncModalStore = () => {
   const store = writable(InitialState);
 
-  const syncing = function (status: SyncModalState['status']) {
+  const syncing = (status: SyncModalState['status']) => {
     store.update((state) => ({ ...state, status }));
   };
 

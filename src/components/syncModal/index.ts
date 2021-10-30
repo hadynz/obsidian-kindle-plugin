@@ -1,10 +1,12 @@
 import { App, Modal } from 'obsidian';
 
 import SyncModalContent from './SyncModalContent.svelte';
+import { settingsStore } from '~/store';
 import { SyncModalState, store } from './store';
 import type { SyncMode } from '~/models';
 
 const SyncModalTitle: Record<SyncModalState['status'], string> = {
+  'upgrade-warning': 'Breaking change notice',
   'first-time': '',
   idle: 'Your Kindle highlights',
   'sync:fetching-books': 'Syncing data...',
@@ -26,6 +28,10 @@ export default class SyncModal extends Modal {
   }
 
   public async show(): Promise<void> {
+    if (settingsStore.isLegacy()) {
+      store.update((state) => ({ ...state, status: 'upgrade-warning' }));
+    }
+
     this.modalContent = new SyncModalContent({
       target: this.contentEl,
       props: {
@@ -38,6 +44,10 @@ export default class SyncModal extends Modal {
           } else {
             this.props.onMyClippingsSync();
           }
+        },
+        onUpgrade: async () => {
+          await settingsStore.actions.upgradeStoreState();
+          store.update((state) => ({ ...state, status: 'idle' }));
         },
       },
     });
