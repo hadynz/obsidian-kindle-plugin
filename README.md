@@ -78,7 +78,7 @@ your online Amazon account.
 ### Template tags
 
 | Tag            | Description                                         | Present                                                                            |
-| -------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| -------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | `{{text}}`     | Annotated text                                      | Always in all sync modes                                                           |
 | `{{location}}` | Highlighted text location                           | Usually available in all sync modes. If not, then `{{page}}` will be available     | Usually available. If not, then `{{page}}` will be available |
 | `{{page}}`     | Highlighted text page                               | Usually available in all sync modes. If not, then `{{location}}` will be available |
