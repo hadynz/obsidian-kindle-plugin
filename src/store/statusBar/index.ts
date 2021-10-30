@@ -9,8 +9,8 @@ import { ee } from '~/eventEmitter';
 const _setInterval = new SetInterval();
 const _setTimeout = new SetTimeout();
 
-const intervalInMs = 1000 * 2; // 5 minute
-const timeoutInMs = 1000 * 30; // 30 seconds
+// const intervalInMs = 1000 * 2; // 5 minute
+// const timeoutInMs = 1000 * 30; // 30 seconds
 
 type StatusBarMessage = {
   status: 'idle' | 'ready' | 'syncing' | 'error';
@@ -52,13 +52,13 @@ const createStatusBarStore = () => {
 
   const defaultMessage = new DefaultMessage();
 
-  const waitThenResumeDefaultMessage = () => {
-    _setTimeout.reset(() => {
-      _setInterval.reset(() => setMessage(defaultMessage.get()), intervalInMs);
-    }, timeoutInMs);
-  };
+  // const waitThenResumeDefaultMessage = () => {
+  //   _setTimeout.reset(() => {
+  //     _setInterval.reset(() => setMessage(defaultMessage.get()), intervalInMs);
+  //   }, timeoutInMs);
+  // };
 
-  ee.on('resyncBook', (file) => {
+  ee.on('resyncBook', (_file) => {
     _setTimeout.clear();
     _setInterval.clear();
     // setMessage({
@@ -75,7 +75,7 @@ const createStatusBarStore = () => {
     // waitThenResumeDefaultMessage();
   });
 
-  ee.on('resyncComplete', (_file, diffCount) => {
+  ee.on('resyncComplete', (_file, _diffCount) => {
     // setMessage({
     //   status: 'ready',
     //   text: `${diffCount} highlight(s) were imported`,
