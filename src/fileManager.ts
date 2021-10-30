@@ -13,7 +13,7 @@ import type { Book } from '~/models';
  */
 const bookFilePath = (book: Book): string => {
   const fileName = sanitizeTitle(book.title);
-  return path.join(get(settingsStore).highlightsFolder, `${fileName}.md`).replace(/\//, '');
+  return path.join(get(settingsStore).highlightsFolder, `${fileName}.md`).replace(/^\//, '');
 };
 
 const bookFrontMatter = (book: Book, highlightsCount: number): KindleFrontmatter => {

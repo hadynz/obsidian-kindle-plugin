@@ -28,7 +28,6 @@ const createSettingsStore = () => {
   const store = writable(DEFAULT_SETTINGS as Settings);
 
   let _plugin!: KindlePlugin;
-  let isLegacy: boolean;
 
   // Load settings data from disk into store
   const initialize = async (plugin: KindlePlugin): Promise<void> => {
@@ -40,9 +39,6 @@ const createSettingsStore = () => {
     };
 
     store.set(settings);
-
-    // Legacy is when user's data.json contains legacy state information
-    isLegacy = data.history != null;
 
     _plugin = plugin;
   };
@@ -80,6 +76,11 @@ const createSettingsStore = () => {
       await _plugin.saveData(data);
     }
   });
+
+  const isLegacy = async () => {
+    const data = Object.assign({}, DEFAULT_SETTINGS, await _plugin.loadData());
+    return data.history != null;
+  };
 
   const upgradeStoreState = async () => {
     const data = Object.assign({}, DEFAULT_SETTINGS, await _plugin.loadData());
@@ -150,7 +151,7 @@ const createSettingsStore = () => {
   return {
     subscribe: store.subscribe,
     initialize,
-    isLegacy: () => isLegacy,
+    isLegacy,
     actions: {
       setHighlightsFolder,
       resetSyncHistory,
