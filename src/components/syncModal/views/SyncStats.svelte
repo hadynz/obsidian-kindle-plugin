@@ -12,7 +12,11 @@
   <div class="kp-stats--item-wrapper">
     <div class="kp-stats--item">
       <div>Books</div>
-      <div class="kp-stats--value">{numberWithCommas($fileStore)}</div>
+      <div class="kp-stats--value">{numberWithCommas($fileStore.fileCount)}</div>
+    </div>
+    <div class="kp-stats--item">
+      <div>Highlights</div>
+      <div class="kp-stats--value">{numberWithCommas($fileStore.highlightCount)}</div>
     </div>
   </div>
   <div class="kp-stats--sync-date">

@@ -112,7 +112,7 @@ const createStatusBarStore = () => {
     [settingsStore, fileStore],
     ([$settings, $file], set) => {
       // Always update parameters of default message
-      defaultMessage.set($settings.lastSyncDate, $file);
+      defaultMessage.set($settings.lastSyncDate, $file.fileCount);
 
       // Expose store's set method to closure
       setMessage = (value: StatusBarMessage) => {
