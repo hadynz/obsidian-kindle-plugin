@@ -21,7 +21,7 @@
     >
       {@html amazonIcon}
     </a>
-    <div class="kp-syncbuttons-text">Sync from the cloud</div>
+    <div class="kp-syncbuttons-text">Amazon Cloud</div>
   </div>
   <div class="kp-syncbuttons--option">
     <a
@@ -34,7 +34,7 @@
     >
       {@html clippingsIcon}
     </a>
-    <div class="kp-syncbuttons-text">Upload My Clippings file</div>
+    <div class="kp-syncbuttons-text">Upload "My Clippings" file</div>
   </div>
 </div>
 
