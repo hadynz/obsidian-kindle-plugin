@@ -1,7 +1,18 @@
+import _ from 'lodash';
 import { readable } from 'svelte/store';
 
 import { ee } from '~/eventEmitter';
 import type FileManager from '~/fileManager';
+
+type FileStoreState = {
+  fileCount: number;
+  highlightCount: number;
+};
+
+const INITIAL_STATE: FileStoreState = {
+  fileCount: 0,
+  highlightCount: 0,
+};
 
 const createFileStore = () => {
   let _fileManager: FileManager;
@@ -10,10 +21,13 @@ const createFileStore = () => {
     _fileManager = fileManager;
   };
 
-  const store = readable(0, (set) => {
+  const store = readable(INITIAL_STATE, (set) => {
     const updateFileCount = () => {
       _fileManager?.getKindleFiles().then((files) => {
-        set(files.length);
+        set({
+          fileCount: files.length,
+          highlightCount: _.sumBy(files, (file) => file.frontmatter?.highlightsCount),
+        });
       });
     };
 
