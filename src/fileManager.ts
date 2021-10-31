@@ -103,7 +103,13 @@ export default class FileManager {
   ): Promise<void> {
     const filePath = this.generateUniqueFilePath(book);
     const frontmatterContent = this.generateBookContent(book, content, highlightsCount);
-    await this.vault.create(filePath, frontmatterContent);
+
+    try {
+      await this.vault.create(filePath, frontmatterContent);
+    } catch (error) {
+      console.error(`Error writing new file (path="${filePath})"`);
+      throw error;
+    }
   }
 
   public async updateFile(
@@ -113,7 +119,13 @@ export default class FileManager {
     highlightsCount: number
   ): Promise<void> {
     const frontmatterContent = this.generateBookContent(remoteBook, content, highlightsCount);
-    await this.vault.modify(kindleFile.file, frontmatterContent);
+
+    try {
+      await this.vault.modify(kindleFile.file, frontmatterContent);
+    } catch (error) {
+      console.error(`Error modifying e file (path="${kindleFile.file.path})"`);
+      throw error;
+    }
   }
 
   /**
