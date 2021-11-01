@@ -1,62 +1,10 @@
 import { MetadataCache, TAbstractFile, TFile, TFolder, Vault, normalizePath } from 'obsidian';
-import { get } from 'svelte/store';
-import path from 'path';
-import moment from 'moment';
 
-import { settingsStore } from '~/store';
-import { sanitizeTitle, mergeFrontmatter } from '~/utils';
-import type { Book } from '~/models';
-
-/**
- * Returns a file path for a given book relative to the current Obsidian
- * vault directory.
- */
-const bookFilePath = (book: Book): string => {
-  const fileName = sanitizeTitle(book.title);
-  return path.join(get(settingsStore).highlightsFolder, `${fileName}.md`);
-};
-
-const bookToFrontMatter = (book: Book, highlightsCount: number): KindleFrontmatter => {
-  return {
-    bookId: book.id,
-    title: book.title,
-    author: book.author,
-    asin: book.asin,
-    lastAnnotatedDate: moment(book.lastAnnotatedDate).format('YYYY-MM-DD'),
-    bookImageUrl: book.imageUrl,
-    highlightsCount,
-  };
-};
-
-const frontMatterToBook = (frontmatter: KindleFrontmatter): Book => {
-  const formats = ['MMM DD, YYYY', 'YYYY-MM-DD'];
-  return {
-    id: frontmatter.bookId,
-    title: frontmatter.title,
-    author: frontmatter.author,
-    asin: frontmatter.asin,
-    lastAnnotatedDate: moment(frontmatter.lastAnnotatedDate, formats).toDate(),
-    imageUrl: frontmatter.bookImageUrl,
-  };
-};
+import { mergeFrontmatter } from '~/utils';
+import { bookFilePath, bookToFrontMatter, frontMatterToBook } from './mappers';
+import type { Book, KindleFile, KindleFrontmatter } from '~/models';
 
 const SyncingStateKey = 'kindle-sync';
-
-type KindleFrontmatter = {
-  bookId: string;
-  title: string;
-  author: string;
-  asin: string;
-  lastAnnotatedDate: string;
-  bookImageUrl: string;
-  highlightsCount: number;
-};
-
-export type KindleFile = {
-  file: TFile;
-  frontmatter: KindleFrontmatter;
-  book?: Book;
-};
 
 export default class FileManager {
   constructor(private vault: Vault, private metadataCache: MetadataCache) {}

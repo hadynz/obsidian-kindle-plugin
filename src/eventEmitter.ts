@@ -1,8 +1,7 @@
 import EventEmitter from 'events';
 import type TypedEmitter from 'typed-emitter';
 
-import type { Book, Highlight, SyncMode } from '~/models';
-import type { KindleFile } from '~/fileManager';
+import type { Book, Highlight, SyncMode, KindleFile } from '~/models';
 
 interface MessageEvents {
   obsidianReady: () => void;

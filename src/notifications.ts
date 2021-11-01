@@ -2,7 +2,7 @@ import { Notice } from 'obsidian';
 import { sanitizeTitle } from '~/utils';
 
 import { ee } from '~/eventEmitter';
-import type { KindleFile } from '~/fileManager';
+import type { KindleFile } from '~/models';
 
 export const registerNotifications = (): void => {
   ee.on('resyncBook', (kindleFile) => {

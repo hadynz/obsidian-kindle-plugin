@@ -3,8 +3,7 @@ import { HighlightIdBlockRefPrefix, Renderer } from '~/renderer';
 import { diffLists } from './helpers';
 import type { Highlight } from '~/models';
 import type FileManager from '~/fileManager';
-import type { Book } from '~/models';
-import type { KindleFile } from '~/fileManager';
+import type { Book, KindleFile } from '~/models';
 
 export type RenderedHighlight = {
   line: number;

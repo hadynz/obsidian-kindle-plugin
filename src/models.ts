@@ -1,3 +1,5 @@
+import type { TFile } from 'obsidian';
+
 export type Book = {
   id: string;
   title: string;
@@ -47,4 +49,20 @@ export type AmazonAccount = {
   hostname: string;
   kindleReaderUrl: string;
   notebookUrl: string;
+};
+
+export type KindleFrontmatter = {
+  bookId: string;
+  title: string;
+  author: string;
+  asin: string;
+  lastAnnotatedDate: string;
+  bookImageUrl: string;
+  highlightsCount: number;
+};
+
+export type KindleFile = {
+  file: TFile;
+  frontmatter: KindleFrontmatter;
+  book?: Book;
 };
