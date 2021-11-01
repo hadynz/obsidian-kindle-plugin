@@ -1,4 +1,4 @@
-import { MetadataCache, TAbstractFile, TFile, TFolder, Vault } from 'obsidian';
+import { MetadataCache, TAbstractFile, TFile, TFolder, Vault, normalizePath } from 'obsidian';
 import { get } from 'svelte/store';
 import path from 'path';
 
@@ -8,12 +8,11 @@ import type { Book } from '~/models';
 
 /**
  * Returns a file path for a given book relative to the current Obsidian
- * vault directory. The method also trims leading slashes to help with
- * internal path matching with Obsidian's vault.getFiles method
+ * vault directory.
  */
 const bookFilePath = (book: Book): string => {
   const fileName = sanitizeTitle(book.title);
-  return path.join(get(settingsStore).highlightsFolder, `${fileName}.md`).replace(/^\//, '');
+  return path.join(get(settingsStore).highlightsFolder, `${fileName}.md`);
 };
 
 const bookFrontMatter = (book: Book, highlightsCount: number): KindleFrontmatter => {
@@ -140,7 +139,10 @@ export default class FileManager {
 
   private generateUniqueFilePath(book: Book): string {
     const filePath = bookFilePath(book);
-    const isDuplicate = this.vault.getMarkdownFiles().some((v) => v.path === filePath);
+
+    const isDuplicate = this.vault
+      .getMarkdownFiles()
+      .some((v) => v.path === normalizePath(filePath));
 
     if (isDuplicate) {
       const currentTime = new Date().getTime().toString();
