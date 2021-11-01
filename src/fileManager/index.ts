@@ -1,50 +1,10 @@
-import { MetadataCache, TAbstractFile, TFile, TFolder, Vault } from 'obsidian';
-import { get } from 'svelte/store';
-import path from 'path';
+import { MetadataCache, TAbstractFile, TFile, TFolder, Vault, normalizePath } from 'obsidian';
 
-import { settingsStore } from '~/store';
-import { sanitizeTitle, mergeFrontmatter } from '~/utils';
-import type { Book } from '~/models';
-
-/**
- * Returns a file path for a given book relative to the current Obsidian
- * vault directory. The method also trims leading slashes to help with
- * internal path matching with Obsidian's vault.getFiles method
- */
-const bookFilePath = (book: Book): string => {
-  const fileName = sanitizeTitle(book.title);
-  return path.join(get(settingsStore).highlightsFolder, `${fileName}.md`).replace(/^\//, '');
-};
-
-const bookFrontMatter = (book: Book, highlightsCount: number): KindleFrontmatter => {
-  return {
-    bookId: book.id,
-    title: book.title,
-    author: book.author,
-    asin: book.asin,
-    lastAnnotatedDate: book.lastAnnotatedDate,
-    bookImageUrl: book.imageUrl,
-    highlightsCount,
-  };
-};
+import { mergeFrontmatter } from '~/utils';
+import { bookFilePath, bookToFrontMatter, frontMatterToBook } from './mappers';
+import type { Book, KindleFile, KindleFrontmatter } from '~/models';
 
 const SyncingStateKey = 'kindle-sync';
-
-type KindleFrontmatter = {
-  bookId: string;
-  title: string;
-  author: string;
-  asin: string;
-  lastAnnotatedDate: string;
-  bookImageUrl: string;
-  highlightsCount: number;
-};
-
-export type KindleFile = {
-  file: TFile;
-  frontmatter: KindleFrontmatter;
-  book?: Book;
-};
 
 export default class FileManager {
   constructor(private vault: Vault, private metadataCache: MetadataCache) {}
@@ -77,14 +37,7 @@ export default class FileManager {
       return undefined;
     }
 
-    const book: Book = {
-      id: kindleFrontmatter.bookId,
-      title: kindleFrontmatter.title,
-      author: kindleFrontmatter.author,
-      asin: kindleFrontmatter.asin,
-      lastAnnotatedDate: kindleFrontmatter.lastAnnotatedDate,
-      imageUrl: kindleFrontmatter.bookImageUrl,
-    };
+    const book = frontMatterToBook(kindleFrontmatter);
 
     return { file, frontmatter: kindleFrontmatter, book };
   }
@@ -134,13 +87,16 @@ export default class FileManager {
    */
   private generateBookContent(book: Book, content: string, highlightsCount: number): string {
     return mergeFrontmatter(content, {
-      [SyncingStateKey]: bookFrontMatter(book, highlightsCount),
+      [SyncingStateKey]: bookToFrontMatter(book, highlightsCount),
     });
   }
 
   private generateUniqueFilePath(book: Book): string {
     const filePath = bookFilePath(book);
-    const isDuplicate = this.vault.getMarkdownFiles().some((v) => v.path === filePath);
+
+    const isDuplicate = this.vault
+      .getMarkdownFiles()
+      .some((v) => v.path === normalizePath(filePath));
 
     if (isDuplicate) {
       const currentTime = new Date().getTime().toString();

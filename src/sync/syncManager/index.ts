@@ -1,5 +1,4 @@
 import { get } from 'svelte/store';
-import type { App } from 'obsidian';
 
 import { settingsStore } from '~/store';
 import { scrapeBookMetadata } from '~/scraper';
@@ -7,14 +6,13 @@ import { DiffManager } from '../diffManager';
 import { Renderer } from '~/renderer';
 import { diffBooks } from './diffBooks';
 import type FileManager from '~/fileManager';
-import type { KindleFile } from '~/fileManager';
-import type { Book, BookMetadata, Highlight } from '~/models';
+import type { Book, BookMetadata, Highlight, KindleFile } from '~/models';
 import type { DiffResult } from '../diffManager';
 
 export default class SyncManager {
   private renderer: Renderer;
 
-  constructor(private app: App, private fileManager: FileManager) {
+  constructor(private fileManager: FileManager) {
     this.fileManager = fileManager;
     this.renderer = new Renderer();
   }

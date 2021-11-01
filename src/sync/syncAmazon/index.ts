@@ -2,8 +2,7 @@ import AmazonLoginModal from '~/components/amazonLoginModal';
 import { scrapeHighlightsForBook, scrapeBooks } from '~/scraper';
 import { ee } from '~/eventEmitter';
 import type { SyncManager } from '~/sync';
-import type { Book } from '~/models';
-import type { KindleFile } from '~/fileManager';
+import type { Book, KindleFile } from '~/models';
 
 export default class SyncAmazon {
   constructor(private syncManager: SyncManager) {}

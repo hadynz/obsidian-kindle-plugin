@@ -1,3 +1,4 @@
+import moment from 'moment';
 import type { Root } from 'cheerio';
 
 import type { Book } from '~/models';
@@ -9,8 +10,9 @@ import { hash } from '~/utils';
  * Amazon dates in the Kindle notebook looks like "Sunday October 24, 2021"
  * This method will parse this string and return a valid Date object
  */
-const parseToDateString = (kindleDate: string): string => {
-  return kindleDate.substr(kindleDate.indexOf(' ') + 1);
+const parseToDateString = (kindleDate: string): Date => {
+  const amazonDateString = kindleDate.substr(kindleDate.indexOf(' ') + 1);
+  return moment(amazonDateString, 'MMM DD, YYYY').toDate();
 };
 
 export const parseBooks = ($: Root): Book[] => {
