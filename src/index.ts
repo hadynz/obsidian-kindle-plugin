@@ -22,7 +22,7 @@ export default class KindlePlugin extends Plugin {
     console.log('Kindle Highlights plugin: loading plugin', new Date().toLocaleString());
 
     this.fileManager = new FileManager(this.app.vault, this.app.metadataCache);
-    const syncManager = new SyncManager(this.app, this.fileManager);
+    const syncManager = new SyncManager(this.fileManager);
 
     await initializeStores(this, this.fileManager);
 

@@ -5,7 +5,7 @@ export type Book = {
   asin?: string;
   url?: string;
   imageUrl?: string;
-  lastAnnotatedDate?: string;
+  lastAnnotatedDate?: Date;
 };
 
 export type Highlight = {

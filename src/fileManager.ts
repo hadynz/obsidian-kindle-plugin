@@ -1,6 +1,7 @@
 import { MetadataCache, TAbstractFile, TFile, TFolder, Vault, normalizePath } from 'obsidian';
 import { get } from 'svelte/store';
 import path from 'path';
+import moment from 'moment';
 
 import { settingsStore } from '~/store';
 import { sanitizeTitle, mergeFrontmatter } from '~/utils';
@@ -15,15 +16,27 @@ const bookFilePath = (book: Book): string => {
   return path.join(get(settingsStore).highlightsFolder, `${fileName}.md`);
 };
 
-const bookFrontMatter = (book: Book, highlightsCount: number): KindleFrontmatter => {
+const bookToFrontMatter = (book: Book, highlightsCount: number): KindleFrontmatter => {
   return {
     bookId: book.id,
     title: book.title,
     author: book.author,
     asin: book.asin,
-    lastAnnotatedDate: book.lastAnnotatedDate,
+    lastAnnotatedDate: moment(book.lastAnnotatedDate).format('YYYY-MM-DD'),
     bookImageUrl: book.imageUrl,
     highlightsCount,
+  };
+};
+
+const frontMatterToBook = (frontmatter: KindleFrontmatter): Book => {
+  const formats = ['MMM DD, YYYY', 'YYYY-MM-DD'];
+  return {
+    id: frontmatter.bookId,
+    title: frontmatter.title,
+    author: frontmatter.author,
+    asin: frontmatter.asin,
+    lastAnnotatedDate: moment(frontmatter.lastAnnotatedDate, formats).toDate(),
+    imageUrl: frontmatter.bookImageUrl,
   };
 };
 
@@ -76,14 +89,7 @@ export default class FileManager {
       return undefined;
     }
 
-    const book: Book = {
-      id: kindleFrontmatter.bookId,
-      title: kindleFrontmatter.title,
-      author: kindleFrontmatter.author,
-      asin: kindleFrontmatter.asin,
-      lastAnnotatedDate: kindleFrontmatter.lastAnnotatedDate,
-      imageUrl: kindleFrontmatter.bookImageUrl,
-    };
+    const book = frontMatterToBook(kindleFrontmatter);
 
     return { file, frontmatter: kindleFrontmatter, book };
   }
@@ -133,7 +139,7 @@ export default class FileManager {
    */
   private generateBookContent(book: Book, content: string, highlightsCount: number): string {
     return mergeFrontmatter(content, {
-      [SyncingStateKey]: bookFrontMatter(book, highlightsCount),
+      [SyncingStateKey]: bookToFrontMatter(book, highlightsCount),
     });
   }
 
