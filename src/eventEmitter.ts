@@ -5,8 +5,11 @@ import type { Book, Highlight, SyncMode, KindleFile } from '~/models';
 
 interface MessageEvents {
   obsidianReady: () => void;
-  login: () => void;
+  startLogin: () => void;
   loginComplete: (success: boolean) => void;
+  startLogout: () => void;
+  logoutSuccess: () => void;
+  logoutFailure: () => void;
   fetchingBooks: () => void;
   fetchingBooksSuccess: (booksToSync: Book[], remoteBooks: Book[]) => void;
   syncSessionStart: (mode: SyncMode) => void;

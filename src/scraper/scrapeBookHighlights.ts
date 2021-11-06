@@ -57,7 +57,7 @@ const parseHighlights = ($: Root): Highlight[] => {
 };
 
 const loadAndScrapeHighlights = async (book: Book, url: string) => {
-  const dom = await loadRemoteDom(url);
+  const { dom } = await loadRemoteDom(url);
   const nextPageState = parseNextPageState(dom);
 
   return {
