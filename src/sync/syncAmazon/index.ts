@@ -58,7 +58,7 @@ export default class SyncAmazon {
   }
 
   private async login(): Promise<boolean> {
-    ee.emit('login');
+    ee.emit('startLogin');
 
     const modal = new AmazonLoginModal();
     const success = await modal.doLogin();

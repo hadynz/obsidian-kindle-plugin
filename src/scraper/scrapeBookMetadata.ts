@@ -63,7 +63,7 @@ export const parseBookMetadata = ($: Root): BookMetadata => {
 };
 
 const scrapeBookMetadata = async (book: Book): Promise<BookMetadata> => {
-  const dom = await loadRemoteDom(`https://www.amazon.com/dp/${book.asin}`, 1000);
+  const { dom } = await loadRemoteDom(`https://www.amazon.com/dp/${book.asin}`, 1000);
 
   return parseBookMetadata(dom);
 };

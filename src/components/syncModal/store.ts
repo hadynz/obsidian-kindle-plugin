@@ -41,7 +41,7 @@ const createSyncModalStore = () => {
     store.update((state) => ({ ...state, status }));
   };
 
-  ee.on('login', () => syncing('sync:login'));
+  ee.on('startLogin', () => syncing('sync:login'));
 
   ee.on('fetchingBooks', () => syncing('sync:fetching-books'));
 

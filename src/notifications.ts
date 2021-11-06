@@ -28,4 +28,16 @@ export const registerNotifications = (): void => {
   ee.on('resyncFailure', (_file: KindleFile, message: string) => {
     new Notice(message);
   });
+
+  ee.on('startLogout', () => {
+    new Notice('Signing out...');
+  });
+
+  ee.on('logoutSuccess', () => {
+    new Notice('Signed out');
+  });
+
+  ee.on('logoutFailure', () => {
+    new Notice('Error. Could not sign out');
+  });
 };

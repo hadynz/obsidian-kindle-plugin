@@ -3,8 +3,16 @@ import cheerio, { Root } from 'cheerio';
 
 const { BrowserWindow: RemoteBrowserWindow } = remote;
 
-export const loadRemoteDom = (url: string, timeout = 0): Promise<Root> => {
-  return new Promise<Root>((resolve) => {
+type RemoteLoadResult = {
+  dom: Root;
+  didNavigateUrl: string;
+  didFinishLoadUrl: string;
+};
+
+export const loadRemoteDom = (targetUrl: string, timeout = 0): Promise<RemoteLoadResult> => {
+  return new Promise<RemoteLoadResult>((resolve) => {
+    let didNavigateUrl: string = null;
+
     const window: BrowserWindow = new RemoteBrowserWindow({
       width: 1000,
       height: 600,
@@ -15,7 +23,11 @@ export const loadRemoteDom = (url: string, timeout = 0): Promise<Root> => {
       show: false,
     });
 
-    window.webContents.on('did-finish-load', async () => {
+    window.webContents.on('did-navigate', async (_event, url) => {
+      didNavigateUrl = url;
+    });
+
+    window.webContents.on('did-finish-load', async (_event, url) => {
       if (timeout > 0) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
@@ -28,9 +40,13 @@ export const loadRemoteDom = (url: string, timeout = 0): Promise<Root> => {
 
       window.destroy();
 
-      resolve($);
+      resolve({
+        dom: $,
+        didNavigateUrl: didNavigateUrl,
+        didFinishLoadUrl: url,
+      });
     });
 
-    window.loadURL(url);
+    window.loadURL(targetUrl);
   });
 };

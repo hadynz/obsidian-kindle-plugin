@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import { get } from 'svelte/store';
 
+import { ee } from '~/eventEmitter';
 import AmazonLogoutModal from '~/components/amazonLogoutModal';
 import type KindlePlugin from '~/.';
 import type FileManager from '~/fileManager';
@@ -61,10 +62,23 @@ export class SettingsTab extends PluginSettingTab {
           .onClick(async () => {
             button.removeCta().setButtonText('Signing out...').setDisabled(true);
 
-            const signoutLink = await scrapeLogoutUrl();
+            ee.emit('startLogout');
 
-            const modal = new AmazonLogoutModal(signoutLink);
-            await modal.doLogout();
+            try {
+              const signout = await scrapeLogoutUrl();
+
+              // User is still logged in
+              if (signout.isStillLoggedIn) {
+                const modal = new AmazonLogoutModal(signout.url);
+                await modal.doLogout();
+              }
+
+              await settingsStore.actions.logout();
+            } catch (error) {
+              ee.emit('logoutFailure');
+            }
+
+            ee.emit('logoutSuccess');
 
             this.display(); // rerender
           });

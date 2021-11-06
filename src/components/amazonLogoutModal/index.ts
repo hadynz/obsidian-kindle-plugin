@@ -1,7 +1,5 @@
 import { remote, BrowserWindow } from 'electron';
 
-import { settingsStore } from '~/store';
-
 const { BrowserWindow: RemoteBrowserWindow } = remote;
 
 export default class AmazonLogoutModal {
@@ -10,8 +8,8 @@ export default class AmazonLogoutModal {
   private waitForSignIn: Promise<void>;
   private resolvePromise!: () => void;
 
-  constructor(url: string) {
-    this.url = url;
+  constructor(targetUrl: string) {
+    this.url = targetUrl;
 
     this.waitForSignIn = new Promise((resolve: () => void) => (this.resolvePromise = resolve));
 
@@ -26,25 +24,16 @@ export default class AmazonLogoutModal {
       this.modal.show();
     });
 
-    this.modal.webContents.on('did-navigate', async () => {
+    this.modal.webContents.on('did-navigate', async (_event, url) => {
       if (url.contains('signin')) {
         this.modal.destroy();
-
-        await settingsStore.actions.logout();
-
         this.resolvePromise();
       }
     });
   }
 
   async doLogout(): Promise<void> {
-    try {
-      this.modal.loadURL(this.url);
-    } catch (error) {
-      // Swallow error. `loadUrl` is interrupted on successful
-      // logout as we immediately redirect if user is logged out
-    }
-
+    this.modal.loadURL(this.url);
     return this.waitForSignIn;
   }
 }
