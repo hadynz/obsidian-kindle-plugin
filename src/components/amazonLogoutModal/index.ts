@@ -2,7 +2,7 @@ import { remote, BrowserWindow } from 'electron';
 
 import { settingsStore } from '~/store';
 
-const { BrowserWindow } = remote;
+const { BrowserWindow: RemoteBrowserWindow } = remote;
 
 export default class AmazonLogoutModal {
   private modal: BrowserWindow;
@@ -15,7 +15,7 @@ export default class AmazonLogoutModal {
 
     this.waitForSignIn = new Promise((resolve: () => void) => (this.resolvePromise = resolve));
 
-    this.modal = new BrowserWindow({
+    this.modal = new RemoteBrowserWindow({
       parent: remote.getCurrentWindow(),
       width: 450,
       height: 730,
