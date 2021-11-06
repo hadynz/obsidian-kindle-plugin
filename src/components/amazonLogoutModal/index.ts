@@ -1,11 +1,11 @@
-import { remote } from 'electron';
+import { remote, BrowserWindow } from 'electron';
 
 import { settingsStore } from '~/store';
 
 const { BrowserWindow } = remote;
 
 export default class AmazonLogoutModal {
-  private modal;
+  private modal: BrowserWindow;
   private url: string;
   private waitForSignIn: Promise<void>;
   private resolvePromise!: () => void;
@@ -22,23 +22,29 @@ export default class AmazonLogoutModal {
       show: false,
     });
 
-    // We can only change title after page is loaded since HTML page has its own title
     this.modal.once('ready-to-show', () => {
       this.modal.show();
     });
 
-    // If user is on the read.amazon.com url, we can safely assume they are logged in
-    this.modal.webContents.on('did-navigate', async (_event, url) => {
+    this.modal.webContents.on('did-navigate', async () => {
       if (url.contains('signin')) {
-        this.modal.close();
+        this.modal.destroy();
+
         await settingsStore.actions.logout();
+
         this.resolvePromise();
       }
     });
   }
 
   async doLogout(): Promise<void> {
-    this.modal.loadURL(this.url);
+    try {
+      this.modal.loadURL(this.url);
+    } catch (error) {
+      // Swallow error. `loadUrl` is interrupted on successful
+      // logout as we immediately redirect if user is logged out
+    }
+
     return this.waitForSignIn;
   }
 }

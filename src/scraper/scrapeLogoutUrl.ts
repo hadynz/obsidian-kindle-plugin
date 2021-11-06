@@ -4,7 +4,7 @@ import { loadRemoteDom } from './loadRemoteDom';
 import { currentAmazonRegion } from '~/amazonRegion';
 
 export const parseSignoutLink = ($: Root): string => {
-  const signoutLinkEl = $('#kp-notebook-head tr:last-child a').attr('href');
+  const signoutLinkEl = $('#settings-link-logout').attr('href');
 
   if (signoutLinkEl) {
     return signoutLinkEl;
@@ -15,8 +15,12 @@ export const parseSignoutLink = ($: Root): string => {
 
 const scrapeLogoutUrl = async (): Promise<string> => {
   const region = currentAmazonRegion();
-  const dom = await loadRemoteDom(region.notebookUrl);
-  return parseSignoutLink(dom);
+  const url = region.kindleReaderUrl;
+
+  const dom = await loadRemoteDom(url);
+
+  const logoutHref = parseSignoutLink(dom);
+  return `${url}${logoutHref}`;
 };
 
 export default scrapeLogoutUrl;
