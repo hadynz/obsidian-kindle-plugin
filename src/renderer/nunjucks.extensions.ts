@@ -43,7 +43,12 @@ function TrimAllEmptyLinesExtension(): void {
   };
 }
 
-// {% blockref "text", "id" %}...{% endblockref %}
+/**
+ * // TODO: description goes here...
+ * {% blockref "text", "id" %}
+ *   ...
+ * {% endblockref %}
+ */
 function BlockReferenceExtension(): void {
   this.tags = ['blockref'];
 
