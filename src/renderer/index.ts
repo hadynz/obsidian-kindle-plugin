@@ -3,7 +3,7 @@ import { get } from 'svelte/store';
 
 import bookTemplate from './templates/bookTemplate.njk';
 import defaultHighlightTemplate from './templates/defaultHighlightTemplate.njk';
-import { TrimAllEmptyLinesExtension } from './nunjucks.extensions';
+import { BlockReferenceExtension, TrimAllEmptyLinesExtension } from './nunjucks.extensions';
 import { sanitizeTitle } from '~/utils';
 import { settingsStore } from '~/store';
 import { trimMultipleLines } from './helper';
@@ -16,6 +16,7 @@ export class Renderer {
 
   constructor() {
     this.nunjucks = new nunjucks.Environment(null, { autoescape: false });
+    this.nunjucks.addExtension('BlockRef', new BlockReferenceExtension());
     this.nunjucks.addExtension('Trim', new TrimAllEmptyLinesExtension());
   }
 
@@ -60,10 +61,7 @@ export class Renderer {
       get(settingsStore).highlightTemplate || this.defaultHighlightTemplate();
 
     const renderedHighlight = this.nunjucks.renderString(userTemplate, highlightParams);
-    const trimmedHighlight = trimMultipleLines(renderedHighlight);
-
-    // Surround all highlights with a block reference to enable re-sync functionality
-    return `${HighlightIdBlockRefPrefix}${highlight.id}\n${trimmedHighlight}`;
+    return trimMultipleLines(renderedHighlight);
   }
 
   private renderHighlights(book: Book, highlights: Highlight[]): string {

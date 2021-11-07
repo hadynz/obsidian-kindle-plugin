@@ -37,6 +37,11 @@ export class StringBuffer {
     return this;
   }
 
+  public replace(line: LineEntry): StringBuffer {
+    this.lines[line.line] = line.content;
+    return this;
+  }
+
   public append(newLines: string[]): StringBuffer {
     this.lines.push(...newLines);
     return this;
