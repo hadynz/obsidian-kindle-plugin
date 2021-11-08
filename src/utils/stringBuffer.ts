@@ -3,6 +3,10 @@ type LineEntry = {
   content: string;
 };
 
+type LineEntryMatch = LineEntry & {
+  match: RegExpMatchArray;
+};
+
 export class StringBuffer {
   private lines: string[];
 
@@ -22,6 +26,13 @@ export class StringBuffer {
     return this.lines
       .map((content, index): LineEntry => ({ line: index + 1, content }))
       .filter(predicate);
+  }
+
+  public match(regex: RegExp): LineEntryMatch[] {
+    return this.lines.map((content, index) => {
+      const match = content.match(regex);
+      return { line: index + 1, content, match };
+    });
   }
 
   public insertLinesAt(newLines: LineEntry[]): StringBuffer {
