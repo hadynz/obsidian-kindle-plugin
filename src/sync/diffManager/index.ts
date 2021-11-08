@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import { sb, StringBuffer } from '~/utils';
 import { HighlightIdBlockRefPrefix, Renderer } from '~/renderer';
 import { diffLists } from './helpers';
@@ -43,13 +45,16 @@ export class DiffManager {
   }
 
   private async parseRenderedHighlights(): Promise<RenderedHighlight[]> {
+    const needle = _.escapeRegExp(HighlightIdBlockRefPrefix);
+    const endsWithRegex = new RegExp(`.*(${needle}.*)$`);
+
     return this.fileBuffer
-      .find((lineEntry) => lineEntry.content.startsWith(HighlightIdBlockRefPrefix))
-      .map((lineEntry): RenderedHighlight => {
-        const { line, content } = lineEntry;
+      .match(endsWithRegex)
+      .filter((lem) => lem.match != null)
+      .map((lem) => {
         return {
-          line,
-          highlightId: content.replace(HighlightIdBlockRefPrefix, ''),
+          line: lem.line,
+          highlightId: lem.match[1].replace(HighlightIdBlockRefPrefix, ''),
         };
       });
   }

@@ -3,7 +3,8 @@ import { get } from 'svelte/store';
 
 import bookTemplate from './templates/bookTemplate.njk';
 import defaultHighlightTemplate from './templates/defaultHighlightTemplate.njk';
-import { TrimAllEmptyLinesExtension } from './nunjucks.extensions';
+import highlightTemplateWrapper from './templates/highlightTemplateWrapper.njk';
+import { BlockReferenceExtension, TrimAllEmptyLinesExtension } from './nunjucks.extensions';
 import { sanitizeTitle } from '~/utils';
 import { settingsStore } from '~/store';
 import { trimMultipleLines } from './helper';
@@ -11,11 +12,22 @@ import type { Book, BookHighlight, Highlight, RenderTemplate } from '~/models';
 
 export const HighlightIdBlockRefPrefix = '^ref-';
 
+const appLink = (book: Book, highlight?: Highlight): string => {
+  if (book.asin == null) {
+    return null;
+  }
+  if (highlight != null) {
+    return `kindle://book?action=open&asin=${book.asin}&location=${highlight.location}`;
+  }
+  return `kindle://book?action=open&asin=${book.asin}`;
+};
+
 export class Renderer {
   private nunjucks: Environment;
 
   constructor() {
     this.nunjucks = new nunjucks.Environment(null, { autoescape: false });
+    this.nunjucks.addExtension('BlockRef', new BlockReferenceExtension());
     this.nunjucks.addExtension('Trim', new TrimAllEmptyLinesExtension());
   }
 
@@ -35,13 +47,11 @@ export class Renderer {
   public render(entry: BookHighlight): string {
     const { book, highlights } = entry;
 
-    const appLink = book.asin ? `kindle://book?action=open&asin=${book.asin}` : null;
-
     const params: RenderTemplate = {
       ...book,
       fullTitle: book.title,
       title: sanitizeTitle(book.title),
-      appLink,
+      appLink: appLink(book),
       ...entry.metadata,
       highlights: this.renderHighlights(book, highlights),
     };
@@ -50,20 +60,16 @@ export class Renderer {
   }
 
   public renderHighlight(book: Book, highlight: Highlight): string {
-    const appLink = book.asin
-      ? `kindle://book?action=open&asin=${book.asin}&location=${highlight.location}`
-      : null;
-
-    const highlightParams = { ...highlight, appLink };
+    const highlightParams = { ...highlight, appLink: appLink(book, highlight) };
 
     const userTemplate =
       get(settingsStore).highlightTemplate || this.defaultHighlightTemplate();
 
-    const renderedHighlight = this.nunjucks.renderString(userTemplate, highlightParams);
-    const trimmedHighlight = trimMultipleLines(renderedHighlight);
+    const highlightTemplate = highlightTemplateWrapper.replace('{{content}}', userTemplate);
 
-    // Surround all highlights with a block reference to enable re-sync functionality
-    return `${HighlightIdBlockRefPrefix}${highlight.id}\n${trimmedHighlight}`;
+    const renderedHighlight = this.nunjucks.renderString(highlightTemplate, highlightParams);
+
+    return trimMultipleLines(renderedHighlight);
   }
 
   private renderHighlights(book: Book, highlights: Highlight[]): string {

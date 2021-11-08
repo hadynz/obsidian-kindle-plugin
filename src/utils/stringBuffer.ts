@@ -3,6 +3,10 @@ type LineEntry = {
   content: string;
 };
 
+type LineEntryMatch = LineEntry & {
+  match: RegExpMatchArray;
+};
+
 export class StringBuffer {
   private lines: string[];
 
@@ -24,6 +28,13 @@ export class StringBuffer {
       .filter(predicate);
   }
 
+  public match(regex: RegExp): LineEntryMatch[] {
+    return this.lines.map((content, index) => {
+      const match = content.match(regex);
+      return { line: index + 1, content, match };
+    });
+  }
+
   public insertLinesAt(newLines: LineEntry[]): StringBuffer {
     if (newLines.some((l) => l.line <= 0)) {
       throw new Error('Line numbers must start from 1');
@@ -34,6 +45,11 @@ export class StringBuffer {
       this.lines.splice(newLine.line - 1, 0, newLine.content);
     }
 
+    return this;
+  }
+
+  public replace(line: LineEntry): StringBuffer {
+    this.lines[line.line] = line.content;
     return this;
   }
 
