@@ -33,11 +33,11 @@ export class SettingsTab extends PluginSettingTab {
     }
 
     this.highlightsFolder();
+    this.amazonRegion();
     this.downloadBookMetadata();
     this.syncOnBoot();
     this.highlightTemplate();
-    this.amazonRegion();
-    this.resetSyncHistory();
+    this.sponsorMe();
   }
 
   private async logout(): Promise<void> {
@@ -175,18 +175,14 @@ export class SettingsTab extends PluginSettingTab {
       );
   }
 
-  private resetSyncHistory(): void {
+  private sponsorMe(): void {
     new Setting(this.containerEl)
-      .setName('Reset sync')
-      .setDesc('Wipe sync history to allow for resync')
-      .addButton((button) => {
-        return button
-          .setButtonText('Reset')
-          .setWarning()
-          .onClick(async () => {
-            await settingsStore.actions.resetSyncHistory();
-            this.display(); // rerender
-          });
+      .setName('Sponsor')
+      .setDesc(
+        'Has this plugin enhanced your workflow? Say thanks as a one-time payment and buy me a coffee'
+      )
+      .addButton((bt) => {
+        bt.buttonEl.outerHTML = `<a href="https://www.buymeacoffee.com/hadynz"><img style="height: 35px;" src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=hadynz&button_colour=BD5FFF&font_colour=ffffff&font_family=Lato&outline_colour=000000&coffee_colour=FFDD00"></a>`;
       });
   }
 }

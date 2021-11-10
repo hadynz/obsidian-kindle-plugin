@@ -60,10 +60,8 @@ Configure the settings of the plugin to specify the folder location for your syn
   Amazon sync only)
 - **Sync on startup [default: off]**: Enable to always automatically sync your latest highlights
   using your Amazon account
-- **Reset sync**: Wipe your sync history (number of books and highlights synced). Does **not**
-  delete any previously synced notes from your vault
 - **Amazon region**: Select the Amazon account region which has your Kindle highlights data.
-  Currently only global (.com), India, Japan and Spain are supported
+  Currently only global (.com), India, Japan, Spain and Germany are supported
 - **Sign out**: Log out from your Amazon account (appears only if you have logged in)
 
 ## Usage
@@ -78,7 +76,7 @@ your online Amazon account.
 ### Template tags
 
 | Tag            | Description                                         | Present                                                                            |
-| -------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| -------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------ |
 | `{{text}}`     | Annotated text                                      | Always in all sync modes                                                           |
 | `{{location}}` | Highlighted text location                           | Usually available in all sync modes. If not, then `{{page}}` will be available     | Usually available. If not, then `{{page}}` will be available |
 | `{{page}}`     | Highlighted text page                               | Usually available in all sync modes. If not, then `{{location}}` will be available |

@@ -99,13 +99,6 @@ const createSettingsStore = () => {
     });
   };
 
-  const resetSyncHistory = () => {
-    store.update((state) => {
-      state.lastSyncDate = undefined;
-      return state;
-    });
-  };
-
   const login = () => {
     store.update((state) => {
       state.isLoggedIn = true;
@@ -154,7 +147,6 @@ const createSettingsStore = () => {
     isLegacy,
     actions: {
       setHighlightsFolder,
-      resetSyncHistory,
       login,
       logout,
       setHighlightTemplate,
