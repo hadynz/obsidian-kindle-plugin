@@ -37,7 +37,6 @@ export class SettingsTab extends PluginSettingTab {
     this.syncOnBoot();
     this.highlightTemplate();
     this.amazonRegion();
-    this.resetSyncHistory();
     this.sponsorMe();
   }
 
@@ -174,21 +173,6 @@ export class SettingsTab extends PluginSettingTab {
           await settingsStore.actions.setSyncOnBoot(value);
         })
       );
-  }
-
-  private resetSyncHistory(): void {
-    new Setting(this.containerEl)
-      .setName('Reset sync')
-      .setDesc('Wipe sync history to allow for resync')
-      .addButton((button) => {
-        return button
-          .setButtonText('Reset')
-          .setWarning()
-          .onClick(async () => {
-            await settingsStore.actions.resetSyncHistory();
-            this.display(); // rerender
-          });
-      });
   }
 
   private sponsorMe(): void {
