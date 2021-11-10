@@ -33,10 +33,10 @@ export class SettingsTab extends PluginSettingTab {
     }
 
     this.highlightsFolder();
+    this.amazonRegion();
     this.downloadBookMetadata();
     this.syncOnBoot();
     this.highlightTemplate();
-    this.amazonRegion();
     this.sponsorMe();
   }
 
