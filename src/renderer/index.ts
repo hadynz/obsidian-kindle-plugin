@@ -65,7 +65,7 @@ export class Renderer {
     const userTemplate =
       get(settingsStore).highlightTemplate || this.defaultHighlightTemplate();
 
-    const highlightTemplate = highlightTemplateWrapper.replace('{{content}}', userTemplate);
+    const highlightTemplate = highlightTemplateWrapper.replace('{{ content }}', userTemplate);
 
     const renderedHighlight = this.nunjucks.renderString(highlightTemplate, highlightParams);
 

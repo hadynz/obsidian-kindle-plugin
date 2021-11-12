@@ -26,6 +26,7 @@ export default class SyncKindleClippings {
     } catch (error) {
       const message = `Error parsing ${clippingsFile}.\n\n${error}`;
       ee.emit('syncSessionFailure', message);
+      console.error(message);
     }
   }
 }

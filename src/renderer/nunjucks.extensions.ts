@@ -4,10 +4,17 @@ import { HighlightIdBlockRefPrefix } from '~/renderer';
 import { sb } from '~/utils';
 
 type SubClass = {
-  lineno: number;
+  children: SubClassValue[];
   colno: number;
+  lineno: number;
+};
+
+type SubClassValue = {
+  args?: SubClass;
+  name?: SubClassValue;
+  colno: number;
+  lineno: number;
   value: string;
-  children?: SubClass[];
 };
 
 type ParsedSignature = {
@@ -43,6 +50,11 @@ function TrimAllEmptyLinesExtension(): void {
   };
 }
 
+const getRecursiveValue = (subclass: SubClass): string => {
+  const firstChild = subclass.children[0];
+  return firstChild.args == null ? firstChild.value : getRecursiveValue(firstChild.args);
+};
+
 /**
  * // TODO: description goes here...
  * {% blockref "text", "id" %}
@@ -56,7 +68,7 @@ function BlockReferenceExtension(): void {
     const tok = parser.nextToken(); // Get the tag token
 
     // Parse the args and move after the block end.
-    const args: ParsedSignature = parser.parseSignature(null, true);
+    const args: SubClass = parser.parseSignature(null, true);
     parser.advanceAfterBlockEnd(tok.value);
 
     // Parse the body
@@ -66,9 +78,7 @@ function BlockReferenceExtension(): void {
     // Find line number of argument 1 variable in template
     const needle = args.children[0].value;
 
-    const needleSubclass = body.children.find(
-      (c) => c.children?.length > 0 && c.children[0].value === needle
-    );
+    const needleSubclass = body.children.find((c) => getRecursiveValue(c) === needle);
 
     this.lineNumber = needleSubclass.lineno;
 

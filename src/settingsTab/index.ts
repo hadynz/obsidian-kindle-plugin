@@ -75,6 +75,7 @@ export class SettingsTab extends PluginSettingTab {
 
               await settingsStore.actions.logout();
             } catch (error) {
+              console.error('Error when trying to logout', error);
               ee.emit('logoutFailure');
             }
 

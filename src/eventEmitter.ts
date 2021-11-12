@@ -24,7 +24,3 @@ interface MessageEvents {
 }
 
 export const ee = new EventEmitter() as TypedEmitter<MessageEvents>;
-
-ee.on('syncSessionFailure', console.error);
-ee.on('syncBookFailure', console.error);
-ee.on('resyncFailure', console.error);
