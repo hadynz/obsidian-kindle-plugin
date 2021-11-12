@@ -30,6 +30,7 @@ export default class SyncAmazon {
 
       ee.emit('syncSessionSuccess');
     } catch (error) {
+      console.error('Error while trying fetch books and to sync', error);
       ee.emit('syncSessionFailure', String(error));
     }
   }
@@ -53,6 +54,7 @@ export default class SyncAmazon {
 
       ee.emit('resyncComplete', file, diffs.length);
     } catch (error) {
+      console.error('Error resyncing higlights for file', file, error);
       ee.emit('resyncFailure', file, String(error));
     }
   }
@@ -78,6 +80,7 @@ export default class SyncAmazon {
 
         ee.emit('syncBookSuccess', book, highlights);
       } catch (error) {
+        console.error('Error syncing book', book, error);
         ee.emit('syncBookFailure', book, String(error));
       }
     }
