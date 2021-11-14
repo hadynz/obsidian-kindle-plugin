@@ -1,11 +1,22 @@
+<script lang="ts">
+  import type { BookDemo } from '../index';
+  import { fileName } from '../store';
+
+  export let books: BookDemo[];
+  let selectedBook = books[0];
+
+  export let onSelect: (book: any) => void;
+  $: onSelect(selectedBook);
+</script>
+
 <div class="wrapper">
   <div class="title">Preview</div>
-  <select class="dropdown">
-    <option value="/">Animal Farm (Classics To Go) (George Orwell)</option>
-    <option value="/">An Everyone Culture (Robert Kegan and Lisa Laskow Lahey)</option>
-    <option value="/">The Girl on the Train: A Novel (Paula Hawkins)</option>
+  <select class="dropdown" bind:value={selectedBook}>
+    {#each books as book}
+      <option value={book}>{book.title} ({book.author})</option>
+    {/each}
   </select>
-  <div class="preview">File name: <span class="file-name">Animal Farm.md</span></div>
+  <div class="preview">File name: <span class="file-name">{$fileName}</span></div>
 </div>
 
 <style>

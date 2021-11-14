@@ -14,8 +14,14 @@ import { scrapeLogoutUrl } from '~/scraper';
 import { AmazonRegions } from '~/amazonRegion';
 import FileNameDescription from './components/FileNameDescription.svelte';
 import Preview from './components/Preview.svelte';
+import { fileName } from './store';
 
 const { moment } = window;
+
+export type BookDemo = {
+  title: string;
+  author: string;
+};
 
 export class SettingsTab extends PluginSettingTab {
   private renderer: Renderer;
@@ -141,6 +147,8 @@ export class SettingsTab extends PluginSettingTab {
         text.setValue(get(settingsStore).fileNameTemplate).onChange(async (value) => {
           const isValid = fileNameRenderer.validate(value);
 
+          fileName.set(`You typed: ${value}`);
+
           if (isValid) {
             console.log('template is valid. saving', value);
           }
@@ -154,8 +162,23 @@ export class SettingsTab extends PluginSettingTab {
     setting.controlEl.style.flexDirection = 'column';
     setting.controlEl.style.alignItems = 'flex-end';
 
+    const books: BookDemo[] = [
+      { title: 'Animal Farm (Classics To Go)', author: 'George Orwell' },
+      { title: 'An Everyone Culture', author: 'Robert Kegan and Lisa Laskow Lahey' },
+      { title: 'The Girl on the Train: A Novel', author: 'Paula Hawkins' },
+    ];
+
     new FileNameDescription({ target: setting.descEl });
-    new Preview({ target: setting.controlEl });
+    new Preview({
+      target: setting.controlEl,
+      props: {
+        books,
+        onSelect: (book: BookDemo) => {
+          console.log('selected book', book);
+          fileName.set(`${book.title}-yeeha`);
+        },
+      },
+    });
   }
 
   private highlightTemplate(): void {
