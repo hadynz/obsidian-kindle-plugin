@@ -1,25 +1,25 @@
 import fs from 'fs';
-import * as kc from '@hadynz/kindle-clippings';
+import { readMyClippingsFile, groupToBooks, Book } from '@hadynz/kindle-clippings';
 
 import { hash } from '~/utils';
 import type { BookHighlight, Highlight } from '~/models';
 
-const toBookHighlight = (book: kc.Book): BookHighlight => {
+const toBookHighlight = (book: Book): BookHighlight => {
   return {
     book: {
       id: hash(book.title),
       title: book.title,
       author: book.author,
     },
-    highlights: book.entries
+    highlights: book.annotations
       .filter((entry) => entry.type === 'HIGHLIGHT' || entry.type === 'UNKNOWN')
       .map(
         (entry): Highlight => ({
           id: hash(entry.content),
           text: entry.content,
           note: entry.note,
-          location: entry.location,
-          page: entry.page,
+          location: entry.location?.display,
+          page: entry.page?.display,
         })
       ),
   };
@@ -28,9 +28,8 @@ const toBookHighlight = (book: kc.Book): BookHighlight => {
 export const parseBooks = async (file: string): Promise<BookHighlight[]> => {
   const clippingsFileContent = fs.readFileSync(file, 'utf8');
 
-  const rawRows = kc.readKindleClipping(clippingsFileContent);
-  const parsedRows = kc.parseKindleEntries(rawRows);
-  const books = kc.organizeKindleEntriesByBooks(parsedRows);
+  const parsedRows = readMyClippingsFile(clippingsFileContent);
+  const books = groupToBooks(parsedRows);
 
   return books.map(toBookHighlight);
 };
