@@ -7,10 +7,12 @@ import AmazonLogoutModal from '~/components/amazonLogoutModal';
 import type KindlePlugin from '~/.';
 import type FileManager from '~/fileManager';
 import type { AmazonAccountRegion } from '~/models';
+import { fileNameRenderer } from '~/fileNameRenderer';
 import { Renderer } from '~/renderer';
 import { settingsStore } from '~/store';
 import { scrapeLogoutUrl } from '~/scraper';
 import { AmazonRegions } from '~/amazonRegion';
+import FileNameDescription from './components/FileNameDescription.svelte';
 
 const { moment } = window;
 
@@ -36,6 +38,7 @@ export class SettingsTab extends PluginSettingTab {
     this.amazonRegion();
     this.downloadBookMetadata();
     this.syncOnBoot();
+    this.fileNameTemplate();
     this.highlightTemplate();
     this.sponsorMe();
   }
@@ -126,6 +129,27 @@ export class SettingsTab extends PluginSettingTab {
             await settingsStore.actions.setHighlightsFolder(value);
           });
       });
+  }
+
+  private fileNameTemplate(): void {
+    const settingEl = new Setting(this.containerEl)
+      .setName('File name template')
+      .addText((text) => {
+        text.inputEl.style.fontSize = '0.8em';
+        text.inputEl.placeholder = fileNameRenderer.defaultTemplate();
+        text.setValue(get(settingsStore).fileNameTemplate).onChange(async (value) => {
+          const isValid = fileNameRenderer.validate(value);
+
+          if (isValid) {
+            console.log('template is valid. saving', value);
+          }
+
+          text.inputEl.style.border = isValid ? '' : '1px solid red';
+        });
+        return text;
+      });
+
+    new FileNameDescription({ target: settingEl.descEl });
   }
 
   private highlightTemplate(): void {

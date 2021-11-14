@@ -11,6 +11,7 @@ type Settings = {
   lastSyncMode: SyncMode;
   isLoggedIn: boolean;
   highlightTemplate?: string;
+  fileNameTemplate?: string;
   syncOnBoot: boolean;
   downloadBookMetadata: boolean;
 };
@@ -120,6 +121,10 @@ const createSettingsStore = () => {
     });
   };
 
+  const setFileNameTemplate = (value: string) => {
+    store.update((state) => ({ ...state, fileNameTemplate: value }));
+  };
+
   const setSyncOnBoot = (value: boolean) => {
     store.update((state) => {
       state.syncOnBoot = value;
@@ -149,6 +154,7 @@ const createSettingsStore = () => {
       setHighlightsFolder,
       login,
       logout,
+      setFileNameTemplate,
       setHighlightTemplate,
       setSyncOnBoot,
       setDownloadBookMetadata,
