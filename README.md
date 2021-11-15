@@ -34,7 +34,7 @@ You can extract your `My Clippings.txt` file by plugging it into your computer u
 
 - **Enriched metadata** — Enrich your notes by downloading extra metadata information about your book from Amazon.com
 
-- **Powerful, flexible templating** — Customise your highlights to your liking by configuring your own template using ([Nunjucks][2]) templating language
+- **Powerful, flexible templating with preview** — Customise your highlights and file names to your liking by configuring your own template using ([Nunjucks][2]) templating language with live preview
 
 ## Mission statement
 
@@ -76,9 +76,9 @@ your online Amazon account.
 ### Template tags
 
 | Tag            | Description                                         | Present                                                                            |
-| -------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| -------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | `{{text}}`     | Annotated text                                      | Always in all sync modes                                                           |
-| `{{location}}` | Highlighted text location                           | Usually available in all sync modes. If not, then `{{page}}` will be available     | Usually available. If not, then `{{page}}` will be available |
+| `{{location}}` | Highlighted text location                           | Usually available in all sync modes. If not, then `{{page}}` will be available     |
 | `{{page}}`     | Highlighted text page                               | Usually available in all sync modes. If not, then `{{location}}` will be available |
 | `{{note}}`     | Associated note to highlight                        | Optional                                                                           |
 | `{{appLink}}`  | Link to open highlight in Kindle app                | Available only for Amazon books synced through Amazon online                       |

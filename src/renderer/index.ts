@@ -5,7 +5,7 @@ import bookTemplate from './templates/bookTemplate.njk';
 import defaultHighlightTemplate from './templates/defaultHighlightTemplate.njk';
 import highlightTemplateWrapper from './templates/highlightTemplateWrapper.njk';
 import { BlockReferenceExtension, TrimAllEmptyLinesExtension } from './nunjucks.extensions';
-import { sanitizeTitle } from '~/utils';
+import { shortenTitle } from '~/utils';
 import { settingsStore } from '~/store';
 import { trimMultipleLines } from './helper';
 import type { Book, BookHighlight, Highlight, RenderTemplate } from '~/models';
@@ -50,7 +50,7 @@ export class Renderer {
     const params: RenderTemplate = {
       ...book,
       fullTitle: book.title,
-      title: sanitizeTitle(book.title),
+      title: shortenTitle(book.title),
       appLink: appLink(book),
       ...entry.metadata,
       highlights: this.renderHighlights(book, highlights),

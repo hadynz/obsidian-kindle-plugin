@@ -3,7 +3,7 @@ const { moment } = window;
 
 import { SetInterval, SetTimeout } from './scheduling';
 import { settingsStore, fileStore } from '~/store';
-import { sanitizeTitle } from '~/utils';
+import { shortenTitle } from '~/utils';
 import { ee } from '~/eventEmitter';
 
 const _setInterval = new SetInterval();
@@ -70,7 +70,7 @@ const createStatusBarStore = () => {
   ee.on('resyncFailure', async (file) => {
     setMessage({
       status: 'error',
-      text: `Error resyncing ${sanitizeTitle(file.book.title)}`,
+      text: `Error resyncing ${shortenTitle(file.book.title)}`,
     });
     // waitThenResumeDefaultMessage();
   });

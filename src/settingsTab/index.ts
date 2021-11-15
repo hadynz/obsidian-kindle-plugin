@@ -11,6 +11,7 @@ import { Renderer } from '~/renderer';
 import { settingsStore } from '~/store';
 import { scrapeLogoutUrl } from '~/scraper';
 import { AmazonRegions } from '~/amazonRegion';
+import { fileNameTemplateSetting } from './fileNameTemplateSetting';
 
 const { moment } = window;
 
@@ -36,6 +37,7 @@ export class SettingsTab extends PluginSettingTab {
     this.amazonRegion();
     this.downloadBookMetadata();
     this.syncOnBoot();
+    this.fileNameTemplate();
     this.highlightTemplate();
     this.sponsorMe();
   }
@@ -128,14 +130,19 @@ export class SettingsTab extends PluginSettingTab {
       });
   }
 
+  private fileNameTemplate(): void {
+    fileNameTemplateSetting(this.containerEl);
+  }
+
   private highlightTemplate(): void {
-    new Setting(this.containerEl)
+    const setting = new Setting(this.containerEl)
       .setName('Highlight template')
       .setDesc('Template for an individual highlight')
       .addTextArea((text) => {
         text.inputEl.style.width = '100%';
-        text.inputEl.style.height = '450px';
+        text.inputEl.style.height = '200px';
         text.inputEl.style.fontSize = '0.8em';
+        text.inputEl.style.fontFamily = 'var(--font-monospace)';
         text.inputEl.placeholder = this.renderer.defaultHighlightTemplate();
         text.setValue(get(settingsStore).highlightTemplate).onChange(async (value) => {
           const isValid = this.renderer.validate(value);
@@ -148,6 +155,8 @@ export class SettingsTab extends PluginSettingTab {
         });
         return text;
       });
+
+    setting.settingEl.style.alignItems = 'normal';
   }
 
   private downloadBookMetadata(): void {
