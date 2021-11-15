@@ -19,7 +19,7 @@ export const fileNameTemplateSetting = (el: HTMLElement): void => {
     .setName('File name template')
     .setDesc(
       createDocumentFragment(
-        '<a href="https://mozilla.github.io/nunjucks/templating.html">Nunjucks template</a> to use for creation of file names from a book'
+        '<a href="https://mozilla.github.io/nunjucks/templating.html">Nunjucks template</a> to use to format book file name'
       )
     )
     .addText((text) => {
