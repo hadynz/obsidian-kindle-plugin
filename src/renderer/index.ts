@@ -33,7 +33,7 @@ export class Renderer {
 
   public validate(template: string): boolean {
     try {
-      this.nunjucks.renderString(template, {});
+      this.nunjucks.renderString(template, { text: '' });
       return true;
     } catch (error) {
       return false;
