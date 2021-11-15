@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Jumper } from 'svelte-loading-spinners';
 
-  import { sanitizeTitleExcess } from '~/utils';
+  import { shortenTitle } from '~/utils';
   import { currentAmazonRegion } from '~/amazonRegion';
   import { store } from '../store';
 
@@ -13,8 +13,7 @@
   } else if ($store?.syncMode === 'amazon') {
     progressMessage = 'Looking for new Kindle highlights to sync...';
   } else {
-    progressMessage =
-      'Parsing your My Clippings files for highlights and notes...';
+    progressMessage = 'Parsing your My Clippings files for highlights and notes...';
   }
 
   $: total = $store.jobs?.length;
@@ -42,7 +41,7 @@
         <div class="kp-syncmodal--download">
           Syncing
           <span class="kp-syncmodal--book-name">
-            {sanitizeTitleExcess($store.currentJob.book.title)}
+            {shortenTitle($store.currentJob.book.title)}
           </span>
         </div>
       {:else}

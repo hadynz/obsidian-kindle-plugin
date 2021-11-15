@@ -1,22 +1,20 @@
 <script lang="ts">
-  import type { BookDemo } from '../index';
-  import { fileName } from '../store';
+  import { books, fileName, BookDemo } from '../store';
 
-  export let books: BookDemo[];
-  let selectedBook = books[0];
+  let selectedBook = $books[0];
 
-  export let onSelect: (book: any) => void;
+  export let onSelect: (book: BookDemo) => void;
   $: onSelect(selectedBook);
 </script>
 
 <div class="wrapper">
-  <div class="title">Preview</div>
+  <div class="title">Live preview</div>
   <select class="dropdown" bind:value={selectedBook}>
-    {#each books as book}
+    {#each $books as book}
       <option value={book}>{book.title} ({book.author})</option>
     {/each}
   </select>
-  <div class="preview">File name: <span class="file-name">{$fileName}</span></div>
+  <div class="preview">Example file name: <span class="file-name">{$fileName}</span></div>
 </div>
 
 <style>
@@ -25,7 +23,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin-top: 10px;
+    margin-top: 20px;
     padding: 5px 10px;
   }
 

@@ -3,7 +3,7 @@ import moment from 'moment';
 import { get } from 'svelte/store';
 
 import { settingsStore } from '~/store';
-import { sanitizeTitle } from '~/utils';
+import { shortenTitle } from '~/utils';
 import type { Book, KindleFrontmatter } from '~/models';
 
 /**
@@ -11,7 +11,7 @@ import type { Book, KindleFrontmatter } from '~/models';
  * vault directory.
  */
 export const bookFilePath = (book: Book): string => {
-  const fileName = sanitizeTitle(book.title);
+  const fileName = shortenTitle(book.title);
   return path.join(get(settingsStore).highlightsFolder, `${fileName}.md`);
 };
 

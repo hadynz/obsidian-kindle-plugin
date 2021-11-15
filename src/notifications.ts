@@ -1,12 +1,12 @@
 import { Notice } from 'obsidian';
-import { sanitizeTitle } from '~/utils';
+import { shortenTitle } from '~/utils';
 
 import { ee } from '~/eventEmitter';
 import type { KindleFile } from '~/models';
 
 export const registerNotifications = (): void => {
   ee.on('resyncBook', (kindleFile) => {
-    new Notice(`Resyncing "${sanitizeTitle(kindleFile.book.title)}" highlights`);
+    new Notice(`Resyncing "${shortenTitle(kindleFile.book.title)}" highlights`);
   });
 
   ee.on('resyncComplete', (_kindleFile, diffCount) => {
