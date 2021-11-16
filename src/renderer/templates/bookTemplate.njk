@@ -1,8 +1,11 @@
 # {{title}}
 ## Metadata
 {% trim %}
-{% if author %}* Author: [[{{author}}]]{% endif %}
-{% if authorUrl %}* Author: [{{author}}]({{authorUrl}}){% endif %}
+{% if authorUrl %}
+* Author: [{{author}}]({{authorUrl}})
+{% elif author %}
+* Author: [[{{author}}]]
+{% endif %}
 {% if asin %}* ASIN: {{asin}}{% endif %}
 {% if isbn %}* ISBN: {{isbn}}{% endif %}
 {% if pages %}* Pages: {{pages}}{% endif %}
