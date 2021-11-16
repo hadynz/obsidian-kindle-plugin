@@ -1,13 +1,14 @@
 # {{title}}
 ## Metadata
 {% trim %}
-{% if author %}* Author: [{{author}}]({{authorUrl}}){% endif %}
+{% if author %}* Author: [[{{author}}]]{% endif %}
+{% if authorUrl %}* Author: [{{author}}]({{authorUrl}}){% endif %}
 {% if asin %}* ASIN: {{asin}}{% endif %}
 {% if isbn %}* ISBN: {{isbn}}{% endif %}
 {% if pages %}* Pages: {{pages}}{% endif %}
 {% if publication %}* Publication: {{publication}}{% endif %}
 {% if publisher %}* Publisher: {{publisher}}{% endif %}
-{% if url %}* Reference: [[{{url}}]]{% endif %}
+{% if url %}* Reference: {{url}}{% endif %}
 {% if appLink %}* [Kindle link]({{appLink}}){% endif %}
 {% endtrim %}
 
