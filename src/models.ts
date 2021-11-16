@@ -56,7 +56,7 @@ export type KindleFrontmatter = {
   title: string;
   author: string;
   asin: string;
-  lastAnnotatedDate: string;
+  lastAnnotatedDate?: string; // Not set for My Clipping annotations
   bookImageUrl: string;
   highlightsCount: number;
 };
