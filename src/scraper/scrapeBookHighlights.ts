@@ -10,19 +10,9 @@ type NextPageState = {
   contentLimitState: string;
 };
 
-const mapTextToColor = (colorText: string): Highlight['color'] => {
-  switch (colorText?.toLowerCase()) {
-    case 'blue':
-      return 'blue';
-    case 'orange':
-      return 'orange';
-    case 'pink':
-      return 'pink';
-    case 'yellow':
-      return 'yellow';
-    default:
-      return null;
-  }
+const mapTextToColor = (highlightClasses: string): Highlight['color'] => {
+  const matches = highlightClasses.match(/kp-notebook-highlight-(.*)/);
+  return matches ? (matches[1] as Highlight['color']) : null;
 };
 
 const highlightsUrl = (book: Book, state?: NextPageState): string => {
@@ -44,11 +34,14 @@ const parseHighlights = ($: Root): Highlight[] => {
   return highlightsEl.map((highlightEl): Highlight => {
     const pageMatch = $('#annotationNoteHeader', highlightEl).text()?.match(/\d+$/);
 
+    const highlightClasses = $('.kp-notebook-highlight', highlightEl).attr('class');
+    const color = mapTextToColor(highlightClasses);
+
     const text = $('#highlight', highlightEl).text()?.trim();
     return {
       id: hash(text),
       text,
-      color: mapTextToColor($('#annotationHighlightHeader', highlightEl).text().split(' ')[0]),
+      color,
       location: $('#kp-annotation-location', highlightEl).val(),
       page: pageMatch ? pageMatch[0] : null,
       note: br2ln($('#note', highlightEl).html()),
