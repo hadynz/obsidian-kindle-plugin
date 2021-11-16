@@ -12,7 +12,8 @@ const parseDetailsList = ($: Root): Omit<BookMetadata, 'authorUrl'> => {
     const key = $('span:first-child', currentEl)
       .text()
       .replace(/[\n\r]+/g, '')
-      .replace(':', '');
+      .replace(':', '')
+      .replace(/[^\w\s]/gi, ''); // Strip all chars except alpha numeric and spaces
 
     const value = $('span:nth-child(2)', currentEl).text();
 
