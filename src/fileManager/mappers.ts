@@ -12,7 +12,7 @@ import type { Book, KindleFrontmatter } from '~/models';
  */
 export const bookFilePath = (book: Book): string => {
   const fileName = fileNameRenderer.render(book);
-  return path.join(get(settingsStore).highlightsFolder, `${fileName}.md`);
+  return path.join(get(settingsStore).highlightsFolder, fileName);
 };
 
 export const bookToFrontMatter = (book: Book, highlightsCount: number): KindleFrontmatter => {
