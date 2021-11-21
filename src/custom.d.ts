@@ -29,3 +29,8 @@ declare module 'fletcher' {
   const fletcher16: (buffer: Buffer) => number;
   export default fletcher16;
 }
+
+declare module '*.json' {
+  const file: any;
+  export default file;
+}

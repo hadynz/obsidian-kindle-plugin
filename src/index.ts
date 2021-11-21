@@ -11,6 +11,8 @@ import { registerNotifications } from '~/notifications';
 import kindleIcon from '~/assets/kindleIcon.svg';
 import { ee } from '~/eventEmitter';
 
+import '~/sentry';
+
 addIcon('kindle', kindleIcon);
 
 export default class KindlePlugin extends Plugin {
