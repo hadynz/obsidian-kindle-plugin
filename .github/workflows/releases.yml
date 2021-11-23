@@ -24,7 +24,7 @@ jobs:
           npm run lint
           npm run test
           npm run build:prod
-          zip -r -j ${{ env.PLUGIN_NAME }}.zip dist
+          zip -r -j ${{ env.PLUGIN_NAME }}.zip dist -x "*.map"
           ls
           echo "::set-output name=tag_name::$(git tag --sort version:refname | tail -n 1)"
 

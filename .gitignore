@@ -19,3 +19,4 @@ data.json
 coverage
 dist
 tsconfig.tsbuildinfo
+.env

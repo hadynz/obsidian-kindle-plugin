@@ -10,15 +10,8 @@
       "src": ["src/*", "tests/*"],
       "~/*": ["src/*"]
     },
-    "sourceMap": true,
-    "sourceRoot": "src",
-    "isolatedModules": true,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "module": "es2015",
-    "skipLibCheck": true
+    "resolveJsonModule": true
   },
-  "handleMixedImports": true,
   // Fixes errors when changing `module` to ES in the above compiler options
   // See: https://github.com/webpack/webpack-cli/issues/2458#issuecomment-846635277
   "ts-node": {
