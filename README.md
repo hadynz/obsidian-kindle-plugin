@@ -61,7 +61,7 @@ Configure the settings of the plugin to specify the folder location for your syn
 - **Sync on startup [default: off]**: Enable to always automatically sync your latest highlights
   using your Amazon account
 - **Amazon region**: Select the Amazon account region which has your Kindle highlights data.
-  Currently only global (.com), India, Japan, Spain and Germany are supported
+  Currently only global (.com), India, Japan, Spain, Germany and Italy are supported
 - **Sign out**: Log out from your Amazon account (appears only if you have logged in)
 
 ## Usage
