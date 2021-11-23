@@ -20,7 +20,7 @@ jobs:
       - name: Build
         id: build
         env:
-          GITHUB_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: |
           npm install
           npm run lint
