@@ -1,12 +1,26 @@
 import path from 'path';
 import pack from './package.json';
 import sveltePreprocess from 'svelte-preprocess';
-import CopyPlugin from 'copy-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
+import EmitFilePlugin from 'emit-file-webpack-plugin';
 import SentryWebpackPlugin from '@sentry/webpack-plugin';
-import { Configuration, DefinePlugin } from 'webpack';
+import { Configuration, DefinePlugin, WebpackPluginInstance } from 'webpack';
 
 const isProduction = process.env.NODE_ENV === 'production';
+
+const obsidianManifestPlugin = new EmitFilePlugin({
+  filename: 'manifest.json',
+  content: () => ({
+    name: 'Kindle Highlights',
+    minAppVersion: '0.10.2',
+    isDesktopOnly: true,
+    id: pack.name,
+    version: pack.version,
+    description: pack.description,
+    author: pack.author.name,
+    authorUrl: pack.author.url,
+  }),
+});
 
 const sentryPlugin = new SentryWebpackPlugin({
   authToken: process.env.SENTRY_AUTH_TOKEN,
@@ -23,6 +37,7 @@ const config: Configuration = {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].js',
     libraryTarget: 'commonjs',
+    clean: true,
   },
   target: 'node',
   mode: isProduction ? 'production' : 'development',
@@ -64,15 +79,13 @@ const config: Configuration = {
     ],
   },
   plugins: [
-    new CopyPlugin({
-      patterns: [{ from: './manifest.json', to: '.' }],
-    }),
     new DefinePlugin({
       PACKAGE_NAME: JSON.stringify(pack.name),
       VERSION: JSON.stringify(pack.version),
       PRODUCTION: JSON.stringify(isProduction),
     }),
     ...(isProduction ? [sentryPlugin] : []),
+    ...(isProduction ? [obsidianManifestPlugin as WebpackPluginInstance] : []),
   ],
   resolve: {
     alias: {
