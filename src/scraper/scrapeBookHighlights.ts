@@ -10,8 +10,8 @@ type NextPageState = {
   contentLimitState: string;
 };
 
-const mapTextToColor = (highlightClasses: string): Highlight['color'] => {
-  const matches = highlightClasses.match(/kp-notebook-highlight-(.*)/);
+export const mapTextToColor = (highlightClasses: string): Highlight['color'] => {
+  const matches = highlightClasses?.match(/kp-notebook-highlight-(.*)/);
   return matches ? (matches[1] as Highlight['color']) : null;
 };
 
