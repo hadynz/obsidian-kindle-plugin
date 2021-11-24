@@ -1,7 +1,9 @@
 import moment from 'moment';
+import { get } from 'svelte/store';
 import type { Root } from 'cheerio';
 
-import type { Book } from '~/models';
+import type { Book, AmazonAccountRegion } from '~/models';
+import { settingsStore } from '~/store';
 import { loadRemoteDom } from './loadRemoteDom';
 import { currentAmazonRegion } from '~/amazonRegion';
 import { hash } from '~/utils';
@@ -10,9 +12,17 @@ import { hash } from '~/utils';
  * Amazon dates in the Kindle notebook looks like "Sunday October 24, 2021"
  * This method will parse this string and return a valid Date object
  */
-const parseToDateString = (kindleDate: string): Date => {
-  const amazonDateString = kindleDate.substr(kindleDate.indexOf(' ') + 1);
-  return moment(amazonDateString, 'MMM DD, YYYY').toDate();
+export const parseToDateString = (kindleDate: string, region: AmazonAccountRegion): Date => {
+  switch (region) {
+    case 'japan': {
+      const amazonDateString = kindleDate.substring(0, kindleDate.indexOf(' '));
+      return moment(amazonDateString, 'YYYY MM DD', 'ja').toDate();
+    }
+    default: {
+      const amazonDateString = kindleDate.substr(kindleDate.indexOf(' ') + 1);
+      return moment(amazonDateString, 'MMM DD, YYYY').toDate();
+    }
+  }
 };
 
 export const parseBooks = ($: Root): Book[] => {
@@ -33,7 +43,7 @@ export const parseBooks = ($: Root): Book[] => {
         ?.trim(),
       url: `https://www.amazon.com/dp/${$(bookEl).attr('id')}`,
       imageUrl: $('.kp-notebook-cover-image', bookEl).attr('src') as string,
-      lastAnnotatedDate: parseToDateString(lastAnnotatedDate),
+      lastAnnotatedDate: parseToDateString(lastAnnotatedDate, get(settingsStore).amazonRegion),
     };
   });
 };
