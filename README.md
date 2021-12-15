@@ -56,7 +56,7 @@ Configure the settings of the plugin to specify the folder location for your syn
 - **Highlights folder**: Vault folder to use for plugin to write synced book highlights and notes
 - **Note template**: Template ([Nunjucks][2]) to use for rendering your highlights when writing
   them to disk
-- **Sync on startup [default: on]**: Download extra book metadata from Amazon.com (works for
+- **Download book metadata [default: on]**: Download extra book metadata from Amazon.com (works for
   Amazon sync only)
 - **Sync on startup [default: off]**: Enable to always automatically sync your latest highlights
   using your Amazon account
