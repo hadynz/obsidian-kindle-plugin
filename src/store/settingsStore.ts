@@ -14,6 +14,7 @@ type Settings = {
   fileNameTemplate?: string;
   syncOnBoot: boolean;
   downloadBookMetadata: boolean;
+  myClippingsFileLocation: string;
 };
 
 const DEFAULT_SETTINGS: Settings = {
@@ -23,6 +24,7 @@ const DEFAULT_SETTINGS: Settings = {
   isLoggedIn: false,
   syncOnBoot: false,
   downloadBookMetadata: true,
+  myClippingsFileLocation: '',
 };
 
 const createSettingsStore = () => {
@@ -121,6 +123,13 @@ const createSettingsStore = () => {
     });
   };
 
+  const setMyClippingsFileLocation = (value: string) => {
+    store.update((state => {
+      state.myClippingsFileLocation = value;
+      return state;
+    }));
+  }
+
   const setFileNameTemplate = (value: string) => {
     store.update((state) => ({ ...state, fileNameTemplate: value }));
   };
@@ -159,6 +168,7 @@ const createSettingsStore = () => {
       setSyncOnBoot,
       setDownloadBookMetadata,
       setAmazonRegion,
+      setMyClippingsFileLocation,
       upgradeStoreState,
     },
   };
