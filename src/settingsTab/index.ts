@@ -34,12 +34,31 @@ export class SettingsTab extends PluginSettingTab {
     }
 
     this.highlightsFolder();
+    this.myClippingsFileLocation();
     this.amazonRegion();
     this.downloadBookMetadata();
     this.syncOnBoot();
     this.fileNameTemplate();
     this.highlightTemplate();
     this.sponsorMe();
+  }
+
+
+  private async myClippingsFileLocation(): void {
+    new Setting(this.containerEl)
+      .setName('My Clippings file location')
+      .setDesc(
+        "Set a path for the plugin to check for your \"My Clippings\" file, instead of asking to find it each time."
+      )
+      .addText(text => {
+        return text
+          .setPlaceholder('')
+          .setValue(get(settingsStore).myClippingsFileLocation)
+          .onChange((async (value: string) => {
+            await settingsStore.actions.setMyClippingsFileLocation(value);
+          }))
+
+      })
   }
 
   private async logout(): Promise<void> {
