@@ -80,7 +80,7 @@ function BlockReferenceExtension(): void {
 
     const needleSubclass = body.children.find((c) => getRecursiveValue(c) === needle);
 
-    this.lineNumber = needleSubclass.lineno;
+    this.lineNumber = needleSubclass?.lineno;
 
     // Actually do work on block body and arguments
     return new nodes.CallExtension(this, 'run', args, [body]);
@@ -93,6 +93,12 @@ function BlockReferenceExtension(): void {
     bodyCallback: () => string
   ) {
     const renderedTemplate: string = bodyCallback();
+
+    // `lineNumber` can be undefined if highlight text ({{text}}) is not used in template
+    if (this.lineNumber == null) {
+      return renderedTemplate;
+    }
+
     const buffer = sb(renderedTemplate);
 
     const blockRef = `${HighlightIdBlockRefPrefix}${context.ctx[highlightId]}`;
