@@ -3,7 +3,7 @@ import { get } from 'svelte/store';
 import { settingsStore } from '~/store';
 import { scrapeBookMetadata } from '~/scraper';
 import { DiffManager } from '../diffManager';
-import { Renderer } from '~/renderer';
+import { Renderer } from '~/rendering';
 import { diffBooks } from './diffBooks';
 import type FileManager from '~/fileManager';
 import type { Book, BookMetadata, Highlight, KindleFile } from '~/models';

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import { sb, StringBuffer } from '~/utils';
-import { HighlightIdBlockRefPrefix, Renderer } from '~/renderer';
+import { HighlightIdBlockRefPrefix, Renderer } from '~/rendering';
 import { diffLists } from './helpers';
 import type { Highlight } from '~/models';
 import type FileManager from '~/fileManager';

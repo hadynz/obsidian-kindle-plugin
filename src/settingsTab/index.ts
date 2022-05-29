@@ -7,7 +7,7 @@ import AmazonLogoutModal from '~/components/amazonLogoutModal';
 import type KindlePlugin from '~/.';
 import type FileManager from '~/fileManager';
 import type { AmazonAccountRegion } from '~/models';
-import { Renderer } from '~/renderer';
+import { Renderer } from '../rendering';
 import { settingsStore } from '~/store';
 import { scrapeLogoutUrl } from '~/scraper';
 import { AmazonRegions } from '~/amazonRegion';
