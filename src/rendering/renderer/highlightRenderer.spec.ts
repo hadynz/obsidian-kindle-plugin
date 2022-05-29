@@ -65,5 +65,18 @@ describe('HighlightRenderer', () => {
         new RegExp('^highlighted text -  \\^ref-.*$')
       );
     });
+
+    it('Only leading and trailing lines in a template are always trimmed', () => {
+      const templateWithTrailingLines = '\n\n{{text}}\n\n{{location}}\n\n';
+      const highlight: Highlight = {
+        id: faker.datatype.uuid(),
+        text: 'highlighted text',
+        location: '110',
+      };
+
+      const renderer = new HighlightRenderer(templateWithTrailingLines);
+
+      expect(renderer.render(highlight)).toMatch(new RegExp('^highlighted text \\^ref-.*\\n\\n110$'));
+    });
   });
 });
