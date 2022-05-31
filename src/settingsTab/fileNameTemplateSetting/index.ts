@@ -5,10 +5,10 @@ import Legend from './components/Legend.svelte';
 import Preview from './components/Preview.svelte';
 import { settingsStore } from '~/store';
 import { fileName, BookDemo } from './store';
-import { fileNameRenderer, DefaultFileNameTemplate } from '~/rendering';
+import { getRenderers, DefaultFileNameTemplate } from '~/rendering';
 
 const updateFileNamePreview = (book: BookDemo): void => {
-  const renderedFileName = fileNameRenderer.render(book);
+  const renderedFileName = getRenderers().fileNameRenderer.render(book);
   fileName.set(renderedFileName);
 };
 
@@ -27,7 +27,7 @@ export const fileNameTemplateSetting = (el: HTMLElement): void => {
       text.inputEl.placeholder = DefaultFileNameTemplate;
 
       text.setValue(get(settingsStore).fileNameTemplate).onChange(async (value) => {
-        const isValid = fileNameRenderer.validate(value);
+        const isValid = getRenderers().fileNameRenderer.validate(value);
 
         if (isValid) {
           settingsStore.actions.setFileNameTemplate(value);

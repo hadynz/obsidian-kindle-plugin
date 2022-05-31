@@ -10,6 +10,7 @@ type Settings = {
   lastSyncDate?: Date;
   lastSyncMode: SyncMode;
   isLoggedIn: boolean;
+  fileTemplate?: string;
   highlightTemplate?: string;
   fileNameTemplate?: string;
   syncOnBoot: boolean;
@@ -121,6 +122,10 @@ const createSettingsStore = () => {
     });
   };
 
+  const setFileTemplate = (value: string) => {
+    store.update((state) => ({ ...state, fileTemplate: value }));
+  };
+
   const setFileNameTemplate = (value: string) => {
     store.update((state) => ({ ...state, fileNameTemplate: value }));
   };
@@ -154,6 +159,7 @@ const createSettingsStore = () => {
       setHighlightsFolder,
       login,
       logout,
+      setFileTemplate,
       setFileNameTemplate,
       setHighlightTemplate,
       setSyncOnBoot,

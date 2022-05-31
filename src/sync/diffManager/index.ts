@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import { sb, StringBuffer } from '~/utils';
-import { highlightRenderer } from '~/rendering';
+import { getRenderers } from '~/rendering';
 import { HighlightIdBlockRefPrefix } from '~/rendering/renderer';
 import { diffLists } from './helpers';
 import type { Highlight } from '~/models';
@@ -62,6 +62,8 @@ export class DiffManager {
     remoteHighlights: Highlight[],
     diffs: DiffResult[]
   ): Promise<void> {
+    const highlightRenderer = getRenderers().highlightRenderer;
+
     const insertList = diffs
       .filter((d) => d.nextRenderedHighlight)
       .map((d) => ({

@@ -5,17 +5,20 @@ import defaultHighlightTemplate from '~/rendering/templates/defaultHighlightTemp
 import { FileNameRenderer, FileRenderer, HighlightRenderer } from './renderer';
 import { settingsStore } from '~/store';
 
-// Exported constants
 export const DefaultFileNameTemplate = '{{shortTitle}}';
 export const DefaultFileTemplate = bookTemplate;
 export const DefaultHighlightTemplate = defaultHighlightTemplate;
 
-const { fileNameTemplate, highlightTemplate } = get(settingsStore);
-const userFileNameTemplate = fileNameTemplate || DefaultFileNameTemplate;
-const fileTemplate = highlightTemplate || DefaultFileTemplate;
-const highlighTemplate = highlightTemplate || DefaultHighlightTemplate;
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const getRenderers = () => {
+  const { fileNameTemplate, fileTemplate, highlightTemplate } = get(settingsStore);
+  const userFileNameTemplate = fileNameTemplate || DefaultFileNameTemplate;
+  const userFileTemplate = fileTemplate || DefaultFileTemplate;
+  const userHighlighTemplate = highlightTemplate || DefaultHighlightTemplate;
 
-// Exported renderers
-export const fileNameRenderer = new FileNameRenderer(userFileNameTemplate);
-export const fileRenderer = new FileRenderer(fileTemplate, highlighTemplate);
-export const highlightRenderer = new HighlightRenderer(highlighTemplate);
+  return {
+    fileNameRenderer: new FileNameRenderer(userFileNameTemplate),
+    fileRenderer: new FileRenderer(userFileTemplate, userHighlighTemplate),
+    highlightRenderer: new HighlightRenderer(userHighlighTemplate),
+  };
+};

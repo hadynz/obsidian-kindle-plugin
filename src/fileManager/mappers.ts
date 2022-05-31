@@ -3,7 +3,7 @@ import moment from 'moment';
 import { get } from 'svelte/store';
 
 import { settingsStore } from '~/store';
-import { fileNameRenderer } from '~/rendering';
+import { getRenderers } from '~/rendering';
 import type { Book, KindleFrontmatter } from '~/models';
 
 /**
@@ -11,7 +11,7 @@ import type { Book, KindleFrontmatter } from '~/models';
  * vault directory.
  */
 export const bookFilePath = (book: Book): string => {
-  const fileName = fileNameRenderer.render(book);
+  const fileName = getRenderers().fileNameRenderer.render(book);
   return path.join(get(settingsStore).highlightsFolder, fileName);
 };
 

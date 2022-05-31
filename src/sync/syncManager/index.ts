@@ -3,7 +3,7 @@ import { get } from 'svelte/store';
 import { settingsStore } from '~/store';
 import { scrapeBookMetadata } from '~/scraper';
 import { DiffManager } from '../diffManager';
-import { fileRenderer } from '~/rendering';
+import { getRenderers } from '~/rendering';
 import { diffBooks } from './diffBooks';
 import type FileManager from '~/fileManager';
 import type { Book, BookMetadata, Highlight, KindleFile } from '~/models';
@@ -58,7 +58,7 @@ export default class SyncManager {
   private async createBook(book: Book, highlights: Highlight[]): Promise<void> {
     const metadata = await this.syncMetadata(book);
 
-    const content = fileRenderer.render({ book, highlights, metadata });
+    const content = getRenderers().fileRenderer.render({ book, highlights, metadata });
 
     await this.fileManager.createFile(book, content, highlights.length);
   }
