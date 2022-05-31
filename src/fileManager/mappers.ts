@@ -3,7 +3,7 @@ import moment from 'moment';
 import { get } from 'svelte/store';
 
 import { settingsStore } from '~/store';
-import { fileNameRenderer } from '~/rendering/renderer/fileNameRenderer';
+import { fileNameRenderer } from '~/rendering';
 import type { Book, KindleFrontmatter } from '~/models';
 
 /**

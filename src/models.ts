@@ -27,18 +27,28 @@ export type BookHighlight = {
 
 export type BookMetadata = {
   isbn?: string;
+  pages?: string;
+  publication?: string;
+  publisher?: string;
+  authorUrl?: string;
+};
+
+export type RenderTemplate = {
+  title: string;
+  author: string;
+  asin?: string;
+  url?: string;
+  imageUrl?: string;
+  lastAnnotatedDate?: string;
+  longTitle: string;
+  appLink?: string;
+  isbn?: string;
   pages: string;
   publication: string;
   publisher: string;
   authorUrl: string;
+  highlights: string;
 };
-
-export type RenderTemplate = Book &
-  BookMetadata & {
-    fullTitle: string;
-    appLink?: string;
-    highlights: string;
-  };
 
 export type SyncMode = 'amazon' | 'my-clippings';
 

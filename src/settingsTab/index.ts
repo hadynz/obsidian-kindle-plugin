@@ -7,7 +7,7 @@ import AmazonLogoutModal from '~/components/amazonLogoutModal';
 import type KindlePlugin from '~/.';
 import type FileManager from '~/fileManager';
 import type { AmazonAccountRegion } from '~/models';
-import { Renderer } from '../rendering';
+import { DefaultHighlightTemplate, highlightRenderer } from '../rendering';
 import { settingsStore } from '~/store';
 import { scrapeLogoutUrl } from '~/scraper';
 import { AmazonRegions } from '~/amazonRegion';
@@ -16,12 +16,9 @@ import { fileNameTemplateSetting } from './fileNameTemplateSetting';
 const { moment } = window;
 
 export class SettingsTab extends PluginSettingTab {
-  private renderer: Renderer;
-
   constructor(app: App, plugin: KindlePlugin, private fileManager: FileManager) {
     super(app, plugin);
     this.app = app;
-    this.renderer = new Renderer();
   }
 
   public async display(): Promise<void> {
@@ -143,9 +140,9 @@ export class SettingsTab extends PluginSettingTab {
         text.inputEl.style.height = '200px';
         text.inputEl.style.fontSize = '0.8em';
         text.inputEl.style.fontFamily = 'var(--font-monospace)';
-        text.inputEl.placeholder = this.renderer.defaultHighlightTemplate();
+        text.inputEl.placeholder = DefaultHighlightTemplate;
         text.setValue(get(settingsStore).highlightTemplate).onChange(async (value) => {
-          const isValid = this.renderer.validate(value);
+          const isValid = highlightRenderer.validate(value);
 
           if (isValid) {
             await settingsStore.actions.setHighlightTemplate(value);

@@ -1,4 +1,4 @@
-import { FileNameRenderer } from './fileNameRenderer';
+import FileNameRenderer from './fileNameRenderer';
 import type { Book } from '~/models';
 
 describe('FileNameRenderer', () => {

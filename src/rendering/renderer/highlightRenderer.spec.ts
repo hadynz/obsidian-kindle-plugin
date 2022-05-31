@@ -1,6 +1,6 @@
 import faker from 'faker';
 
-import { HighlightRenderer } from './highlightRenderer';
+import HighlightRenderer from './highlightRenderer';
 import type { Highlight } from '~/models';
 
 describe('HighlightRenderer', () => {
@@ -76,7 +76,9 @@ describe('HighlightRenderer', () => {
 
       const renderer = new HighlightRenderer(templateWithTrailingLines);
 
-      expect(renderer.render(highlight)).toMatch(new RegExp('^highlighted text \\^ref-.*\\n\\n110$'));
+      expect(renderer.render(highlight)).toMatch(
+        new RegExp('^highlighted text \\^ref-.*\\n\\n110$')
+      );
     });
   });
 });

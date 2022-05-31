@@ -1,7 +1,8 @@
 import _ from 'lodash';
 
 import { sb, StringBuffer } from '~/utils';
-import { HighlightIdBlockRefPrefix, Renderer } from '~/rendering';
+import { highlightRenderer } from '~/rendering';
+import { HighlightIdBlockRefPrefix } from '~/rendering/renderer';
 import { diffLists } from './helpers';
 import type { Highlight } from '~/models';
 import type FileManager from '~/fileManager';
@@ -18,7 +19,6 @@ export type DiffResult = {
 };
 
 export class DiffManager {
-  private renderer: Renderer;
   private fileBuffer: StringBuffer;
 
   public static async create(
@@ -30,9 +30,7 @@ export class DiffManager {
     return manager;
   }
 
-  private constructor(private fileManager: FileManager, private kindleFile: KindleFile) {
-    this.renderer = new Renderer();
-  }
+  private constructor(private fileManager: FileManager, private kindleFile: KindleFile) {}
 
   private async load(): Promise<void> {
     const fileContents = await this.fileManager.readFile(this.kindleFile);
@@ -68,12 +66,12 @@ export class DiffManager {
       .filter((d) => d.nextRenderedHighlight)
       .map((d) => ({
         line: d.nextRenderedHighlight?.line,
-        content: this.renderer.renderHighlight(this.kindleFile.book, d.remoteHighlight),
+        content: highlightRenderer.render(d.remoteHighlight, this.kindleFile.book.asin),
       }));
 
     const appendList = diffs
       .filter((d) => d.nextRenderedHighlight == null)
-      .map((d) => this.renderer.renderHighlight(this.kindleFile.book, d.remoteHighlight));
+      .map((d) => highlightRenderer.render(d.remoteHighlight, this.kindleFile.book.asin));
 
     const modifiedFileContents = this.fileBuffer
       .insertLinesAt(insertList)

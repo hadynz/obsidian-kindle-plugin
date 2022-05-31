@@ -1,14 +1,10 @@
 import nunjucks, { Environment } from 'nunjucks';
 import sanitize from 'sanitize-filename';
-import { get } from 'svelte/store';
 
 import { shortenTitle } from '~/utils';
-import { settingsStore } from '~/store';
 import type { Book } from '~/models';
 
-export const DefaultFileNameTemplate = '{{shortTitle}}';
-
-export class FileNameRenderer {
+export default class FileNameRenderer {
   private nunjucks: Environment;
 
   constructor(private template: string) {
@@ -34,7 +30,3 @@ export class FileNameRenderer {
     return `${sanitize(fileName)}.md`;
   }
 }
-
-const userFileNameTemplate = get(settingsStore).fileNameTemplate || DefaultFileNameTemplate;
-
-export const fileNameRenderer = new FileNameRenderer(userFileNameTemplate);

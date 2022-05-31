@@ -1,34 +1,18 @@
-import nunjucks, { Environment } from 'nunjucks';
-import { get } from 'svelte/store';
+import { Environment } from 'nunjucks';
 
-import defaultHighlightTemplate from '~/rendering/templates/defaultHighlightTemplate.njk';
 import highlightTemplateWrapper from '~/rendering//templates/highlightTemplateWrapper.njk';
-import { BlockReferenceExtension, TrimAllEmptyLinesExtension } from '../nunjucks.extensions';
-import { settingsStore } from '~/store';
-import { trimMultipleLines } from '../helper';
+import { BlockReferenceExtension } from '../nunjucks.extensions';
+import { trimMultipleLines, generateAppLink } from '../utils';
 import type { Highlight } from '~/models';
 
 export const HighlightIdBlockRefPrefix = '^ref-';
 
-export const DefaultHighlightTemplate = defaultHighlightTemplate;
-
-const appLink = (bookAsin: string, highlight?: Highlight): string => {
-  if (bookAsin == null) {
-    return null;
-  }
-  if (highlight?.location != null) {
-    return `kindle://book?action=open&asin=${bookAsin}&location=${highlight.location}`;
-  }
-  return `kindle://book?action=open&asin=${bookAsin}`;
-};
-
-export class HighlightRenderer {
+export default class HighlightRenderer {
   private nunjucks: Environment;
 
   constructor(private template: string) {
-    this.nunjucks = new nunjucks.Environment(null, { autoescape: false });
+    this.nunjucks = new Environment(null, { autoescape: false });
     this.nunjucks.addExtension('BlockRef', new BlockReferenceExtension());
-    this.nunjucks.addExtension('Trim', new TrimAllEmptyLinesExtension());
   }
 
   public validate(template: string): boolean {
@@ -41,7 +25,7 @@ export class HighlightRenderer {
   }
 
   public render(highlight: Highlight, bookAsin: string = undefined): string {
-    const highlightParams = { ...highlight, appLink: appLink(bookAsin, highlight) };
+    const highlightParams = { ...highlight, appLink: generateAppLink(bookAsin, highlight) };
 
     const highlightTemplate = highlightTemplateWrapper.replace('{{ content }}', this.template);
 
@@ -50,7 +34,3 @@ export class HighlightRenderer {
     return trimMultipleLines(renderedHighlight);
   }
 }
-
-const userFileNameTemplate = get(settingsStore).highlightTemplate || DefaultHighlightTemplate;
-
-export const highlightRenderer = new HighlightRenderer(userFileNameTemplate);

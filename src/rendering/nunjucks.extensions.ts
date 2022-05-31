@@ -1,6 +1,6 @@
 import nunjucks from 'nunjucks';
 
-import { HighlightIdBlockRefPrefix } from './';
+import { HighlightIdBlockRefPrefix } from './renderer';
 import { sb } from '~/utils';
 
 type SubClass = {

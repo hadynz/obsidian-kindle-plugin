@@ -5,10 +5,7 @@ import Legend from './components/Legend.svelte';
 import Preview from './components/Preview.svelte';
 import { settingsStore } from '~/store';
 import { fileName, BookDemo } from './store';
-import {
-  fileNameRenderer,
-  DefaultFileNameTemplate,
-} from '~/rendering/renderer/fileNameRenderer';
+import { fileNameRenderer, DefaultFileNameTemplate } from '~/rendering';
 
 const updateFileNamePreview = (book: BookDemo): void => {
   const renderedFileName = fileNameRenderer.render(book);
