@@ -41,7 +41,7 @@ export default class FileRenderer {
       appLink: generateAppLink(book.asin),
       isbn: metadata?.isbn,
       pages: metadata?.pages,
-      publication: metadata?.publication,
+      publicationDate: metadata?.publicationDate,
       publisher: metadata?.publisher,
       authorUrl: metadata?.authorUrl,
       highlights: highlights

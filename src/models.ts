@@ -28,7 +28,7 @@ export type BookHighlight = {
 export type BookMetadata = {
   isbn?: string;
   pages?: string;
-  publication?: string;
+  publicationDate?: string;
   publisher?: string;
   authorUrl?: string;
 };
@@ -44,7 +44,7 @@ export type RenderTemplate = {
   appLink?: string;
   isbn?: string;
   pages: string;
-  publication: string;
+  publicationDate: string;
   publisher: string;
   authorUrl: string;
   highlights: string;

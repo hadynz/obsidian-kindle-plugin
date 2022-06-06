@@ -19,7 +19,7 @@ describe('FileRenderer', () => {
         metadata: {
           isbn: faker.random.alphaNumeric(4),
           pages: faker.datatype.number(100).toString(),
-          publication: faker.date.past().toISOString(),
+          publicationDate: faker.date.past().toISOString(),
           publisher: faker.company.companyName(),
           authorUrl: faker.internet.url(),
         },
@@ -41,7 +41,7 @@ describe('FileRenderer', () => {
         ['{{lastAnnotatedDate}}', '2022-04-04'],
         ['{{isbn}}', bookHighlight.metadata.isbn],
         ['{{pages}}', bookHighlight.metadata.pages],
-        ['{{publication}}', bookHighlight.metadata.publication],
+        ['{{publicationDate}}', bookHighlight.metadata.publicationDate],
         ['{{publisher}}', bookHighlight.metadata.publisher],
         ['{{authorUrl}}', bookHighlight.metadata.authorUrl],
       ])('template variable "%s" evaluated as "%s"', (template, expected) => {

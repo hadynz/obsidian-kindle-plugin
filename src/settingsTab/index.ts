@@ -4,14 +4,13 @@ import { get } from 'svelte/store';
 
 import { ee } from '~/eventEmitter';
 import AmazonLogoutModal from '~/components/amazonLogoutModal';
+import templateSettings from './templateSettings';
 import type KindlePlugin from '~/.';
 import type FileManager from '~/fileManager';
 import type { AmazonAccountRegion } from '~/models';
-import { DefaultHighlightTemplate, DefaultFileTemplate, getRenderers } from '../rendering';
 import { settingsStore } from '~/store';
 import { scrapeLogoutUrl } from '~/scraper';
 import { AmazonRegions } from '~/amazonRegion';
-import { fileNameTemplateSetting } from './fileNameTemplateSetting';
 
 const { moment } = window;
 
@@ -34,9 +33,7 @@ export class SettingsTab extends PluginSettingTab {
     this.amazonRegion();
     this.downloadBookMetadata();
     this.syncOnBoot();
-    this.fileNameTemplate();
-    this.fileTemplate();
-    this.highlightTemplate();
+    templateSettings(this.app, containerEl);
     this.sponsorMe();
   }
 
@@ -126,60 +123,6 @@ export class SettingsTab extends PluginSettingTab {
             await settingsStore.actions.setHighlightsFolder(value);
           });
       });
-  }
-
-  private fileNameTemplate(): void {
-    fileNameTemplateSetting(this.containerEl);
-  }
-
-  private fileTemplate(): void {
-    const setting = new Setting(this.containerEl)
-      .setName('File template')
-      .setDesc('Template for a file of highlights')
-      .addTextArea((text) => {
-        text.inputEl.style.width = '100%';
-        text.inputEl.style.height = '200px';
-        text.inputEl.style.fontSize = '0.8em';
-        text.inputEl.style.fontFamily = 'var(--font-monospace)';
-        text.inputEl.placeholder = DefaultFileTemplate;
-        text.setValue(get(settingsStore).fileTemplate).onChange(async (value) => {
-          const isValid = getRenderers().highlightRenderer.validate(value);
-
-          if (isValid) {
-            await settingsStore.actions.setFileTemplate(value);
-          }
-
-          text.inputEl.style.border = isValid ? '' : '1px solid red';
-        });
-        return text;
-      });
-
-    setting.settingEl.style.alignItems = 'normal';
-  }
-
-  private highlightTemplate(): void {
-    const setting = new Setting(this.containerEl)
-      .setName('Highlight template')
-      .setDesc('Template for an individual highlight')
-      .addTextArea((text) => {
-        text.inputEl.style.width = '100%';
-        text.inputEl.style.height = '200px';
-        text.inputEl.style.fontSize = '0.8em';
-        text.inputEl.style.fontFamily = 'var(--font-monospace)';
-        text.inputEl.placeholder = DefaultHighlightTemplate;
-        text.setValue(get(settingsStore).highlightTemplate).onChange(async (value) => {
-          const isValid = getRenderers().highlightRenderer.validate(value);
-
-          if (isValid) {
-            await settingsStore.actions.setHighlightTemplate(value);
-          }
-
-          text.inputEl.style.border = isValid ? '' : '1px solid red';
-        });
-        return text;
-      });
-
-    setting.settingEl.style.alignItems = 'normal';
   }
 
   private downloadBookMetadata(): void {

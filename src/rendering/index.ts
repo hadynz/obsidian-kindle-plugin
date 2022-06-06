@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
 
-import bookTemplate from '~/rendering/templates/bookTemplate.njk';
-import defaultHighlightTemplate from '~/rendering/templates/defaultHighlightTemplate.njk';
+import bookTemplate from './templates/bookTemplate.njk';
+import defaultHighlightTemplate from './templates/defaultHighlightTemplate.njk';
 import { FileNameRenderer, FileRenderer, HighlightRenderer } from './renderer';
 import { settingsStore } from '~/store';
 
