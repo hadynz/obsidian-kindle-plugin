@@ -44,6 +44,7 @@ export default class FileRenderer {
       publicationDate: metadata?.publicationDate,
       publisher: metadata?.publisher,
       authorUrl: metadata?.authorUrl,
+      highlightsCount: highlights.length,
       highlights: highlights
         .map((h) => this.highlightRenderer.render(h, book.asin))
         .join('\n'),

@@ -47,6 +47,7 @@ export type RenderTemplate = {
   publicationDate: string;
   publisher: string;
   authorUrl: string;
+  highlightsCount: number;
   highlights: string;
 };
 

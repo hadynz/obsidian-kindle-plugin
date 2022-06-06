@@ -44,6 +44,7 @@ describe('FileRenderer', () => {
         ['{{publicationDate}}', bookHighlight.metadata.publicationDate],
         ['{{publisher}}', bookHighlight.metadata.publisher],
         ['{{authorUrl}}', bookHighlight.metadata.authorUrl],
+        ['{{highlightsCount}}', '1'],
       ])('template variable "%s" evaluated as "%s"', (template, expected) => {
         const renderer = new FileRenderer(template, '');
         expect(renderer.render(bookHighlight)).toBe(expected);
@@ -78,6 +79,7 @@ describe('FileRenderer', () => {
 ## Metadata
 - Author:: {{author}}
 - Publisher:: {{publisher}}
+- Highlights count:: {{highlightsCount}}
 
 ## Highlights
 {{highlights}}
@@ -89,6 +91,7 @@ describe('FileRenderer', () => {
 ## Metadata
 - Author:: ${bookHighlight.book.author}
 - Publisher:: ${bookHighlight.metadata.publisher}
+- Highlights count:: 2
 
 ## Highlights
 - highlighted text ^ref-H1
@@ -114,7 +117,7 @@ describe('FileRenderer', () => {
 
 ## Metadata
 - Author:: {{author}}
-- Publisher:: {{publisher}}
+- Publisher:: {{publisher}}.
 
 ## Highlights
 {{highlights}}
@@ -125,7 +128,7 @@ describe('FileRenderer', () => {
 
 ## Metadata
 - Author:: ${bookHighlight.book.author}
-- Publisher:: 
+- Publisher:: .
 
 ## Highlights
 

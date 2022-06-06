@@ -77,6 +77,10 @@
         <td>Author's page on Amazon.com</td>
       </tr>
       <tr>
+        <td><Chip title={'highlightsCount'} /></td>
+        <td>Number of highlights <span>- (always set)</span></td>
+      </tr>
+      <tr>
         <td><Chip title={'highlights'} /></td>
         <td>Block of book highlights <span>- (always set)</span></td>
       </tr>
