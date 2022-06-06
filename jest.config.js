@@ -1,6 +1,7 @@
 module.exports = {
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
+    '^.+\\.njk?$': 'jest-text-transformer',
   },
   moduleNameMapper: {
     '^~/(.*)': '<rootDir>/src/$1',

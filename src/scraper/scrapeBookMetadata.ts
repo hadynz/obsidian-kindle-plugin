@@ -23,7 +23,7 @@ const parseDetailsList = ($: Root): Omit<BookMetadata, 'authorUrl'> => {
   return {
     isbn: result['Page numbers source ISBN'],
     pages: result['Print length'],
-    publication: result['Publication date'],
+    publicationDate: result['Publication date'],
     publisher: result['Publisher'],
   };
 };

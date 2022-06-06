@@ -1,17 +1,13 @@
 import nunjucks, { Environment } from 'nunjucks';
 import sanitize from 'sanitize-filename';
-import { get } from 'svelte/store';
 
 import { shortenTitle } from '~/utils';
-import { settingsStore } from '~/store';
 import type { Book } from '~/models';
 
-const DefaultTemplate = '{{shortTitle}}';
-
-class FileNameRenderer {
+export default class FileNameRenderer {
   private nunjucks: Environment;
 
-  constructor() {
+  constructor(private template: string) {
     this.nunjucks = new nunjucks.Environment(null, { autoescape: false });
   }
 
@@ -25,9 +21,7 @@ class FileNameRenderer {
   }
 
   public render(book: Partial<Book>): string {
-    const template = get(settingsStore).fileNameTemplate || this.defaultTemplate();
-
-    const fileName = this.nunjucks.renderString(template, {
+    const fileName = this.nunjucks.renderString(this.template, {
       shortTitle: shortenTitle(book.title),
       longTitle: book.title,
       author: book.author,
@@ -35,10 +29,4 @@ class FileNameRenderer {
 
     return `${sanitize(fileName)}.md`;
   }
-
-  public defaultTemplate(): string {
-    return DefaultTemplate;
-  }
 }
-
-export const fileNameRenderer = new FileNameRenderer();
