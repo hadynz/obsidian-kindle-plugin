@@ -37,7 +37,9 @@ export default class FileRenderer {
       asin: book.asin,
       url: book.url,
       imageUrl: book.imageUrl,
-      lastAnnotatedDate: moment(book.lastAnnotatedDate).format('YYYY-MM-DD').toString(),
+      lastAnnotatedDate: book.lastAnnotatedDate
+        ? moment(book.lastAnnotatedDate).format('YYYY-MM-DD').toString()
+        : undefined,
       appLink: generateAppLink(book.asin),
       isbn: metadata?.isbn,
       pages: metadata?.pages,
