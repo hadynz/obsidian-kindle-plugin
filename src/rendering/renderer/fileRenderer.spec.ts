@@ -51,6 +51,39 @@ describe('FileRenderer', () => {
       });
     });
 
+    describe('file template variables works for null values', () => {
+      const bookHighlight: BookHighlight = {
+        book: {
+          id: faker.random.alphaNumeric(4),
+          title: 'My book title: extended description',
+          author: faker.name.findName(),
+        },
+        metadata: {},
+        highlights: [
+          {
+            id: faker.random.alphaNumeric(4),
+            text: 'highlighted text',
+          },
+        ],
+      };
+
+      it.each([
+        ['{{asin}}', ''],
+        ['{{url}}', ''],
+        ['{{imageUrl}}', ''],
+        ['{{lastAnnotatedDate}}', ''],
+        ['{{isbn}}', ''],
+        ['{{pages}}', ''],
+        ['{{publicationDate}}', ''],
+        ['{{publisher}}', ''],
+        ['{{authorUrl}}', ''],
+        ['{{highlightsCount}}', '1'],
+      ])('template variable "%s" evaluated as "%s"', (template, expected) => {
+        const renderer = new FileRenderer(template, '');
+        expect(renderer.render(bookHighlight)).toBe(expected);
+      });
+    });
+
     it('Simple render of a minimalist file template', () => {
       const bookHighlight: BookHighlight = {
         book: {
