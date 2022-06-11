@@ -5,7 +5,7 @@ import HighlightRenderer from './highlightRenderer';
 import { shortenTitle } from '~/utils';
 import { generateAppLink } from '../utils';
 import { TrimAllEmptyLinesExtension } from '../nunjucks.extensions';
-import type { BookHighlight, RenderTemplate } from '~/models';
+import type { BookHighlight, FileRenderTemplate } from '~/models';
 
 export default class FileRenderer {
   private nunjucks: Environment;
@@ -30,7 +30,7 @@ export default class FileRenderer {
   public render(entry: BookHighlight): string {
     const { book, highlights, metadata } = entry;
 
-    const params: RenderTemplate = {
+    const params: FileRenderTemplate = {
       title: shortenTitle(book.title),
       longTitle: book.title,
       author: book.author,

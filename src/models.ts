@@ -33,7 +33,7 @@ export type BookMetadata = {
   authorUrl?: string;
 };
 
-export type RenderTemplate = {
+export type FileRenderTemplate = {
   title: string;
   author: string;
   asin?: string;
