@@ -43,48 +43,9 @@ you're life's work held hostage in the cloud again", this plugin tries to do exa
 with your precious Kindle notes and highlights. Why should you struggle in accessing your own
 data, or paying for a third party service to access information that you own?
 
-## Usage
+## Known considerations
 
-After enabling the plugin in the settings menu, your Obsidian's status bar will start showing
-your Kindle sync status. Click on the status bar to start adhoc syncing or to see more
-detailed information on your sync status to date.
-
-Configure the settings of the plugin to specify the folder location for your syncing.
-
-## Settings
-
-- **Highlights folder**: Vault folder to use for plugin to write synced book highlights and notes
-- **Note template**: Template ([Nunjucks][2]) to use for rendering your highlights when writing
-  them to disk
-- **Download book metadata [default: on]**: Download extra book metadata from Amazon.com (works for
-  Amazon sync only)
-- **Sync on startup [default: off]**: Enable to always automatically sync your latest highlights
-  using your Amazon account
-- **Amazon region**: Select the Amazon account region which has your Kindle highlights data.
-  Currently only global (.com), India, Japan, Spain, Germany and Italy are supported
-- **Sign out**: Log out from your Amazon account (appears only if you have logged in)
-
-## Usage
-
-You can start the sync process by clicking on the Kindle icon in the ribbon bar or clicking
-on the plugin's status bar message at the bottom of Obsidian. You will be presented with a
-modal that gives you several two options to sync.
-
-Start syncing by choosing between uploading a copy of your `My Clippings.txt` file or using
-your online Amazon account.
-
-### Template tags
-
-| Tag            | Description                                         | Present                                                                            |
-| -------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `{{text}}`     | Annotated text                                      | Always in all sync modes                                                           |
-| `{{location}}` | Highlighted text location                           | Usually available in all sync modes. If not, then `{{page}}` will be available     |
-| `{{page}}`     | Highlighted text page                               | Usually available in all sync modes. If not, then `{{location}}` will be available |
-| `{{note}}`     | Associated note to highlight                        | Optional                                                                           |
-| `{{appLink}}`  | Link to open highlight in Kindle app                | Available only for Amazon books synced through Amazon online                       |
-| `{{color}}`    | Color of the highlight (pink, blue, yellow, orange) | Available only for Amazon books synced through Amazon online                       |
-
-## Security consideration
+### Security
 
 If you choose to sync your highlights via Amazon's online Kindle Reader, it is important to note
 that by logging in to your Amazon account via Obsidian your Amazon session becomes available to
@@ -92,6 +53,11 @@ any other plugin across your vaults until your session expires.
 
 You can mitigate this risk by logging out after every sync (from settings) or using the offline
 method of syncing by uploading your `My Clippings.txt` file instead.
+
+### Export limits
+
+For several reasons (see [here][5] and [here][6]) the Kindle platform can sometimes limit the amount
+of highlighted text that can be exported from a particular book. This limit varies from book to book, purchased from Amazon or have DRM protection. There is currently no known alternative to work around this.
 
 ## Say Thanks
 
@@ -109,3 +75,5 @@ If you like this plugin and would like to buy me a coffee, you can!
 [2]: https://mozilla.github.io/nunjucks
 [3]: https://github.com/pjeby/hot-reload
 [4]: https://read.amazon.com/notebook
+[5]: https://help.readwise.io/article/47-why-are-my-kindle-highlights-truncated-ellipses#:~:text=Publishers%20require%20Amazon%20to%20place,the%20book%20will%20be%20truncated.
+[6]: https://brian.carnell.com/articles/2018/route-around-amazon-kindles-ridiculous-limits-on-highlights-exporting-with-bookcision/
