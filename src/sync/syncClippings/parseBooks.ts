@@ -20,6 +20,7 @@ const toBookHighlight = (book: Book): BookHighlight => {
           note: entry.note,
           location: entry.location?.display,
           page: entry.page?.display,
+          createdDate: entry.createdDate,
         })
       ),
   };

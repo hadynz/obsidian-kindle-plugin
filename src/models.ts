@@ -17,6 +17,7 @@ export type Highlight = {
   page?: string;
   note?: string;
   color?: 'pink' | 'blue' | 'yellow' | 'orange';
+  createdDate?: Date;
 };
 
 export type BookHighlight = {
@@ -49,6 +50,17 @@ export type FileRenderTemplate = {
   authorUrl: string;
   highlightsCount: number;
   highlights: string;
+};
+
+export type HighlightRenderTemplate = {
+  id: string;
+  text: string;
+  location?: string;
+  page?: string;
+  note?: string;
+  color?: 'pink' | 'blue' | 'yellow' | 'orange';
+  createdDate?: Date;
+  appLink?: string;
 };
 
 export type SyncMode = 'amazon' | 'my-clippings';

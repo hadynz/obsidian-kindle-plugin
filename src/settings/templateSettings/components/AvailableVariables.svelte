@@ -8,11 +8,11 @@
     <tbody>
       <tr>
         <td><Chip title={'longTitle'} /></td>
-        <td>Book title - full <span>- (always set)</span></td>
+        <td>Book title - full <span class="mute">- (always set)</span></td>
       </tr>
       <tr>
         <td><Chip title={'shortTitle'} /></td>
-        <td>Book title - short <span>- (always set)</span></td>
+        <td>Book title - short <span class="mute">- (always set)</span></td>
       </tr>
       <tr>
         <td><Chip title={'author'} /></td>
@@ -26,11 +26,11 @@
     <tbody>
       <tr>
         <td><Chip title={'longTitle'} /></td>
-        <td>Book title - full <span>- (always set)</span></td>
+        <td>Book title - full <span class="mute">- (always set)</span></td>
       </tr>
       <tr>
         <td><Chip title={'title'} /></td>
-        <td>Book title - short <span>- (always set)</span></td>
+        <td>Book title - short <span class="mute">- (always set)</span></td>
       </tr>
       <tr>
         <td><Chip title={'author'} /></td>
@@ -78,11 +78,11 @@
       </tr>
       <tr>
         <td><Chip title={'highlightsCount'} /></td>
-        <td>Number of highlights <span>- (always set)</span></td>
+        <td>Number of highlights <span class="mute">- (always set)</span></td>
       </tr>
       <tr>
         <td><Chip title={'highlights'} /></td>
-        <td>Block of book highlights <span>- (always set)</span></td>
+        <td>Block of book highlights <span class="mute">- (always set)</span></td>
       </tr>
     </tbody>
   </table>
@@ -92,7 +92,7 @@
     <tbody>
       <tr>
         <td><Chip title={'text'} /></td>
-        <td>Highlighted text<span>- (always set)</span></td>
+        <td>Highlighted text<span class="mute">- (always set)</span></td>
       </tr>
       <tr>
         <td><Chip title={'location'} /></td>
@@ -109,6 +109,17 @@
       <tr>
         <td><Chip title={'color'} /></td>
         <td>Highlighted color</td>
+      </tr>
+      <tr>
+        <td><Chip title={'createdDate'} /></td>
+        <td
+          >Highlight creation date. <br /><span class="mute"
+            >Use
+            <a href="https://momentjs.com/docs/#/displaying/format/">moment's format strings</a
+            >
+            to format date e.g. <Chip title={'createdDate | date("DD-MM-YYYY")'} /></span
+          >
+        </td>
       </tr>
       <tr>
         <td><Chip title={'appLink'} /></td>
@@ -129,7 +140,7 @@
     min-width: 100%;
     grid-template-columns: auto auto;
     column-gap: 1rem;
-    align-items: center;
+    row-gap: 0.25rem;
   }
 
   tbody,
@@ -141,7 +152,7 @@
     font-size: 0.8em;
   }
 
-  span {
+  .mute {
     color: var(--text-muted);
   }
 </style>

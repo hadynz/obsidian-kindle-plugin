@@ -3,8 +3,7 @@ import { get } from 'svelte/store';
 
 import FileManager from '~/fileManager';
 import SyncModal from '~/components/syncModal';
-import { SettingsTab } from '~/settingsTab';
-//import { StatusBar } from '~/components/statusBar';
+import { SettingsTab } from '~/settings';
 import { initializeStores, settingsStore } from '~/store';
 import { SyncAmazon, SyncClippings, SyncManager } from '~/sync';
 import { registerNotifications } from '~/notifications';
