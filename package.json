@@ -1,6 +1,6 @@
 {
   "name": "obsidian-kindle-plugin",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "Sync your Kindle book highlights using your Amazon login or uploading your My Clippings file",
   "main": "src/index.ts",
   "repository": {
@@ -33,6 +33,7 @@
     "gray-matter": "^4.0.3",
     "lodash": "^4.17.21",
     "nunjucks": "^3.2.3",
+    "nunjucks-date-filter": "^0.1.1",
     "sanitize-filename": "^1.6.3",
     "svelte-loading-spinners": "^0.1.4",
     "typed-emitter": "^1.4.0"

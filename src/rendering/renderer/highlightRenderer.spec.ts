@@ -33,10 +33,32 @@ describe('HighlightRenderer', () => {
         ['{{page}}', '3'],
         ['{{note}}', 'my smart note'],
         ['{{color}}', 'pink'],
+        ['{{createdDate}}', ''],
       ])('template variable "%s" evaluated as "%s"', (template, expected) => {
         const renderer = new HighlightRenderer(template);
         expect(renderer.render(highlight)).toBe(expected);
       });
+
+      it.each([
+        [new Date('2019-11-29T18:00:13Z'), '{{createdDate | date}}', '29-11-2019'],
+        [
+          new Date('2016-04-18T07:28:27Z'),
+          '{{createdDate | date("LLL")}}',
+          'April 18, 2016 7:28 AM',
+        ],
+      ])(
+        'createdDate template variable is set when highlight creation date is set',
+        (createdDate: Date, template: string, expected: string) => {
+          const highlight: Highlight = {
+            id: faker.datatype.uuid(),
+            text: faker.lorem.sentence(),
+            createdDate,
+          };
+
+          const renderer = new HighlightRenderer(template);
+          expect(renderer.render(highlight)).toBe(expected);
+        }
+      );
     });
 
     it('appLink template variable is set when a book has an ASIN value', () => {
