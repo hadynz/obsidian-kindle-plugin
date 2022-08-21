@@ -13,8 +13,8 @@ export default class FileManager {
     return await this.vault.cachedRead(file.file);
   }
 
-  public async getKindleFile(book: Book): Promise<KindleFile | undefined> {
-    const allSyncedFiles = await this.getKindleFiles();
+  public getKindleFile(book: Book): KindleFile | undefined {
+    const allSyncedFiles = this.getKindleFiles();
 
     const kindleFile = allSyncedFiles.find((file) => file.frontmatter.bookId === book.id);
 
@@ -31,7 +31,7 @@ export default class FileManager {
     const fileCache = this.metadataCache.getFileCache(file);
 
     // File cache can be undefined if this file was just created and not yet cached by Obsidian
-    const kindleFrontmatter: KindleFrontmatter = fileCache?.frontmatter?.[SyncingStateKey];
+    const kindleFrontmatter = fileCache?.frontmatter?.[SyncingStateKey] as KindleFrontmatter;
 
     if (kindleFrontmatter == null) {
       return undefined;
@@ -42,7 +42,7 @@ export default class FileManager {
     return { file, frontmatter: kindleFrontmatter, book };
   }
 
-  public async getKindleFiles(): Promise<KindleFile[]> {
+  public getKindleFiles(): KindleFile[] {
     return this.vault
       .getMarkdownFiles()
       .map((file) => this.mapToKindleFile(file))

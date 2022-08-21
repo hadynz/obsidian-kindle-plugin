@@ -43,7 +43,7 @@ export const fileNameTemplateSetting = (el: HTMLElement): void => {
     text.inputEl.style.marginRight = '5px';
     text.inputEl.placeholder = DefaultFileNameTemplate;
 
-    text.setValue(get(settingsStore).fileNameTemplate).onChange(async (value) => {
+    text.setValue(get(settingsStore).fileNameTemplate).onChange((value) => {
       const isValid = getRenderers().fileNameRenderer.validate(value);
 
       if (isValid) {
@@ -67,11 +67,11 @@ export const fileTemplateSetting = (el: HTMLElement): void => {
     .addTextArea((text) => {
       styleTextarea(text.inputEl);
       text.inputEl.placeholder = DefaultFileTemplate;
-      text.setValue(get(settingsStore).fileTemplate).onChange(async (value) => {
+      text.setValue(get(settingsStore).fileTemplate).onChange((value) => {
         const isValid = getRenderers().highlightRenderer.validate(value);
 
         if (isValid) {
-          await settingsStore.actions.setFileTemplate(value);
+          settingsStore.actions.setFileTemplate(value);
         }
 
         text.inputEl.style.border = isValid ? '' : '1px solid red';
@@ -90,11 +90,11 @@ export const highlightTemplateSetting = (el: HTMLElement): void => {
     .addTextArea((text) => {
       styleTextarea(text.inputEl);
       text.inputEl.placeholder = DefaultHighlightTemplate;
-      text.setValue(get(settingsStore).highlightTemplate).onChange(async (value) => {
+      text.setValue(get(settingsStore).highlightTemplate).onChange((value) => {
         const isValid = getRenderers().highlightRenderer.validate(value);
 
         if (isValid) {
-          await settingsStore.actions.setHighlightTemplate(value);
+          settingsStore.actions.setHighlightTemplate(value);
         }
 
         text.inputEl.style.border = isValid ? '' : '1px solid red';

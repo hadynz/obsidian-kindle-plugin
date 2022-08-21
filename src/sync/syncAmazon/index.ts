@@ -20,7 +20,7 @@ export default class SyncAmazon {
       ee.emit('fetchingBooks');
 
       const remoteBooks = await scrapeBooks();
-      const booksToSync = await this.syncManager.filterBooksToSync(remoteBooks);
+      const booksToSync = this.syncManager.filterBooksToSync(remoteBooks);
 
       ee.emit('fetchingBooksSuccess', booksToSync, remoteBooks);
 

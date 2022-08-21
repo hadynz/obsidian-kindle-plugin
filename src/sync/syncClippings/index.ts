@@ -16,7 +16,7 @@ export default class SyncKindleClippings {
     try {
       ee.emit('syncSessionStart', 'my-clippings');
 
-      const bookHighlights = await parseBooks(clippingsFile);
+      const bookHighlights = parseBooks(clippingsFile);
 
       for (const { book, highlights } of bookHighlights) {
         await this.syncManager.syncBook(book, highlights);
@@ -24,7 +24,7 @@ export default class SyncKindleClippings {
 
       ee.emit('syncSessionSuccess');
     } catch (error) {
-      const message = `Error parsing ${clippingsFile}.\n\n${error}`;
+      const message = `Error parsing ${clippingsFile}.\n\n${String(error)}`;
       ee.emit('syncSessionFailure', message);
       console.error(message);
     }

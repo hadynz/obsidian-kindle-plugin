@@ -37,12 +37,12 @@ export class DiffManager {
     this.fileBuffer = sb(fileContents);
   }
 
-  public async diff(remoteHighlights: Highlight[]): Promise<DiffResult[]> {
-    const renderedHighlights = await this.parseRenderedHighlights();
+  public diff(remoteHighlights: Highlight[]): DiffResult[] {
+    const renderedHighlights = this.parseRenderedHighlights();
     return diffLists(remoteHighlights, renderedHighlights);
   }
 
-  private async parseRenderedHighlights(): Promise<RenderedHighlight[]> {
+  private parseRenderedHighlights(): RenderedHighlight[] {
     const needle = _.escapeRegExp(HighlightIdBlockRefPrefix);
     const endsWithRegex = new RegExp(`.*(${needle}.*)$`);
 
@@ -80,7 +80,7 @@ export class DiffManager {
       .append(appendList)
       .toString();
 
-    this.fileManager.updateFile(
+    await this.fileManager.updateFile(
       this.kindleFile,
       remoteBook,
       modifiedFileContents,

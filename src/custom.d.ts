@@ -34,3 +34,12 @@ declare module '*.json' {
   const file: any;
   export default file;
 }
+
+declare module 'nunjucks-date-filter' {
+  interface NunjucksDateFilter {
+    (date: Date, format: string): void;
+    setDefaultFormat: (format: string) => void;
+  }
+  const module: NunjucksDateFilter;
+  export default module;
+}

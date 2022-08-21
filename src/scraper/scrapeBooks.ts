@@ -35,14 +35,14 @@ export const parseBooks = ($: Root): Book[] => {
 
     return {
       id: hash(title),
-      asin: $(bookEl).attr('id') as string,
+      asin: $(bookEl).attr('id'),
       title,
       author: $('p.kp-notebook-searchable', bookEl)
         .text()
         .replace(/^(By: )/, '')
         ?.trim(),
       url: `https://www.amazon.com/dp/${$(bookEl).attr('id')}`,
-      imageUrl: $('.kp-notebook-cover-image', bookEl).attr('src') as string,
+      imageUrl: $('.kp-notebook-cover-image', bookEl).attr('src'),
       lastAnnotatedDate: parseToDateString(lastAnnotatedDate, get(settingsStore).amazonRegion),
     };
   });

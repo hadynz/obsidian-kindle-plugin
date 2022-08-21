@@ -26,7 +26,7 @@ const toBookHighlight = (book: Book): BookHighlight => {
   };
 };
 
-export const parseBooks = async (file: string): Promise<BookHighlight[]> => {
+export const parseBooks = (file: string): BookHighlight[] => {
   const clippingsFileContent = fs.readFileSync(file, 'utf8');
 
   const parsedRows = readMyClippingsFile(clippingsFileContent);

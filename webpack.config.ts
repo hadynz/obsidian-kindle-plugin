@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import path from 'path';
 import pack from './package.json';
 import sveltePreprocess from 'svelte-preprocess';

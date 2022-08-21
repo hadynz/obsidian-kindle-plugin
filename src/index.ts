@@ -30,19 +30,15 @@ export default class KindlePlugin extends Plugin {
     this.syncAmazon = new SyncAmazon(syncManager);
     this.syncClippings = new SyncClippings(syncManager);
 
-    // new StatusBar(this.addStatusBarItem(), () => {
-    //   this.showSyncModal();
-    // });
-
-    this.addRibbonIcon('kindle', 'Sync your Kindle highlights', () => {
-      this.showSyncModal();
+    this.addRibbonIcon('kindle', 'Sync your Kindle highlights', async () => {
+      await this.showSyncModal();
     });
 
     this.addCommand({
       id: 'kindle-sync',
       name: 'Sync highlights',
-      callback: () => {
-        this.showSyncModal();
+      callback: async () => {
+        await this.showSyncModal();
       },
     });
 
@@ -81,20 +77,19 @@ export default class KindlePlugin extends Plugin {
     });
   }
 
-  private showSyncModal(): void {
-    new SyncModal(this.app, {
+  private async showSyncModal(): Promise<void> {
+    await new SyncModal(this.app, {
       onOnlineSync: () => this.startAmazonSync(),
       onMyClippingsSync: () => this.syncClippings.startSync(),
     }).show();
   }
 
-  private startAmazonSync(): void {
-    this.syncAmazon.startSync();
+  private async startAmazonSync(): Promise<void> {
+    await this.syncAmazon.startSync();
   }
 
-  public async onunload(): Promise<void> {
+  public onunload(): void {
     ee.removeAllListeners();
-
     console.log('Kindle Highlights plugin: unloading plugin', new Date().toLocaleString());
   }
 }

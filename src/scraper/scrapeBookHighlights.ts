@@ -11,7 +11,7 @@ type NextPageState = {
 };
 
 export const mapTextToColor = (highlightClasses: string): Highlight['color'] => {
-  const matches = highlightClasses?.match(/kp-notebook-highlight-(.*)/);
+  const matches = /kp-notebook-highlight-(.*)/.exec(highlightClasses);
   return matches ? (matches[1] as Highlight['color']) : null;
 };
 
@@ -32,7 +32,7 @@ const parseHighlights = ($: Root): Highlight[] => {
   const highlightsEl = $('.a-row.a-spacing-base').toArray();
 
   return highlightsEl.map((highlightEl): Highlight => {
-    const pageMatch = $('#annotationNoteHeader', highlightEl).text()?.match(/\d+$/);
+    const pageMatch = /\d+$/.exec($('#annotationNoteHeader', highlightEl).text());
 
     const highlightClasses = $('.kp-notebook-highlight', highlightEl).attr('class');
     const color = mapTextToColor(highlightClasses);
