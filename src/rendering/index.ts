@@ -1,9 +1,10 @@
 import { get } from 'svelte/store';
 
+import { settingsStore } from '~/store';
+
 import bookTemplate from './templates/bookTemplate.njk';
 import defaultHighlightTemplate from './templates/defaultHighlightTemplate.njk';
 import { FileNameRenderer, FileRenderer, HighlightRenderer } from './renderer';
-import { settingsStore } from '~/store';
 
 export const DefaultFileNameTemplate = '{{shortTitle}}';
 export const DefaultFileTemplate = bookTemplate;

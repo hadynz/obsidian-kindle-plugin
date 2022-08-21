@@ -2,15 +2,16 @@ import _ from 'lodash';
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import { get } from 'svelte/store';
 
-import { ee } from '~/eventEmitter';
-import AmazonLogoutModal from '~/components/amazonLogoutModal';
-import templateSettings from './templateSettings';
 import type KindlePlugin from '~/.';
+import { AmazonRegions, orderedAmazonRegions } from '~/amazonRegion';
+import AmazonLogoutModal from '~/components/amazonLogoutModal';
+import { ee } from '~/eventEmitter';
 import type FileManager from '~/fileManager';
 import type { AmazonAccountRegion } from '~/models';
-import { settingsStore } from '~/store';
 import { scrapeLogoutUrl } from '~/scraper';
-import { AmazonRegions, orderedAmazonRegions } from '~/amazonRegion';
+import { settingsStore } from '~/store';
+
+import templateSettings from './templateSettings';
 
 const { moment } = window;
 

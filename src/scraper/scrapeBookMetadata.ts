@@ -1,6 +1,7 @@
 import type { Root } from 'cheerio';
 
 import type { Book, BookMetadata } from '~/models';
+
 import { loadRemoteDom } from './loadRemoteDom';
 
 type AmazonDetailsList = {

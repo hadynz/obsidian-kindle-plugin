@@ -1,8 +1,8 @@
 import AmazonLoginModal from '~/components/amazonLoginModal';
-import { scrapeHighlightsForBook, scrapeBooks } from '~/scraper';
 import { ee } from '~/eventEmitter';
-import type { SyncManager } from '~/sync';
 import type { Book, KindleFile } from '~/models';
+import { scrapeBooks, scrapeHighlightsForBook } from '~/scraper';
+import type { SyncManager } from '~/sync';
 
 export default class SyncAmazon {
   constructor(private syncManager: SyncManager) {}

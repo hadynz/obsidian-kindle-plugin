@@ -1,8 +1,8 @@
 import nunjucks, { Environment } from 'nunjucks';
 import sanitize from 'sanitize-filename';
 
-import { shortenTitle } from '~/utils';
 import type { Book } from '~/models';
+import { shortenTitle } from '~/utils';
 
 export default class FileNameRenderer {
   private nunjucks: Environment;

@@ -1,8 +1,8 @@
-import { remote, BrowserWindow } from 'electron';
+import { BrowserWindow, remote } from 'electron';
 
+import { currentAmazonRegion } from '~/amazonRegion';
 import type { AmazonAccount } from '~/models';
 import { settingsStore } from '~/store';
-import { currentAmazonRegion } from '~/amazonRegion';
 
 const { BrowserWindow: RemoteBrowserWindow } = remote;
 

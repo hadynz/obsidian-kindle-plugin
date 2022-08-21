@@ -1,9 +1,10 @@
 import type { Root } from 'cheerio';
 
-import type { Book, Highlight } from '~/models';
-import { loadRemoteDom } from './loadRemoteDom';
 import { currentAmazonRegion } from '~/amazonRegion';
+import type { Book, Highlight } from '~/models';
 import { br2ln, hash } from '~/utils';
+
+import { loadRemoteDom } from './loadRemoteDom';
 
 type NextPageState = {
   token: string;

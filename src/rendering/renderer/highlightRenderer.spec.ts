@@ -1,7 +1,8 @@
 import faker from 'faker';
 
-import HighlightRenderer from './highlightRenderer';
 import type { Highlight } from '~/models';
+
+import HighlightRenderer from './highlightRenderer';
 
 describe('HighlightRenderer', () => {
   describe('validate', () => {

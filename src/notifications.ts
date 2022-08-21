@@ -1,8 +1,8 @@
 import { Notice } from 'obsidian';
-import { shortenTitle } from '~/utils';
 
 import { ee } from '~/eventEmitter';
 import type { KindleFile } from '~/models';
+import { shortenTitle } from '~/utils';
 
 export const registerNotifications = (): void => {
   ee.on('resyncBook', (kindleFile) => {

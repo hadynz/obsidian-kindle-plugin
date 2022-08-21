@@ -1,12 +1,13 @@
+import type { Root } from 'cheerio';
 import moment from 'moment';
 import { get } from 'svelte/store';
-import type { Root } from 'cheerio';
 
-import type { Book, AmazonAccountRegion } from '~/models';
-import { settingsStore } from '~/store';
-import { loadRemoteDom } from './loadRemoteDom';
 import { currentAmazonRegion } from '~/amazonRegion';
+import type { AmazonAccountRegion, Book } from '~/models';
+import { settingsStore } from '~/store';
 import { hash } from '~/utils';
+
+import { loadRemoteDom } from './loadRemoteDom';
 
 /**
  * Amazon dates in the Kindle notebook looks like "Sunday October 24, 2021"

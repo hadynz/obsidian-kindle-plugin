@@ -1,14 +1,14 @@
 import { addIcon, Plugin } from 'obsidian';
 import { get } from 'svelte/store';
 
-import FileManager from '~/fileManager';
+import kindleIcon from '~/assets/kindleIcon.svg';
 import SyncModal from '~/components/syncModal';
+import { ee } from '~/eventEmitter';
+import FileManager from '~/fileManager';
+import { registerNotifications } from '~/notifications';
 import { SettingsTab } from '~/settings';
 import { initializeStores, settingsStore } from '~/store';
 import { SyncAmazon, SyncClippings, SyncManager } from '~/sync';
-import { registerNotifications } from '~/notifications';
-import kindleIcon from '~/assets/kindleIcon.svg';
-import { ee } from '~/eventEmitter';
 
 import '~/sentry';
 

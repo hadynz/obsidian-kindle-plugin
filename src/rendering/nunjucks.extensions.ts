@@ -5,8 +5,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import nunjucks from 'nunjucks';
 
-import { HighlightIdBlockRefPrefix } from './renderer';
 import { sb } from '~/utils';
+
+import { HighlightIdBlockRefPrefix } from './renderer';
 
 type SubClass = {
   children: SubClassValue[];

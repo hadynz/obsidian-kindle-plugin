@@ -1,8 +1,8 @@
-import { fileStore } from './fileStore';
-import { settingsStore } from './settingsStore';
-
 import type KindlePlugin from '~/.';
 import type FileManager from '~/fileManager';
+
+import { fileStore } from './fileStore';
+import { settingsStore } from './settingsStore';
 
 const initializeStores = async (
   plugin: KindlePlugin,

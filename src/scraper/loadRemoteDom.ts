@@ -1,5 +1,5 @@
-import { BrowserWindow, remote } from 'electron';
 import cheerio, { Root } from 'cheerio';
+import { BrowserWindow, remote } from 'electron';
 
 const { BrowserWindow: RemoteBrowserWindow } = remote;
 

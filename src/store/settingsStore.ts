@@ -1,8 +1,8 @@
 import { writable } from 'svelte/store';
 
-import { ee } from '~/eventEmitter';
 import type KindlePlugin from '~/.';
-import type { SyncMode, AmazonAccountRegion } from '~/models';
+import { ee } from '~/eventEmitter';
+import type { AmazonAccountRegion, SyncMode } from '~/models';
 
 type Settings = {
   amazonRegion: AmazonAccountRegion;

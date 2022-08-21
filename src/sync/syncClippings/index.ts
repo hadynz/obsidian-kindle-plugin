@@ -1,7 +1,8 @@
 import { ee } from '~/eventEmitter';
+import type { SyncManager } from '~/sync';
+
 import { openDialog } from './openDialog';
 import { parseBooks } from './parseBooks';
-import type { SyncManager } from '~/sync';
 
 export default class SyncKindleClippings {
   constructor(private syncManager: SyncManager) {}

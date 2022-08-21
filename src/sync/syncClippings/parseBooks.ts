@@ -1,8 +1,8 @@
+import { Book, groupToBooks, readMyClippingsFile } from '@hadynz/kindle-clippings';
 import fs from 'fs';
-import { readMyClippingsFile, groupToBooks, Book } from '@hadynz/kindle-clippings';
 
-import { hash } from '~/utils';
 import type { BookHighlight, Highlight } from '~/models';
+import { hash } from '~/utils';
 
 const toBookHighlight = (book: Book): BookHighlight => {
   return {

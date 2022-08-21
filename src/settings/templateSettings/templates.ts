@@ -1,16 +1,17 @@
 import { App, Setting } from 'obsidian';
 import { get } from 'svelte/store';
 
-import HeaderDescription from './components/HeaderDescription.svelte';
-import { InfoModal } from './InfoModal';
-import { settingsStore } from '~/store';
-import { createDocumentFragment } from './utils';
 import {
-  DefaultHighlightTemplate,
   DefaultFileNameTemplate,
   DefaultFileTemplate,
+  DefaultHighlightTemplate,
   getRenderers,
 } from '~/rendering';
+import { settingsStore } from '~/store';
+
+import HeaderDescription from './components/HeaderDescription.svelte';
+import { InfoModal } from './InfoModal';
+import { createDocumentFragment } from './utils';
 
 const styleTextarea = (el: HTMLTextAreaElement): void => {
   el.style.width = '100%';

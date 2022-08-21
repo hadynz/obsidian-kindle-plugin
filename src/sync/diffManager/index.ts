@@ -1,12 +1,13 @@
 import _ from 'lodash';
 
-import { sb, StringBuffer } from '~/utils';
+import type FileManager from '~/fileManager';
+import type { Highlight } from '~/models';
+import type { Book, KindleFile } from '~/models';
 import { getRenderers } from '~/rendering';
 import { HighlightIdBlockRefPrefix } from '~/rendering/renderer';
+import { sb, StringBuffer } from '~/utils';
+
 import { diffLists } from './helpers';
-import type { Highlight } from '~/models';
-import type FileManager from '~/fileManager';
-import type { Book, KindleFile } from '~/models';
 
 export type RenderedHighlight = {
   line: number;

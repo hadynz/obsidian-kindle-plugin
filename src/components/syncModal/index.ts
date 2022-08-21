@@ -1,9 +1,10 @@
 import { App, Modal } from 'obsidian';
 
-import SyncModalContent from './SyncModalContent.svelte';
-import { settingsStore } from '~/store';
-import { SyncModalState, store } from './store';
 import type { SyncMode } from '~/models';
+import { settingsStore } from '~/store';
+
+import { store, SyncModalState } from './store';
+import SyncModalContent from './SyncModalContent.svelte';
 
 const SyncModalTitle: Record<SyncModalState['status'], string> = {
   'upgrade-warning': 'Breaking change notice',

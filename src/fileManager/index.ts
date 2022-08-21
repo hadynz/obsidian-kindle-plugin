@@ -1,8 +1,9 @@
-import { MetadataCache, TAbstractFile, TFile, TFolder, Vault, normalizePath } from 'obsidian';
+import { MetadataCache, normalizePath, TAbstractFile, TFile, TFolder, Vault } from 'obsidian';
 
-import { mergeFrontmatter } from '~/utils';
-import { bookFilePath, bookToFrontMatter, frontMatterToBook } from './mappers';
 import type { Book, KindleFile, KindleFrontmatter } from '~/models';
+import { mergeFrontmatter } from '~/utils';
+
+import { bookFilePath, bookToFrontMatter, frontMatterToBook } from './mappers';
 
 const SyncingStateKey = 'kindle-sync';
 

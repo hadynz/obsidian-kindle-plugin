@@ -1,4 +1,4 @@
-import { remote, BrowserWindow } from 'electron';
+import { BrowserWindow, remote } from 'electron';
 
 const { BrowserWindow: RemoteBrowserWindow } = remote;
 

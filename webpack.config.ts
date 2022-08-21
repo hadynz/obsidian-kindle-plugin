@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import path from 'path';
-import pack from './package.json';
-import sveltePreprocess from 'svelte-preprocess';
-import CopyPlugin from 'copy-webpack-plugin';
-import TerserPlugin from 'terser-webpack-plugin';
 import SentryWebpackPlugin from '@sentry/webpack-plugin';
+import CopyPlugin from 'copy-webpack-plugin';
+import path from 'path';
+import sveltePreprocess from 'svelte-preprocess';
+import TerserPlugin from 'terser-webpack-plugin';
 import { Configuration, DefinePlugin } from 'webpack';
+
+import pack from './package.json';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
