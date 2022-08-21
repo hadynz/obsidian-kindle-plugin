@@ -23,11 +23,10 @@ const createFileStore = () => {
 
   const store = readable(INITIAL_STATE, (set) => {
     const updateFileCount = () => {
-      _fileManager?.getKindleFiles().then((files) => {
-        set({
-          fileCount: files.length,
-          highlightCount: _.sumBy(files, (file) => file.frontmatter?.highlightsCount),
-        });
+      const files = _fileManager.getKindleFiles();
+      set({
+        fileCount: files.length,
+        highlightCount: _.sumBy(files, (file) => file.frontmatter?.highlightsCount),
       });
     };
 

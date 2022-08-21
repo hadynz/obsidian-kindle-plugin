@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { get } from 'svelte/store';
 
 import type { AmazonAccount, AmazonAccountRegion } from '~/models';
@@ -57,4 +58,14 @@ export const AmazonRegions: Record<AmazonAccountRegion, AmazonAccount> = {
 export const currentAmazonRegion = (): AmazonAccount => {
   const selectedRegion = get(settingsStore).amazonRegion;
   return AmazonRegions[selectedRegion];
+};
+
+export const orderedAmazonRegions = (): AmazonAccountRegion[] => {
+  const keys = Object.keys(AmazonRegions) as AmazonAccountRegion[];
+
+  // Remove 'global' as we will add it manually again top of the list
+  _.remove(keys, (key) => key === 'global');
+
+  const orderedKeys = _.orderBy(keys, (key) => key.toLowerCase(), 'asc');
+  return ['global', ...orderedKeys];
 };

@@ -1,11 +1,13 @@
-import { Environment } from 'nunjucks';
 import moment from 'moment';
+import { Environment } from 'nunjucks';
+
+import type { BookHighlight, FileRenderTemplate } from '~/models';
+import { shortenTitle } from '~/utils';
+
+import { TrimAllEmptyLinesExtension } from '../nunjucks.extensions';
+import { generateAppLink } from '../utils';
 
 import HighlightRenderer from './highlightRenderer';
-import { shortenTitle } from '~/utils';
-import { generateAppLink } from '../utils';
-import { TrimAllEmptyLinesExtension } from '../nunjucks.extensions';
-import type { BookHighlight, FileRenderTemplate } from '~/models';
 
 export default class FileRenderer {
   private nunjucks: Environment;

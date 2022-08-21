@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 
 import { ee } from '~/eventEmitter';
-import type { Book, SyncMode, KindleFile } from '~/models';
+import type { Book, KindleFile, SyncMode } from '~/models';
 
 type Job = {
   book: Book;

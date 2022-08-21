@@ -1,7 +1,8 @@
 import _ from 'lodash';
 
-import type { DiffResult, RenderedHighlight } from './';
 import type { Highlight } from '~/models';
+
+import type { DiffResult, RenderedHighlight } from './';
 
 type DiffIndex = {
   highlight: Highlight;

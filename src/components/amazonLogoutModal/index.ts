@@ -1,4 +1,4 @@
-import { remote, BrowserWindow } from 'electron';
+import { BrowserWindow, remote } from 'electron';
 
 const { BrowserWindow: RemoteBrowserWindow } = remote;
 
@@ -24,7 +24,7 @@ export default class AmazonLogoutModal {
       this.modal.show();
     });
 
-    this.modal.webContents.on('did-navigate', async (_event, url) => {
+    this.modal.webContents.on('did-navigate', (_event, url) => {
       if (url.contains('signin')) {
         this.modal.destroy();
         this.resolvePromise();
@@ -33,7 +33,7 @@ export default class AmazonLogoutModal {
   }
 
   async doLogout(): Promise<void> {
-    this.modal.loadURL(this.url);
+    await this.modal.loadURL(this.url);
     return this.waitForSignIn;
   }
 }

@@ -1,7 +1,8 @@
 import faker from 'faker';
 
-import { diffBooks } from './diffBooks';
 import type { Book } from '~/models';
+
+import { diffBooks } from './diffBooks';
 
 const book = (id: string, lastAnnotatedDate?: Date): Book => {
   return {

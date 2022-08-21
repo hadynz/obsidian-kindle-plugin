@@ -1,14 +1,23 @@
 import type { Root } from 'cheerio';
 
 import type { Book, BookMetadata } from '~/models';
+
 import { loadRemoteDom } from './loadRemoteDom';
+
+type AmazonDetailsList = {
+  [key: string]: string;
+};
+
+type PopoverData = {
+  inlineContent: string;
+};
 
 const parseDetailsList = ($: Root): Omit<BookMetadata, 'authorUrl'> => {
   const detailsListEl = $(
     '#detailBullets_feature_div .detail-bullet-list:first-child li span.a-list-item'
   ).toArray();
 
-  const result = detailsListEl.reduce((accumulator, currentEl) => {
+  const result: AmazonDetailsList = detailsListEl.reduce((accumulator, currentEl) => {
     const key = $('span:first-child', currentEl)
       .text()
       .replace(/[\n\r]+/g, '')
@@ -32,7 +41,7 @@ const parseIsbn = ($: Root): string | null => {
   // Attempt 1 - Try and fetch isbn from product information popover
   const popoverData = $(
     '#rich_product_information ol.a-carousel span[data-action=a-popover]'
-  ).data('a-popover');
+  ).data('a-popover') as PopoverData;
 
   const isbnMatches = popoverData?.inlineContent.match(/(?<=\bISBN\s)(\w+)/g);
 

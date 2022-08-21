@@ -1,7 +1,8 @@
 import type { Root } from 'cheerio';
 
-import { loadRemoteDom } from './loadRemoteDom';
 import { currentAmazonRegion } from '~/amazonRegion';
+
+import { loadRemoteDom } from './loadRemoteDom';
 
 export const parseSignoutLink = ($: Root): string => {
   const signoutLinkEl = $('#settings-link-logout').attr('href');

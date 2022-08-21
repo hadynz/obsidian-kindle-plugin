@@ -1,8 +1,8 @@
 import { writable } from 'svelte/store';
 
-import { ee } from '~/eventEmitter';
 import type KindlePlugin from '~/.';
-import type { SyncMode, AmazonAccountRegion } from '~/models';
+import { ee } from '~/eventEmitter';
+import type { AmazonAccountRegion, SyncMode } from '~/models';
 
 type Settings = {
   amazonRegion: AmazonAccountRegion;
@@ -15,6 +15,10 @@ type Settings = {
   fileNameTemplate?: string;
   syncOnBoot: boolean;
   downloadBookMetadata: boolean;
+
+  // Deprecated - delete eventually
+  noteTemplate?: string;
+  history?: string;
 };
 
 const DEFAULT_SETTINGS: Settings = {
@@ -27,13 +31,13 @@ const DEFAULT_SETTINGS: Settings = {
 };
 
 const createSettingsStore = () => {
-  const store = writable(DEFAULT_SETTINGS as Settings);
+  const store = writable(DEFAULT_SETTINGS);
 
   let _plugin!: KindlePlugin;
 
   // Load settings data from disk into store
   const initialize = async (plugin: KindlePlugin): Promise<void> => {
-    const data = Object.assign({}, DEFAULT_SETTINGS, await plugin.loadData());
+    const data = Object.assign({}, DEFAULT_SETTINGS, await plugin.loadData()) as Settings;
 
     const settings: Settings = {
       ...data,
@@ -67,7 +71,7 @@ const createSettingsStore = () => {
   });
 
   // Listen to any change to store, and write to disk
-  store.subscribe(async (settings) => {
+  store.subscribe((settings) => {
     if (_plugin) {
       // Transform settings fields for serialization
       const data = {
@@ -75,17 +79,19 @@ const createSettingsStore = () => {
         lastSyncDate: settings.lastSyncDate ? settings.lastSyncDate.toJSON() : undefined,
       };
 
-      await _plugin.saveData(data);
+      _plugin
+        .saveData(data)
+        .catch((err) => console.error(`Error saving settings: ${String(err)}`));
     }
   });
 
   const isLegacy = async () => {
-    const data = Object.assign({}, DEFAULT_SETTINGS, await _plugin.loadData());
+    const data = Object.assign({}, DEFAULT_SETTINGS, await _plugin.loadData()) as Settings;
     return data.history != null;
   };
 
   const upgradeStoreState = async () => {
-    const data = Object.assign({}, DEFAULT_SETTINGS, await _plugin.loadData());
+    const data = Object.assign({}, DEFAULT_SETTINGS, await _plugin.loadData()) as Settings;
 
     // Remove deprecated settings field
     delete data.noteTemplate;

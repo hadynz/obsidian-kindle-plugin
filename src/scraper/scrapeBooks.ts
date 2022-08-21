@@ -1,12 +1,13 @@
+import type { Root } from 'cheerio';
 import moment from 'moment';
 import { get } from 'svelte/store';
-import type { Root } from 'cheerio';
 
-import type { Book, AmazonAccountRegion } from '~/models';
-import { settingsStore } from '~/store';
-import { loadRemoteDom } from './loadRemoteDom';
 import { currentAmazonRegion } from '~/amazonRegion';
+import type { AmazonAccountRegion, Book } from '~/models';
+import { settingsStore } from '~/store';
 import { hash } from '~/utils';
+
+import { loadRemoteDom } from './loadRemoteDom';
 
 /**
  * Amazon dates in the Kindle notebook looks like "Sunday October 24, 2021"
@@ -35,14 +36,14 @@ export const parseBooks = ($: Root): Book[] => {
 
     return {
       id: hash(title),
-      asin: $(bookEl).attr('id') as string,
+      asin: $(bookEl).attr('id'),
       title,
       author: $('p.kp-notebook-searchable', bookEl)
         .text()
         .replace(/^(By: )/, '')
         ?.trim(),
       url: `https://www.amazon.com/dp/${$(bookEl).attr('id')}`,
-      imageUrl: $('.kp-notebook-cover-image', bookEl).attr('src') as string,
+      imageUrl: $('.kp-notebook-cover-image', bookEl).attr('src'),
       lastAnnotatedDate: parseToDateString(lastAnnotatedDate, get(settingsStore).amazonRegion),
     };
   });

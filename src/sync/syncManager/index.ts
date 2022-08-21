@@ -1,22 +1,24 @@
 import { get } from 'svelte/store';
 
-import { settingsStore } from '~/store';
-import { scrapeBookMetadata } from '~/scraper';
-import { DiffManager } from '../diffManager';
-import { getRenderers } from '~/rendering';
-import { diffBooks } from './diffBooks';
 import type FileManager from '~/fileManager';
 import type { Book, BookMetadata, Highlight, KindleFile } from '~/models';
+import { getRenderers } from '~/rendering';
+import { scrapeBookMetadata } from '~/scraper';
+import { settingsStore } from '~/store';
+
 import type { DiffResult } from '../diffManager';
+import { DiffManager } from '../diffManager';
+
+import { diffBooks } from './diffBooks';
 
 export default class SyncManager {
   constructor(private fileManager: FileManager) {
     this.fileManager = fileManager;
   }
 
-  public async filterBooksToSync(remoteBooks: Book[]): Promise<Book[]> {
+  public filterBooksToSync(remoteBooks: Book[]): Book[] {
     const lastSyncDate = get(settingsStore).lastSyncDate;
-    const vaultBooks = await this.fileManager.getKindleFiles();
+    const vaultBooks = this.fileManager.getKindleFiles();
 
     return diffBooks(
       remoteBooks,
@@ -30,7 +32,7 @@ export default class SyncManager {
       return; // No highlights for book. Skip sync
     }
 
-    const file = await this.fileManager.getKindleFile(book);
+    const file = this.fileManager.getKindleFile(book);
 
     if (file == null) {
       await this.createBook(book, highlights);
@@ -46,7 +48,7 @@ export default class SyncManager {
   ): Promise<DiffResult[]> {
     const diffManager = await DiffManager.create(this.fileManager, file);
 
-    const diffs = await diffManager.diff(remoteHighlights);
+    const diffs = diffManager.diff(remoteHighlights);
 
     if (diffs.length > 0) {
       await diffManager.applyDiffs(remoteBook, remoteHighlights, diffs);

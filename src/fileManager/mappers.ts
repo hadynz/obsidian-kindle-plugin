@@ -1,10 +1,10 @@
-import path from 'path';
 import moment from 'moment';
+import path from 'path';
 import { get } from 'svelte/store';
 
-import { settingsStore } from '~/store';
-import { getRenderers } from '~/rendering';
 import type { Book, KindleFrontmatter } from '~/models';
+import { getRenderers } from '~/rendering';
+import { settingsStore } from '~/store';
 
 /**
  * Returns a file path for a given book relative to the current Obsidian

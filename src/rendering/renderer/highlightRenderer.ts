@@ -1,10 +1,11 @@
 import { Environment } from 'nunjucks';
 import dateFilter from 'nunjucks-date-filter';
 
-import highlightTemplateWrapper from '~/rendering//templates/highlightTemplateWrapper.njk';
-import { BlockReferenceExtension } from '../nunjucks.extensions';
-import { trimMultipleLines, generateAppLink } from '../utils';
 import type { Highlight, HighlightRenderTemplate } from '~/models';
+import highlightTemplateWrapper from '~/rendering//templates/highlightTemplateWrapper.njk';
+
+import { BlockReferenceExtension } from '../nunjucks.extensions';
+import { generateAppLink, trimMultipleLines } from '../utils';
 
 export const HighlightIdBlockRefPrefix = '^ref-';
 

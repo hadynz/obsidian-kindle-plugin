@@ -1,8 +1,8 @@
-import { remote, BrowserWindow } from 'electron';
+import { BrowserWindow, remote } from 'electron';
 
+import { currentAmazonRegion } from '~/amazonRegion';
 import type { AmazonAccount } from '~/models';
 import { settingsStore } from '~/store';
-import { currentAmazonRegion } from '~/amazonRegion';
 
 const { BrowserWindow: RemoteBrowserWindow } = remote;
 
@@ -33,11 +33,11 @@ export default class AmazonLoginModal {
     });
 
     // If user is on the read.amazon.com url, we can safely assume they are logged in
-    this.modal.webContents.on('did-navigate', async (_event, url) => {
+    this.modal.webContents.on('did-navigate', (_event, url) => {
       if (url.startsWith(this.region.kindleReaderUrl)) {
         this.modal.close();
 
-        await settingsStore.actions.login();
+        settingsStore.actions.login();
 
         this.resolvePromise(true);
       }

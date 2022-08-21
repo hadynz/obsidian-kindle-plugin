@@ -1,7 +1,8 @@
 import faker from 'faker';
 
-import FileRenderer from './fileRenderer';
 import type { BookHighlight } from '~/models';
+
+import FileRenderer from './fileRenderer';
 
 describe('FileRenderer', () => {
   describe('render', () => {

@@ -1,10 +1,10 @@
 import type { App } from 'obsidian';
 
 import {
-  templatesHeaderSetting,
   fileNameTemplateSetting,
   fileTemplateSetting,
   highlightTemplateSetting,
+  templatesHeaderSetting,
 } from './templates';
 
 export default (app: App, el: HTMLElement): void => {

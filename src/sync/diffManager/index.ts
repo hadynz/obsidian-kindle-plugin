@@ -1,12 +1,13 @@
 import _ from 'lodash';
 
-import { sb, StringBuffer } from '~/utils';
+import type FileManager from '~/fileManager';
+import type { Highlight } from '~/models';
+import type { Book, KindleFile } from '~/models';
 import { getRenderers } from '~/rendering';
 import { HighlightIdBlockRefPrefix } from '~/rendering/renderer';
+import { sb, StringBuffer } from '~/utils';
+
 import { diffLists } from './helpers';
-import type { Highlight } from '~/models';
-import type FileManager from '~/fileManager';
-import type { Book, KindleFile } from '~/models';
 
 export type RenderedHighlight = {
   line: number;
@@ -37,12 +38,12 @@ export class DiffManager {
     this.fileBuffer = sb(fileContents);
   }
 
-  public async diff(remoteHighlights: Highlight[]): Promise<DiffResult[]> {
-    const renderedHighlights = await this.parseRenderedHighlights();
+  public diff(remoteHighlights: Highlight[]): DiffResult[] {
+    const renderedHighlights = this.parseRenderedHighlights();
     return diffLists(remoteHighlights, renderedHighlights);
   }
 
-  private async parseRenderedHighlights(): Promise<RenderedHighlight[]> {
+  private parseRenderedHighlights(): RenderedHighlight[] {
     const needle = _.escapeRegExp(HighlightIdBlockRefPrefix);
     const endsWithRegex = new RegExp(`.*(${needle}.*)$`);
 
@@ -80,7 +81,7 @@ export class DiffManager {
       .append(appendList)
       .toString();
 
-    this.fileManager.updateFile(
+    await this.fileManager.updateFile(
       this.kindleFile,
       remoteBook,
       modifiedFileContents,

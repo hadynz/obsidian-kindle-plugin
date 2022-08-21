@@ -1,5 +1,6 @@
-import FileNameRenderer from './fileNameRenderer';
 import type { Book } from '~/models';
+
+import FileNameRenderer from './fileNameRenderer';
 
 describe('FileNameRenderer', () => {
   describe('validate', () => {

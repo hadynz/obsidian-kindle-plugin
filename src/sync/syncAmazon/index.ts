@@ -1,8 +1,8 @@
 import AmazonLoginModal from '~/components/amazonLoginModal';
-import { scrapeHighlightsForBook, scrapeBooks } from '~/scraper';
 import { ee } from '~/eventEmitter';
-import type { SyncManager } from '~/sync';
 import type { Book, KindleFile } from '~/models';
+import { scrapeBooks, scrapeHighlightsForBook } from '~/scraper';
+import type { SyncManager } from '~/sync';
 
 export default class SyncAmazon {
   constructor(private syncManager: SyncManager) {}
@@ -20,7 +20,7 @@ export default class SyncAmazon {
       ee.emit('fetchingBooks');
 
       const remoteBooks = await scrapeBooks();
-      const booksToSync = await this.syncManager.filterBooksToSync(remoteBooks);
+      const booksToSync = this.syncManager.filterBooksToSync(remoteBooks);
 
       ee.emit('fetchingBooksSuccess', booksToSync, remoteBooks);
 
@@ -36,6 +36,8 @@ export default class SyncAmazon {
   }
 
   public async resync(file: KindleFile): Promise<void> {
+    ee.emit('resyncBook', file);
+
     const success = await this.login();
 
     if (!success) {
@@ -43,8 +45,6 @@ export default class SyncAmazon {
     }
 
     try {
-      ee.emit('resyncBook', file);
-
       const remoteBooks = await scrapeBooks();
       const remoteBook = remoteBooks.find((r) => r.id === file.book.id);
 

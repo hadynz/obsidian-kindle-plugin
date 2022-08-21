@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import moment from 'moment';
+
 import type { Book } from '~/models';
 
 const isEqual = (book1: Book, book2: Book): boolean => {
