@@ -10,7 +10,7 @@ import type FileManager from '~/fileManager';
 import type { AmazonAccountRegion } from '~/models';
 import { settingsStore } from '~/store';
 import { scrapeLogoutUrl } from '~/scraper';
-import { AmazonRegions } from '~/amazonRegion';
+import { AmazonRegions, orderedAmazonRegions } from '~/amazonRegion';
 
 const { moment } = window;
 
@@ -94,7 +94,7 @@ export class SettingsTab extends PluginSettingTab {
         "Amazon's kindle reader is region specific. Choose your preferred country/region which has your highlights"
       )
       .addDropdown((dropdown) => {
-        Object.keys(AmazonRegions).forEach((region: AmazonAccountRegion) => {
+        orderedAmazonRegions().forEach((region: AmazonAccountRegion) => {
           const account = AmazonRegions[region];
           dropdown.addOption(region, `${account.name} (${account.hostname})`);
         });
