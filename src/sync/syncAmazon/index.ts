@@ -36,6 +36,8 @@ export default class SyncAmazon {
   }
 
   public async resync(file: KindleFile): Promise<void> {
+    ee.emit('resyncBook', file);
+
     const success = await this.login();
 
     if (!success) {
@@ -43,8 +45,6 @@ export default class SyncAmazon {
     }
 
     try {
-      ee.emit('resyncBook', file);
-
       const remoteBooks = await scrapeBooks();
       const remoteBook = remoteBooks.find((r) => r.id === file.book.id);
 

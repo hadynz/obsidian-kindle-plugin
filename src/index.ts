@@ -62,7 +62,7 @@ export default class KindlePlugin extends Plugin {
 
         menu.addItem((item) => {
           item
-            .setTitle('Resync Kindle highlights')
+            .setTitle('Resync Kindle highlights in file')
             .setIcon('kindle')
             .setDisabled(kindleFile.book.asin == null)
             .onClick(async () => {
