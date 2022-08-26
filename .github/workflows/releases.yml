@@ -17,14 +17,11 @@ jobs:
         with:
           node-version: "15.x"
 
-      - name: Set env
-        run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:11})
-
       - name: Build
         id: build
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          RELEASE_VERSION: ${{ RELEASE_VERSION }}
+          RELEASE_VERSION: ${{ github.ref_name }}
         run: |
           npm install
           npm run lint
