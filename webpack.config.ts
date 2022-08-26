@@ -14,15 +14,17 @@ dotenv.config();
 
 type ObsidianManifest = {
   version: string;
+  description: string;
 };
 
 const isProduction = process.env.NODE_ENV === 'production';
+const releaseVersion = process.env.RELEASE_VERSION;
 
 const sentryPlugin = new SentryWebpackPlugin({
   authToken: process.env.SENTRY_AUTH_TOKEN,
   org: 'hadynz',
   project: 'kindle-highlights',
-  release: pack.version,
+  release: releaseVersion,
   ignore: ['node_modules', 'webpack.config.js'],
   include: 'dist',
 });
@@ -82,7 +84,8 @@ const config: Configuration = {
           to: './manifest.json',
           transform: (buffer: Buffer) => {
             const manifest = JSON.parse(buffer.toString()) as ObsidianManifest;
-            manifest.version = process.env.RELEASE_VERSION;
+            manifest.version = releaseVersion;
+            manifest.description = pack.description;
             return JSON.stringify(manifest, null, 2);
           },
         },
@@ -90,7 +93,7 @@ const config: Configuration = {
     }),
     new DefinePlugin({
       PACKAGE_NAME: JSON.stringify(pack.name),
-      VERSION: JSON.stringify(pack.version),
+      VERSION: JSON.stringify(releaseVersion),
       PRODUCTION: JSON.stringify(isProduction),
     }),
     ...(isProduction ? [sentryPlugin] : []),
