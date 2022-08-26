@@ -1,4 +1,4 @@
-name: Build obsidian plugin
+name: Release
 
 on:
   release:
