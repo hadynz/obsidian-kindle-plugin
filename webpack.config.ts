@@ -2,12 +2,19 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import SentryWebpackPlugin from '@sentry/webpack-plugin';
 import CopyPlugin from 'copy-webpack-plugin';
+import dotenv from 'dotenv';
 import path from 'path';
 import sveltePreprocess from 'svelte-preprocess';
 import TerserPlugin from 'terser-webpack-plugin';
 import { Configuration, DefinePlugin } from 'webpack';
 
 import pack from './package.json';
+
+dotenv.config();
+
+type ObsidianManifest = {
+  version: string;
+};
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -69,7 +76,17 @@ const config: Configuration = {
   },
   plugins: [
     new CopyPlugin({
-      patterns: [{ from: './manifest.json', to: '.' }],
+      patterns: [
+        {
+          from: './manifest.template.json',
+          to: './manifest.json',
+          transform: (buffer: Buffer) => {
+            const manifest = JSON.parse(buffer.toString()) as ObsidianManifest;
+            manifest.version = process.env.RELEASE_VERSION;
+            return JSON.stringify(manifest, null, 2);
+          },
+        },
+      ],
     }),
     new DefinePlugin({
       PACKAGE_NAME: JSON.stringify(pack.name),

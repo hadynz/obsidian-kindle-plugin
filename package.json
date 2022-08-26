@@ -1,6 +1,6 @@
 {
   "name": "obsidian-kindle-plugin",
-  "version": "1.6.4",
+  "version": "0.0.1",
   "description": "Sync your Kindle book highlights using your Amazon login or uploading your My Clippings file",
   "main": "src/index.ts",
   "repository": {
@@ -50,6 +50,7 @@
     "@typescript-eslint/parser": "^4.22.0",
     "babel-loader": "^8.2.2",
     "copy-webpack-plugin": "^10.0.0",
+    "dotenv": "^16.0.1",
     "electron": "^12.0.4",
     "eslint": "^7.24.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
