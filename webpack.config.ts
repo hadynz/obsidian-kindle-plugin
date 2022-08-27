@@ -80,8 +80,8 @@ const config: Configuration = {
     new CopyPlugin({
       patterns: [
         {
-          from: './manifest.template.json',
-          to: './manifest.json',
+          from: './manifest.json',
+          to: '.',
           transform: (buffer: Buffer) => {
             const manifest = JSON.parse(buffer.toString()) as ObsidianManifest;
             manifest.version = releaseVersion;
