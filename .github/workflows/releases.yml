@@ -10,6 +10,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: Release
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js
@@ -34,7 +35,7 @@ jobs:
       - name: Validate and open PR
         uses: guardian/actions-merge-release-changes-to-protected-branch@v1.0.0
         with:
-            github-token: ${{ secrets.GITHUB_TOKEN }}
+            github-token: ${{ secrets.GU_GITHUB_TOKEN }}
 
       - name: Build
         id: build
