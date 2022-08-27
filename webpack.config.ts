@@ -12,13 +12,8 @@ import pack from './package.json';
 
 dotenv.config();
 
-type ObsidianManifest = {
-  version: string;
-  description: string;
-};
-
 const isProduction = process.env.NODE_ENV === 'production';
-const releaseVersion = process.env.RELEASE_VERSION;
+const releaseVersion = pack.version;
 
 const sentryPlugin = new SentryWebpackPlugin({
   authToken: process.env.SENTRY_AUTH_TOKEN,
@@ -82,12 +77,6 @@ const config: Configuration = {
         {
           from: './manifest.json',
           to: '.',
-          transform: (buffer: Buffer) => {
-            const manifest = JSON.parse(buffer.toString()) as ObsidianManifest;
-            manifest.version = releaseVersion;
-            manifest.description = pack.description;
-            return JSON.stringify(manifest, null, 2);
-          },
         },
       ],
     }),
