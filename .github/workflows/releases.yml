@@ -31,18 +31,10 @@ jobs:
           field: version
           value: ${{ github.ref_name }}
 
-      - name: Commit files
-        run: |
-          git config --local user.email "hadyos@gmail.com"
-          git config --local user.name "Hady (GitHub Action)"
-          git add -A
-          git commit -m "docs(): bumping release ${{ github.ref_name }}"
-
-      - name: Push changes
-        uses: ad-m/github-push-action@v0.6.0
+      - name: Validate and open PR
+        uses: guardian/actions-merge-release-changes-to-protected-branch@v1.0.0
         with:
-          github_token: ${{ github.token }}
-          tags: true
+            github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build
         id: build
