@@ -22,22 +22,22 @@ jobs:
         with:
           file: package.json
           field: version
-          value: ${{ steps.semantic_release_info.outputs.git_tag }}
+          value: ${{ github.ref_name }}
 
       - name: Update manifest.json version
         uses: jossef/action-set-json-field@v2
         with:
           file: manifest.json
           field: version
-          value: ${{ steps.semantic_release_info.outputs.git_tag }}
+          value: ${{ github.ref_name }}
 
       - name: Commit files
         run: |
           git config --local user.email "hadyos@gmail.com"
           git config --local user.name "Hady (GitHub Action)"
           git add -A
-          git commit -m "docs(): bumping release ${{ steps.semantic_release_info.outputs.git_tag }}"
-          git tag ${{ steps.semantic_release_info.outputs.git_tag }}
+          git commit -m "docs(): bumping release ${{ github.ref_name }}"
+          git tag ${{ github.ref_name }}
 
       - name: Push changes
         uses: ad-m/github-push-action@v0.6.0
