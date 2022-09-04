@@ -38,4 +38,9 @@ describe('Santize title for Obsidian environment', () => {
     const santizedTitle = shortenTitle(' The Warm-Hearted Snowman ');
     expect(santizedTitle).toEqual('The Warm-Hearted Snowman');
   });
+
+  it('replace [] with ()', () => {
+    const santizedTitle = shortenTitle('Ricochet Joe [Kindle in Motion]');
+    expect(santizedTitle).toEqual('Ricochet Joe (Kindle in Motion)');
+  });
 });
