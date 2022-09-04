@@ -69,12 +69,12 @@ export class DiffManager {
       .filter((d) => d.nextRenderedHighlight)
       .map((d) => ({
         line: d.nextRenderedHighlight?.line,
-        content: highlightRenderer.render(d.remoteHighlight, this.kindleFile.book.asin),
+        content: highlightRenderer.render(d.remoteHighlight, this.kindleFile.book),
       }));
 
     const appendList = diffs
       .filter((d) => d.nextRenderedHighlight == null)
-      .map((d) => highlightRenderer.render(d.remoteHighlight, this.kindleFile.book.asin));
+      .map((d) => highlightRenderer.render(d.remoteHighlight, this.kindleFile.book));
 
     const modifiedFileContents = this.fileBuffer
       .insertLinesAt(insertList)

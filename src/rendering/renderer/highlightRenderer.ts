@@ -1,8 +1,9 @@
 import { Environment } from 'nunjucks';
 import dateFilter from 'nunjucks-date-filter';
 
-import type { Highlight, HighlightRenderTemplate } from '~/models';
+import type { Book, Highlight, HighlightRenderTemplate } from '~/models';
 import highlightTemplateWrapper from '~/rendering//templates/highlightTemplateWrapper.njk';
+import { shortenTitle } from '~/utils';
 
 import { BlockReferenceExtension } from '../nunjucks.extensions';
 import { generateAppLink, trimMultipleLines } from '../utils';
@@ -29,10 +30,12 @@ export default class HighlightRenderer {
     }
   }
 
-  public render(highlight: Highlight, bookAsin: string = undefined): string {
+  public render(highlight: Highlight, book: Book): string {
     const highlightParams: HighlightRenderTemplate = {
       ...highlight,
-      appLink: generateAppLink(bookAsin, highlight),
+      title: shortenTitle(book.title),
+      longTitle: book.title,
+      appLink: generateAppLink(book.asin, highlight),
     };
 
     const highlightTemplate = highlightTemplateWrapper.replace('{{ content }}', this.template);

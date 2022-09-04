@@ -54,6 +54,8 @@ export type FileRenderTemplate = {
 
 export type HighlightRenderTemplate = {
   id: string;
+  title: string;
+  longTitle: string;
   text: string;
   location?: string;
   page?: string;

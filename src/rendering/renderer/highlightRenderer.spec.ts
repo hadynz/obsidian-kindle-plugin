@@ -1,6 +1,6 @@
 import faker from 'faker';
 
-import type { Highlight } from '~/models';
+import type { Book, Highlight } from '~/models';
 
 import HighlightRenderer from './highlightRenderer';
 
@@ -18,6 +18,12 @@ describe('HighlightRenderer', () => {
   });
 
   describe('render', () => {
+    const book: Book = {
+      id: faker.datatype.uuid(),
+      title: 'Book title',
+      author: faker.name.findName(),
+    };
+
     describe('highlight template variables', () => {
       const highlight: Highlight = {
         id: '123',
@@ -35,9 +41,11 @@ describe('HighlightRenderer', () => {
         ['{{note}}', 'my smart note'],
         ['{{color}}', 'pink'],
         ['{{createdDate}}', ''],
+        ['{{title}}', 'Book title'],
+        ['{{longTitle}}', 'Book title'],
       ])('template variable "%s" evaluated as "%s"', (template, expected) => {
         const renderer = new HighlightRenderer(template);
-        expect(renderer.render(highlight)).toBe(expected);
+        expect(renderer.render(highlight, book)).toBe(expected);
       });
 
       it.each([
@@ -57,20 +65,20 @@ describe('HighlightRenderer', () => {
           };
 
           const renderer = new HighlightRenderer(template);
-          expect(renderer.render(highlight)).toBe(expected);
+          expect(renderer.render(highlight, book)).toBe(expected);
         }
       );
     });
 
     it('appLink template variable is set when a book has an ASIN value', () => {
-      const asin = 'A1234';
+      const myBook: Book = { ...book, asin: 'A1234' };
       const highlight: Highlight = {
         id: faker.datatype.uuid(),
         text: 'highlighted text',
       };
 
       const renderer = new HighlightRenderer('{{text}} - {{appLink}}');
-      expect(renderer.render(highlight, asin)).toMatch(
+      expect(renderer.render(highlight, myBook)).toMatch(
         new RegExp('^highlighted text - kindle://(.*) \\^ref-.*$')
       );
     });
@@ -83,7 +91,7 @@ describe('HighlightRenderer', () => {
 
       const renderer = new HighlightRenderer('{{text}} - {{appLink}}');
 
-      expect(renderer.render(highlight)).toMatch(
+      expect(renderer.render(highlight, book)).toMatch(
         // eslint-disable-next-line no-regex-spaces
         new RegExp('^highlighted text -  \\^ref-.*$')
       );
@@ -99,7 +107,7 @@ describe('HighlightRenderer', () => {
 
       const renderer = new HighlightRenderer(templateWithTrailingLines);
 
-      expect(renderer.render(highlight)).toMatch(
+      expect(renderer.render(highlight, book)).toMatch(
         new RegExp('^highlighted text \\^ref-.*\\n\\n110$')
       );
     });

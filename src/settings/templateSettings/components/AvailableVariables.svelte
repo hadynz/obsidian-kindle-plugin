@@ -91,6 +91,15 @@
   <table>
     <tbody>
       <tr>
+        <td><Chip title={'longTitle'} /></td>
+        <td>Book title - full <span class="mute">- (always set)</span></td>
+      </tr>
+      <tr>
+        <td><Chip title={'title'} /></td>
+        <td>Book title - short <span class="mute">- (always set)</span></td>
+      </tr>
+      <tr>
+      <tr>
         <td><Chip title={'text'} /></td>
         <td>Highlighted text<span class="mute">- (always set)</span></td>
       </tr>

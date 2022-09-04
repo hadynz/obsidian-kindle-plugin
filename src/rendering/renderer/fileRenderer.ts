@@ -49,9 +49,7 @@ export default class FileRenderer {
       publisher: metadata?.publisher,
       authorUrl: metadata?.authorUrl,
       highlightsCount: highlights.length,
-      highlights: highlights
-        .map((h) => this.highlightRenderer.render(h, book.asin))
-        .join('\n'),
+      highlights: highlights.map((h) => this.highlightRenderer.render(h, book)).join('\n'),
     };
 
     return this.nunjucks.renderString(this.fileTemplate, params);
