@@ -1,4 +1,4 @@
-name: Release
+name: Build obsidian plugin
 
 on:
   release:
@@ -10,32 +10,12 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: Release
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: "15.x"
-
-      - name: Update package.json version
-        uses: jossef/action-set-json-field@v2
-        with:
-          file: package.json
-          field: version
-          value: ${{ github.ref_name }}
-
-      - name: Update manifest.json version
-        uses: jossef/action-set-json-field@v2
-        with:
-          file: manifest.json
-          field: version
-          value: ${{ github.ref_name }}
-
-      - name: Validate and open PR
-        uses: guardian/actions-merge-release-changes-to-protected-branch@v1.0.0
-        with:
-            github-token: ${{ secrets.GU_GITHUB_TOKEN }}
+          node-version: '15.x'
 
       - name: Build
         id: build
