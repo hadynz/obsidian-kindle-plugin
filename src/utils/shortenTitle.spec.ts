@@ -8,6 +8,11 @@ describe('Santize title for Obsidian environment', () => {
     expect(santizedTitle).toEqual('Book Yourself Solid');
   });
 
+  it('strips text after the last colon when multiple exist', () => {
+    const santizedTitle = shortenTitle('Summary: Sapiens: A Brief History of Humankind');
+    expect(santizedTitle).toEqual('Summary: Sapiens');
+  });
+
   it('remove reserved characters — single quote', () => {
     const santizedTitle = shortenTitle(
       "The Manager's Path: A Guide for Tech Leaders Navigating Growth and Change"
