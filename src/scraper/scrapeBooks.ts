@@ -19,11 +19,18 @@ export const parseToDateString = (kindleDate: string, region: AmazonAccountRegio
       const amazonDateString = kindleDate.substring(0, kindleDate.indexOf(' '));
       return moment(amazonDateString, 'YYYY MM DD', 'ja').toDate();
     }
+    case 'france': {
+      return moment(kindleDate, 'MMMM D, YYYY', 'fr').toDate();
+    }
     default: {
       const amazonDateString = kindleDate.substr(kindleDate.indexOf(' ') + 1);
       return moment(amazonDateString, 'MMM DD, YYYY').toDate();
     }
   }
+};
+
+export const parseAuthor = (scrapedAuthor: string): string => {
+  return scrapedAuthor.replace(/.*: /, '')?.trim();
 };
 
 export const parseBooks = ($: Root): Book[] => {
@@ -32,19 +39,20 @@ export const parseBooks = ($: Root): Book[] => {
   return booksEl.map((bookEl): Book => {
     const title = $('h2.kp-notebook-searchable', bookEl).text()?.trim();
 
-    const lastAnnotatedDate = $('[id^="kp-notebook-annotated-date"]', bookEl).val();
+    const scrapedLastAnnotatedDate = $('[id^="kp-notebook-annotated-date"]', bookEl).val();
+    const scrapedAuthor = $('p.kp-notebook-searchable', bookEl).text();
 
     return {
       id: hash(title),
       asin: $(bookEl).attr('id'),
       title,
-      author: $('p.kp-notebook-searchable', bookEl)
-        .text()
-        .replace(/^(By: )/, '')
-        ?.trim(),
+      author: parseAuthor(scrapedAuthor),
       url: `https://www.amazon.com/dp/${$(bookEl).attr('id')}`,
       imageUrl: $('.kp-notebook-cover-image', bookEl).attr('src'),
-      lastAnnotatedDate: parseToDateString(lastAnnotatedDate, get(settingsStore).amazonRegion),
+      lastAnnotatedDate: parseToDateString(
+        scrapedLastAnnotatedDate,
+        get(settingsStore).amazonRegion
+      ),
     };
   });
 };
