@@ -1,6 +1,6 @@
 {
   "name": "obsidian-kindle-plugin",
-  "version": "1.6.8",
+  "version": "1.6.9",
   "description": "Sync your Kindle book highlights using your Amazon login or uploading your My Clippings file",
   "main": "src/index.ts",
   "repository": {
@@ -18,7 +18,7 @@
     "prettier": "prettier --write '**/*.{ts,js,css,html}'",
     "lint": "tsc --noemit && svelte-check && eslint . --ext .ts",
     "clean": "rimraf dist main.js*",
-    "test": "jest",
+    "test": "jest --verbose",
     "test-watch": "jest --watch",
     "dev": "NODE_ENV=development webpack && cp ./dist/main.js* .",
     "build": "NODE_ENV=production webpack",
