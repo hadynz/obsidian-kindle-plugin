@@ -19,6 +19,9 @@ export const parseToDateString = (kindleDate: string, region: AmazonAccountRegio
       const amazonDateString = kindleDate.substring(0, kindleDate.indexOf(' '));
       return moment(amazonDateString, 'YYYY MM DD', 'ja').toDate();
     }
+    case 'france': {
+      return moment(kindleDate, 'MMMM D, YYYY', 'fr').toDate();
+    }
     default: {
       const amazonDateString = kindleDate.substr(kindleDate.indexOf(' ') + 1);
       return moment(amazonDateString, 'MMM DD, YYYY').toDate();

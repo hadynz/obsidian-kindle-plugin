@@ -15,6 +15,11 @@ describe('parseToDateString', () => {
     const lastAnnotatedDate = parseToDateString('2021年11月15日 月曜日', 'japan');
     expect(lastAnnotatedDate).toEqual(new Date(2021, 10, 15));
   });
+
+  it('Parses French last annotated date', () => {
+    const lastAnnotatedDate = parseToDateString('mardi août 30, 2022', 'france');
+    expect(lastAnnotatedDate).toEqual(new Date(2022, 7, 30));
+  });
 });
 
 describe('parseAuthor', () => {
