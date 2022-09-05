@@ -9,6 +9,8 @@ describe('parseAuthor', () => {
     ['Toole, John Kennedy', 'John', 'Toole'],
     [null, undefined, undefined],
     ['Schwab, V. E.', 'V', 'Schwab'],
+    ['Brandon Sanderson', 'Brandon', 'Sanderson'],
+    ['Sanderson, Brandon', 'Brandon', 'Sanderson'],
   ])(
     'Parse "%s" evaluated as firstName: "%s" and lastName: "%s',
     (author, firstName, lastName) => {

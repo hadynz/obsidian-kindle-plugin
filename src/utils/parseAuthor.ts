@@ -8,9 +8,9 @@ export const parseAuthors = (author: string | undefined): Author[] => {
     return [{ firstName: undefined, lastName: undefined }];
   }
 
-  if (new RegExp(/(and)+/, 'i').exec(author)) {
+  if (new RegExp(/\b(and)+/, 'i').exec(author)) {
     return author
-      .split(new RegExp(/(and|,)+/, 'i'))
+      .split(new RegExp(/\b(and|,)+/, 'i'))
       .map((a) => a.trim())
       .filter((a) => ['and', ',', ''].indexOf(a.toLowerCase()) === -1)
       .map(parseSingleAuthor);
