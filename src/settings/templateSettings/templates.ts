@@ -25,6 +25,7 @@ export const templatesHeaderSetting = (app: App, el: HTMLElement): void => {
   const setting = new Setting(el).setName('Templates').setClass('setting-item-heading');
 
   const legendEl = document.createElement('div');
+
   new HeaderDescription({
     target: legendEl,
     props: {

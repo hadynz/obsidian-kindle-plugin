@@ -19,7 +19,9 @@ type CommonTemplateVariables = AuthorsTemplateVariables & {
   longTitle: string;
 };
 
-type FileNameTemplateVariables = CommonTemplateVariables;
+type FileNameTemplateVariables = CommonTemplateVariables & {
+  shortTitle: string; // TODO: Eventually deprecate
+};
 
 type FileTemplateVariables = CommonTemplateVariables & {
   asin?: string;
@@ -71,6 +73,7 @@ export const authorsTemplateVariables = (author: string): AuthorsTemplateVariabl
 export const commonTemplateVariables = (book: Partial<Book>): FileNameTemplateVariables => {
   return {
     title: shortenTitle(book.title),
+    shortTitle: shortenTitle(book.title),
     longTitle: book.title,
     ...authorsTemplateVariables(book.author),
   };

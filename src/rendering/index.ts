@@ -6,7 +6,7 @@ import bookTemplate from './templates/bookTemplate.njk';
 import defaultHighlightTemplate from './templates/defaultHighlightTemplate.njk';
 import { FileNameRenderer, FileRenderer, HighlightRenderer } from './renderer';
 
-export const DefaultFileNameTemplate = '{{shortTitle}}';
+export const DefaultFileNameTemplate = '{{authorsLastNames}}-{{title}}';
 export const DefaultFileTemplate = bookTemplate;
 export const DefaultHighlightTemplate = defaultHighlightTemplate;
 

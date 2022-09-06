@@ -1,41 +1,20 @@
 <script lang="ts">
   import Chip from './Chip.svelte';
+  import CommonVariables from './CommonVariables.svelte';
 </script>
 
 <div id="wrapper">
   <h3>File name template variables</h3>
   <table>
     <tbody>
-      <tr>
-        <td><Chip title={'longTitle'} /></td>
-        <td>Book title - full <span class="mute">- (always set)</span></td>
-      </tr>
-      <tr>
-        <td><Chip title={'shortTitle'} /></td>
-        <td>Book title - short <span class="mute">- (always set)</span></td>
-      </tr>
-      <tr>
-        <td><Chip title={'author'} /></td>
-        <td>Author's name</td>
-      </tr>
+      <CommonVariables />
     </tbody>
   </table>
 
   <h3>File template variables</h3>
   <table>
     <tbody>
-      <tr>
-        <td><Chip title={'longTitle'} /></td>
-        <td>Book title - full <span class="mute">- (always set)</span></td>
-      </tr>
-      <tr>
-        <td><Chip title={'title'} /></td>
-        <td>Book title - short <span class="mute">- (always set)</span></td>
-      </tr>
-      <tr>
-        <td><Chip title={'author'} /></td>
-        <td>Author's name</td>
-      </tr>
+      <CommonVariables />
       <tr>
         <td><Chip title={'asin'} /></td>
         <td>Book ASIN</td>
@@ -90,16 +69,8 @@
   <h3>Highlight template variables</h3>
   <table>
     <tbody>
-      <tr>
-        <td><Chip title={'longTitle'} /></td>
-        <td>Book title - full <span class="mute">- (always set)</span></td>
-      </tr>
-      <tr>
-        <td><Chip title={'title'} /></td>
-        <td>Book title - short <span class="mute">- (always set)</span></td>
-      </tr>
-      <tr>
-      <tr>
+      <CommonVariables />
+      <tr /><tr>
         <td><Chip title={'text'} /></td>
         <td>Highlighted text<span class="mute">- (always set)</span></td>
       </tr>
@@ -152,16 +123,16 @@
     row-gap: 0.25rem;
   }
 
-  tbody,
-  tr {
+  #wrapper :global(tbody),
+  #wrapper :global(tr) {
     display: contents;
   }
 
-  tr td:nth-child(2) {
+  #wrapper :global(tr td:nth-child(2)) {
     font-size: 0.8em;
   }
 
-  .mute {
+  #wrapper :global(.mute) {
     color: var(--text-muted);
   }
 </style>
