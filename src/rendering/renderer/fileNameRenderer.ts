@@ -2,7 +2,8 @@ import nunjucks, { Environment } from 'nunjucks';
 import sanitize from 'sanitize-filename';
 
 import type { Book } from '~/models';
-import { shortenTitle } from '~/utils';
+
+import { fileNameTemplateVariables } from './templateVariables';
 
 export default class FileNameRenderer {
   private nunjucks: Environment;
@@ -21,11 +22,9 @@ export default class FileNameRenderer {
   }
 
   public render(book: Partial<Book>): string {
-    const fileName = this.nunjucks.renderString(this.template, {
-      shortTitle: shortenTitle(book.title),
-      longTitle: book.title,
-      author: book.author,
-    });
+    const templateVariables = fileNameTemplateVariables(book);
+
+    const fileName = this.nunjucks.renderString(this.template, templateVariables);
 
     return `${sanitize(fileName)}.md`;
   }

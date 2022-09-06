@@ -34,37 +34,6 @@ export type BookMetadata = {
   authorUrl?: string;
 };
 
-export type FileRenderTemplate = {
-  title: string;
-  author: string;
-  asin?: string;
-  url?: string;
-  imageUrl?: string;
-  lastAnnotatedDate?: string;
-  longTitle: string;
-  appLink?: string;
-  isbn?: string;
-  pages: string;
-  publicationDate: string;
-  publisher: string;
-  authorUrl: string;
-  highlightsCount: number;
-  highlights: string;
-};
-
-export type HighlightRenderTemplate = {
-  id: string;
-  title: string;
-  longTitle: string;
-  text: string;
-  location?: string;
-  page?: string;
-  note?: string;
-  color?: 'pink' | 'blue' | 'yellow' | 'orange';
-  createdDate?: Date;
-  appLink?: string;
-};
-
 export type SyncMode = 'amazon' | 'my-clippings';
 
 export type AmazonAccountRegion =
