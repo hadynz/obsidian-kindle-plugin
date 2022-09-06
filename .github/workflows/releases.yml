@@ -24,7 +24,7 @@ jobs:
         run: |
           npm install
           npm run lint
-          npm run test
+          npm run test-verbose
           npm run build
           zip -r -j ${{ env.PLUGIN_NAME }}.zip dist -x "*.map"
           ls

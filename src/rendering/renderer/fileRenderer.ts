@@ -1,13 +1,11 @@
-import moment from 'moment';
 import { Environment } from 'nunjucks';
 
-import type { BookHighlight, FileRenderTemplate } from '~/models';
-import { shortenTitle } from '~/utils';
+import type { BookHighlight } from '~/models';
 
 import { TrimAllEmptyLinesExtension } from '../nunjucks.extensions';
-import { generateAppLink } from '../utils';
 
 import HighlightRenderer from './highlightRenderer';
+import { fileTemplateVariables } from './templateVariables';
 
 export default class FileRenderer {
   private nunjucks: Environment;
@@ -30,28 +28,14 @@ export default class FileRenderer {
   }
 
   public render(entry: BookHighlight): string {
-    const { book, highlights, metadata } = entry;
+    const { book, highlights } = entry;
 
-    const params: FileRenderTemplate = {
-      title: shortenTitle(book.title),
-      longTitle: book.title,
-      author: book.author,
-      asin: book.asin,
-      url: book.url,
-      imageUrl: book.imageUrl,
-      lastAnnotatedDate: book.lastAnnotatedDate
-        ? moment(book.lastAnnotatedDate).format('YYYY-MM-DD').toString()
-        : undefined,
-      appLink: generateAppLink(book.asin),
-      isbn: metadata?.isbn,
-      pages: metadata?.pages,
-      publicationDate: metadata?.publicationDate,
-      publisher: metadata?.publisher,
-      authorUrl: metadata?.authorUrl,
-      highlightsCount: highlights.length,
-      highlights: highlights.map((h) => this.highlightRenderer.render(h, book)).join('\n'),
-    };
+    const renderedHighlights = highlights
+      .map((h) => this.highlightRenderer.render(h, book))
+      .join('\n');
 
-    return this.nunjucks.renderString(this.fileTemplate, params);
+    const templateVariables = fileTemplateVariables(entry, renderedHighlights);
+
+    return this.nunjucks.renderString(this.fileTemplate, templateVariables);
   }
 }
