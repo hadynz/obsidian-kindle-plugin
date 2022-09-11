@@ -11,7 +11,7 @@ import type { AmazonAccountRegion } from '~/models';
 import { scrapeLogoutUrl } from '~/scraper';
 import { settingsStore } from '~/store';
 
-import templateSettings from './templateSettings';
+import TemplateEditorModal from './templateEditorModal';
 
 const { moment } = window;
 
@@ -34,12 +34,26 @@ export class SettingsTab extends PluginSettingTab {
       this.logout();
     }
 
+    this.templatesEditor();
     this.highlightsFolder();
     this.amazonRegion();
     this.downloadBookMetadata();
     this.syncOnBoot();
-    templateSettings(this.app, containerEl);
     this.sponsorMe();
+  }
+
+  private templatesEditor(): void {
+    new Setting(this.containerEl)
+      .setName('Templates')
+      .setDesc('Manage and edit templates for file names and highlight note content')
+      .addButton((button) => {
+        button
+          .setButtonText('Edit templates')
+          .setCta()
+          .onClick(() => {
+            new TemplateEditorModal(this.app).show();
+          });
+      });
   }
 
   private logout(): void {
