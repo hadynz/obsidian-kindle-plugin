@@ -23,5 +23,6 @@
 
   .preview {
     margin-left: 50px;
+    overflow: hidden;
   }
 </style>
