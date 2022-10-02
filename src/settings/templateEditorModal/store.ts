@@ -10,6 +10,10 @@ import { settingsStore } from '~/store/settingsStore';
 
 import data from './data';
 
+type TemplateTab = 'file' | 'file-name' | 'highlight';
+
+export const currentTemplateTab = writable<TemplateTab>('file-name');
+
 export const demoBooks = readable(data);
 export const selectedBook = writable(data[0]);
 

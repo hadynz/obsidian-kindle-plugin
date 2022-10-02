@@ -6,6 +6,7 @@
   } from '~/rendering';
 
   import {
+    currentTemplateTab,
     fileNameTemplateField,
     fileTemplateField,
     highlightTemplateField,
@@ -15,39 +16,47 @@
   import SettingItem from './SettingItem.svelte';
 </script>
 
-<SettingItem name="File name template">
-  <input
-    type="text"
-    bind:value={$fileNameTemplateField}
-    placeholder={DefaultFileNameTemplate}
-    spellcheck="false"
-    disabled={$fileNameTemplateField == null}
-  />
-  <EditControls writableStore={fileNameTemplateField} defaultValue={DefaultFileNameTemplate} />
-</SettingItem>
-
-<SettingItem
-  name="File template"
-  description="Template for a file of highlights. This can include YAML front matter"
->
-  <textarea
-    bind:value={$fileTemplateField}
-    placeholder={DefaultFileTemplate}
-    spellcheck="false"
-    disabled={$fileTemplateField == null}
-  />
-  <EditControls writableStore={fileTemplateField} defaultValue={DefaultFileTemplate} />
-</SettingItem>
-
-<SettingItem name="Highlight template" description="Template for an individual highlight">
-  <textarea
-    bind:value={$highlightTemplateField}
-    placeholder={DefaultHighlightTemplate}
-    spellcheck="false"
-    disabled={$highlightTemplateField == null}
-  />
-  <EditControls writableStore={highlightTemplateField} defaultValue={DefaultHighlightTemplate} />
-</SettingItem>
+{#if $currentTemplateTab === 'file-name'}
+  <SettingItem name="File name template">
+    <input
+      type="text"
+      bind:value={$fileNameTemplateField}
+      placeholder={DefaultFileNameTemplate}
+      spellcheck="false"
+      disabled={$fileNameTemplateField == null}
+    />
+    <EditControls
+      writableStore={fileNameTemplateField}
+      defaultValue={DefaultFileNameTemplate}
+    />
+  </SettingItem>
+{:else if $currentTemplateTab === 'file'}
+  <SettingItem
+    name="File template"
+    description="Template for a file of highlights. This can include YAML front matter"
+  >
+    <textarea
+      bind:value={$fileTemplateField}
+      placeholder={DefaultFileTemplate}
+      spellcheck="false"
+      disabled={$fileTemplateField == null}
+    />
+    <EditControls writableStore={fileTemplateField} defaultValue={DefaultFileTemplate} />
+  </SettingItem>
+{:else if $currentTemplateTab === 'highlight'}
+  <SettingItem name="Highlight template" description="Template for an individual highlight">
+    <textarea
+      bind:value={$highlightTemplateField}
+      placeholder={DefaultHighlightTemplate}
+      spellcheck="false"
+      disabled={$highlightTemplateField == null}
+    />
+    <EditControls
+      writableStore={highlightTemplateField}
+      defaultValue={DefaultHighlightTemplate}
+    />
+  </SettingItem>
+{/if}
 
 <style>
   input {
@@ -62,6 +71,6 @@
   }
 
   textarea:focus {
-    border-color: var(--interactive-accent)
+    border-color: var(--interactive-accent);
   }
 </style>

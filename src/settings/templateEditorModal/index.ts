@@ -15,9 +15,9 @@ export default class TemplateEditorModal extends ObsidianModal {
       props: {},
     });
 
-    this.modalEl.style.minWidth = '80vw';
-
-    this.el
+    this.modalEl.classList.add('mod-settings');
+    this.modalEl.style.width = '90vw';
+    this.modalEl.style.height = '60vw';
 
     this.open();
   }
