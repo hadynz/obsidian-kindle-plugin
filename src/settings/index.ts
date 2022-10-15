@@ -48,8 +48,7 @@ export class SettingsTab extends PluginSettingTab {
       .setDesc('Manage and edit templates for file names and highlight note content')
       .addButton((button) => {
         button
-          .setButtonText('Edit templates')
-          .setCta()
+          .setButtonText('Manage')
           .onClick(() => {
             new TemplateEditorModal(this.app).show();
           });

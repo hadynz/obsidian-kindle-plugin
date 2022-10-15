@@ -3,41 +3,64 @@
 </script>
 
 <div class="wrapper">
-  <h1>Live Preview</h1>
+  <div class="section section--preview">
+    <h3>Live Preview</h3>
+    <div class="text">Select a sample book</div>
+    <select class="dropdown" bind:value={$selectedBook}>
+      {#each $demoBooks as demoBook}
+        <option value={demoBook}>{demoBook.book.title} ({demoBook.book.author})</option>
+      {/each}
+    </select>
+  </div>
+  <div class="section">
+    <div class="text label">File name</div>
+    <pre>{$renderedFileName}</pre>
 
-  <div class="text">Select different books to see how your templates will render out in different scenarios</div>
-
-  <select class="dropdown" bind:value={$selectedBook}>
-    {#each $demoBooks as demoBook}
-      <option value={demoBook}>{demoBook.book.title} ({demoBook.book.author})</option>
-    {/each}
-  </select>
-
-  <div class="text label">File name</div>
-  <pre>{$renderedFileName}</pre>
-
-  <div class="text label">File markup</div>
-  <pre>{$renderedFile}</pre>
+    <div class="text label">File markup</div>
+    <pre>{$renderedFile}</pre>
+  </div>
 </div>
 
 <style>
   .wrapper {
-    width: 500px;
+    border-radius: var(--radius-m);
+    border: 1px solid var(--background-modifier-border);
+    background-color: var(--background-primary);
+    overflow: hidden;
+  }
+
+  .wrapper *:last-child {
+    margin-bottom: 0;
+  }
+
+  .section {
+    padding: var(--size-4-3);
+  }
+
+  .section--preview {
+    background-color: var(--background-secondary);
+  }
+
+  h3 {
+    margin: 0;
   }
 
   pre {
     white-space: pre-wrap;
     background-color: var(--background-secondary-alt);
-    padding: 8px 20px;
+    padding: 6px 10px;
     margin-top: 0;
+    font-size: 0.8em;
   }
 
+  h3,
+  pre,
   .dropdown {
-    margin: 20px 0;
+    margin-bottom: 12px;
   }
 
   .text {
-    font-size: 0.9em;
+    font-size: 0.8em;
   }
 
   .label {

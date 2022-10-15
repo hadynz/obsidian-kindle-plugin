@@ -5,8 +5,8 @@
   import { currentTemplateTab } from '../../store';
 </script>
 
-<div class="vertical-tabs-container">
-  <div class="vertical-tab-header">
+<div class="vertical-tabs-container tabs-container">
+  <div class="vertical-tab-header tabs-container--left">
     <div class="vertical-tab-header-group">
       <div class="vertical-tab-header-group-title">Templates</div>
       <div class="vertical-tab-header-group-items">
@@ -34,27 +34,46 @@
       </div>
     </div>
   </div>
-  <div class="vertical-tab-content-container">
-    <div class="vertical-tab-content">
-      <div class="row">
+  <div class="vertical-tab-content-container tabs-container--right">
+    <div class="vertical-tab-content row-content">
         <div class="form">
           <Form />
         </div>
         <div class="preview">
           <Preview />
         </div>
-      </div>
+    </div>
+    <div class="row-buttons">
+      <button class="mod-cta">Save</button>
+      <button>Cancel</button>
     </div>
   </div>
 </div>
 
 <style>
-  .vertical-tab-header {
-    flex-basis: 160px !important;
+  .tabs-container {
+    flex-grow: inherit;
   }
 
-  .row {
+  .tabs-container--left {
+    max-width: 180px !important;
+  }
+
+  .tabs-container--right {
     display: flex;
+    flex-direction: column;
+  }
+
+  .row-content {
+    flex-grow: 1;
+    overflow: scroll;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .row-buttons {
+    text-align: right;
+    padding: 10px;
   }
 
   .form {
@@ -62,7 +81,7 @@
   }
 
   .preview {
-    margin-left: 50px;
-    overflow: hidden;
+    width: 350px;
+    padding: 10px;
   }
 </style>

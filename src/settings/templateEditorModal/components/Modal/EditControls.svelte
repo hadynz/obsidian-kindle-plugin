@@ -7,11 +7,9 @@
 
 <div class="wrapper">
   {#if $writableStore == null}
-    <a class="action" href="/" on:click={() => writableStore.set(defaultValue)}>
-      Override default template
-    </a>
+    <button on:click={() => writableStore.set(defaultValue)}>Override default template</button>
   {:else}
-    <a class="action" href="/" on:click={() => writableStore.set(undefined)}>Reset</a>
+    <button on:click={() => writableStore.set(undefined)}>Reset to default template</button>
   {/if}
 </div>
 
@@ -20,7 +18,7 @@
     margin-top: 8px;
   }
 
-  .action {
+  button {
     font-size: 0.8em;
   }
 </style>

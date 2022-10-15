@@ -18,13 +18,16 @@
 
 {#if $currentTemplateTab === 'file-name'}
   <SettingItem name="File name template">
-    <input
-      type="text"
-      bind:value={$fileNameTemplateField}
-      placeholder={DefaultFileNameTemplate}
-      spellcheck="false"
-      disabled={$fileNameTemplateField == null}
-    />
+    <div>
+      <input
+        type="text"
+        bind:value={$fileNameTemplateField}
+        placeholder={DefaultFileNameTemplate}
+        spellcheck="false"
+        disabled={$fileNameTemplateField == null}
+      />
+      <span>.md</span>
+    </div>
     <EditControls
       writableStore={fileNameTemplateField}
       defaultValue={DefaultFileNameTemplate}
@@ -60,14 +63,15 @@
 
 <style>
   input {
-    width: 400px;
+    min-width: 300px;
   }
 
   textarea {
     width: 100%;
-    height: 200px;
+    height: 400px;
     font-size: 0.8em;
     font-family: var(--font-monospace);
+    resize: vertical;
   }
 
   textarea:focus {
