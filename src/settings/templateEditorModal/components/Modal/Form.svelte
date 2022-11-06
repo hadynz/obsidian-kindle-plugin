@@ -5,18 +5,22 @@
     DefaultHighlightTemplate,
   } from '~/rendering';
 
-  import {
-    currentTemplateTab,
+  import type { TemplateEditorModalStore } from '../../store';
+
+  export let editorStore: TemplateEditorModalStore;
+
+  const {
+    activeTab,
     fileNameTemplateField,
     fileTemplateField,
     highlightTemplateField,
-  } from '../../store';
+  } = editorStore;
 
   import EditControls from './EditControls.svelte';
   import SettingItem from './SettingItem.svelte';
 </script>
 
-{#if $currentTemplateTab === 'file-name'}
+{#if $activeTab === 'file-name'}
   <SettingItem name="File name template">
     <div>
       <input
@@ -33,7 +37,7 @@
       defaultValue={DefaultFileNameTemplate}
     />
   </SettingItem>
-{:else if $currentTemplateTab === 'file'}
+{:else if $activeTab === 'file'}
   <SettingItem
     name="File template"
     description="Template for a file of highlights. This can include YAML front matter"
@@ -46,7 +50,7 @@
     />
     <EditControls writableStore={fileTemplateField} defaultValue={DefaultFileTemplate} />
   </SettingItem>
-{:else if $currentTemplateTab === 'highlight'}
+{:else if $activeTab === 'highlight'}
   <SettingItem name="Highlight template" description="Template for an individual highlight">
     <textarea
       bind:value={$highlightTemplateField}

@@ -1,5 +1,6 @@
-import { derived, get, readable, writable } from 'svelte/store';
+import { derived, get, Readable, readable, Writable, writable } from 'svelte/store';
 
+import type { BookHighlight } from '~/models';
 import {
   DefaultFileNameTemplate,
   DefaultFileTemplate,
@@ -12,40 +13,78 @@ import data from './data';
 
 type TemplateTab = 'file' | 'file-name' | 'highlight';
 
-export const currentTemplateTab = writable<TemplateTab>('file-name');
+export type TemplateEditorModalStore = {
+  activeTab: Writable<TemplateTab>;
+  demoBooks: Readable<BookHighlight[]>;
+  isDirty: Readable<boolean>;
+  selectedBook: Writable<BookHighlight>;
+  fileNameTemplateField: Writable<string>;
+  fileTemplateField: Writable<string>;
+  highlightTemplateField: Writable<string>;
+  renderedFileName: Readable<string>;
+  renderedFile: Readable<string>;
+};
 
-export const demoBooks = readable(data);
-export const selectedBook = writable(data[0]);
+export default (): TemplateEditorModalStore => {
+  const activeTab = writable<TemplateTab>('file-name');
 
-export const fileNameTemplateField = writable(get(settingsStore).fileNameTemplate);
-export const fileTemplateField = writable(get(settingsStore).fileTemplate);
-export const highlightTemplateField = writable(get(settingsStore).highlightTemplate);
+  const demoBooks = readable(data);
+  const selectedBook = writable(data[0]);
 
-export const renderedFileName = derived(
-  [selectedBook, fileNameTemplateField],
-  ([$selectedBook, $fileNameTemplateField]) => {
-    const fileNameTemplate = $fileNameTemplateField || DefaultFileNameTemplate;
+  const fileNameTemplateField = writable(get(settingsStore).fileNameTemplate);
+  const fileTemplateField = writable(get(settingsStore).fileTemplate);
+  const highlightTemplateField = writable(get(settingsStore).highlightTemplate);
 
-    try {
-      const renderer = new FileNameRenderer(fileNameTemplate);
-      return renderer.render($selectedBook.book);
-    } catch (error) {
-      return 'not valid';
+  const renderedFileName = derived(
+    [selectedBook, fileNameTemplateField],
+    ([$selectedBook, $fileNameTemplateField]) => {
+      const fileNameTemplate = $fileNameTemplateField || DefaultFileNameTemplate;
+
+      try {
+        const renderer = new FileNameRenderer(fileNameTemplate);
+        return renderer.render($selectedBook.book);
+      } catch (error) {
+        return 'not valid';
+      }
     }
-  }
-);
+  );
 
-export const renderedFile = derived(
-  [selectedBook, fileTemplateField, highlightTemplateField],
-  ([$selectedBook, $fileTemplateField, $highlightTemplateField]) => {
-    const fileTemplate = $fileTemplateField || DefaultFileTemplate;
-    const highlightTemplate = $highlightTemplateField || DefaultHighlightTemplate;
+  const renderedFile = derived(
+    [selectedBook, fileTemplateField, highlightTemplateField],
+    ([$selectedBook, $fileTemplateField, $highlightTemplateField]) => {
+      const fileTemplate = $fileTemplateField || DefaultFileTemplate;
+      const highlightTemplate = $highlightTemplateField || DefaultHighlightTemplate;
 
-    try {
-      const renderer = new FileRenderer(fileTemplate, highlightTemplate);
-      return renderer.render($selectedBook);
-    } catch (error) {
-      return 'not valid';
+      try {
+        const renderer = new FileRenderer(fileTemplate, highlightTemplate);
+        return renderer.render($selectedBook);
+      } catch (error) {
+        return 'not valid';
+      }
     }
-  }
-);
+  );
+
+  const isDirty = derived(
+    [fileNameTemplateField, fileTemplateField, highlightTemplateField, settingsStore],
+    ([$fileNameTemplateField, $fileTemplateField, $highlightTemplateField]) => {
+      const { fileNameTemplate, fileTemplate, highlightTemplate } = get(settingsStore);
+      return (
+        fileNameTemplate !== $fileNameTemplateField ||
+        fileTemplate !== $fileTemplateField ||
+        highlightTemplate !== $highlightTemplateField
+      );
+    }
+  );
+
+  return {
+    activeTab,
+    demoBooks,
+    selectedBook,
+    fileNameTemplateField,
+    fileTemplateField,
+    highlightTemplateField,
+    renderedFileName,
+    renderedFile,
+    isDirty,
+  };
+};

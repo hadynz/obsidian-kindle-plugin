@@ -1,5 +1,9 @@
 <script lang="ts">
-  import { demoBooks, renderedFileName, renderedFile, selectedBook } from '../../store';
+  import type { TemplateEditorModalStore } from '../../store';
+
+  export let editorStore: TemplateEditorModalStore;
+
+  const { demoBooks, renderedFileName, renderedFile, selectedBook } = editorStore;
 </script>
 
 <div class="wrapper">
