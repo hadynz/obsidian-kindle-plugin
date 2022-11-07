@@ -6,15 +6,13 @@
   } from '~/rendering';
 
   import type { TemplateEditorModalStore } from '../../store';
+  import type { TemplateTab } from '../../types';
 
   export let editorStore: TemplateEditorModalStore;
+  export let showTips: (template: TemplateTab) => void;
 
-  const {
-    activeTab,
-    fileNameTemplateField,
-    fileTemplateField,
-    highlightTemplateField,
-  } = editorStore;
+  const { activeTab, fileNameTemplateField, fileTemplateField, highlightTemplateField } =
+    editorStore;
 
   import EditControls from './EditControls.svelte';
   import SettingItem from './SettingItem.svelte';
@@ -35,6 +33,7 @@
     <EditControls
       writableStore={fileNameTemplateField}
       defaultValue={DefaultFileNameTemplate}
+      showTipsModal={() => showTips('file-name')}
     />
   </SettingItem>
 {:else if $activeTab === 'file'}
@@ -48,7 +47,11 @@
       spellcheck="false"
       disabled={$fileTemplateField == null}
     />
-    <EditControls writableStore={fileTemplateField} defaultValue={DefaultFileTemplate} />
+    <EditControls
+      writableStore={fileTemplateField}
+      defaultValue={DefaultFileTemplate}
+      showTipsModal={() => showTips('file')}
+    />
   </SettingItem>
 {:else if $activeTab === 'highlight'}
   <SettingItem name="Highlight template" description="Template for an individual highlight">
@@ -61,6 +64,7 @@
     <EditControls
       writableStore={highlightTemplateField}
       defaultValue={DefaultHighlightTemplate}
+      showTipsModal={() => showTips('highlight')}
     />
   </SettingItem>
 {/if}

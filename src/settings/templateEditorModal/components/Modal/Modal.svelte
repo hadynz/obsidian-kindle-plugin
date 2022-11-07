@@ -4,10 +4,12 @@
   import Preview from './Preview.svelte';
 
   import type { TemplateEditorModalStore } from '../../store';
+  import type { TemplateTab } from '../../types';
 
   export let store: TemplateEditorModalStore;
   export let onSave: () => void;
   export let onClose: () => void;
+  export let showTips: (template: TemplateTab) => void;
 
   const { activeTab, isDirty } = store;
 </script>
@@ -44,7 +46,7 @@
   <div class="vertical-tab-content-container tabs-container--right">
     <div class="vertical-tab-content row-content">
       <div class="form">
-        <Form editorStore={store} />
+        <Form editorStore={store} {showTips} />
       </div>
       <div class="preview">
         <Preview editorStore={store} />

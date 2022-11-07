@@ -10,8 +10,7 @@ import { FileNameRenderer, FileRenderer } from '~/rendering/renderer';
 import { settingsStore } from '~/store/settingsStore';
 
 import data from './data';
-
-type TemplateTab = 'file' | 'file-name' | 'highlight';
+import type { TemplateTab } from './types';
 
 export type TemplateEditorModalStore = {
   activeTab: Writable<TemplateTab>;
