@@ -65,9 +65,14 @@ export default (): TemplateEditorModalStore => {
   );
 
   const isDirty = derived(
-    [fileNameTemplateField, fileTemplateField, highlightTemplateField, settingsStore],
-    ([$fileNameTemplateField, $fileTemplateField, $highlightTemplateField]) => {
-      const { fileNameTemplate, fileTemplate, highlightTemplate } = get(settingsStore);
+    [fileNameTemplateField, fileTemplateField, highlightTemplateField, settingsStore.store],
+    ([
+      $fileNameTemplateField,
+      $fileTemplateField,
+      $highlightTemplateField,
+      $settingsStore,
+    ]) => {
+      const { fileNameTemplate, fileTemplate, highlightTemplate } = $settingsStore;
       return (
         fileNameTemplate !== $fileNameTemplateField ||
         fileTemplate !== $fileTemplateField ||

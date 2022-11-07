@@ -1,3 +1,4 @@
+import { remote } from 'electron';
 import { App, Modal as ObsidianModal } from 'obsidian';
 import { get } from 'svelte/store';
 
@@ -5,6 +6,20 @@ import { settingsStore } from '~/store';
 
 import Modal from './components/Modal/Modal.svelte';
 import store, { TemplateEditorModalStore } from './store';
+
+const { dialog } = remote;
+
+const showUnsavedChangesWarningDialog = async () => {
+  const result = await dialog.showMessageBox(remote.getCurrentWindow(), {
+    title: 'Unsaved changes',
+    message:
+      'Are you sure you want to close the template editor without saving? Your changes will be lost.',
+    type: 'warning',
+    buttons: ['Discard', 'Cancel'],
+  });
+
+  return result.response === 0 ? 'discard' : 'cancel';
+};
 
 export default class TemplateEditorModal extends ObsidianModal {
   private modalContent: Modal;
@@ -29,8 +44,16 @@ export default class TemplateEditorModal extends ObsidianModal {
           settingsStore.actions.setFileTemplate(newFileTemplateField);
           settingsStore.actions.setHighlightTemplate(newHighlightTemplateField);
         },
-        onClose: () => {
-          // Show dialog warning to save changes if form is dirty
+        onClose: async () => {
+          const isDirty = get(this.modalStore.isDirty);
+
+          if (isDirty) {
+            const result = await showUnsavedChangesWarningDialog();
+            if (result === 'cancel') {
+              return;
+            }
+          }
+
           this.close();
         },
       },

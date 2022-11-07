@@ -158,6 +158,7 @@ const createSettingsStore = () => {
   };
 
   return {
+    store,
     subscribe: store.subscribe,
     initialize,
     isLegacy,

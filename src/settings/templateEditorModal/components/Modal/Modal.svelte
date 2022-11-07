@@ -51,9 +51,6 @@
       </div>
     </div>
     <div class="row-buttons">
-      {#if !$isDirty}
-        <div class="save-message">No changes to save</div>
-      {/if}
       <button on:click={onSave} class="mod-cta" disabled={!$isDirty}>Save</button>
       <button on:click={onClose}>Cancel</button>
     </div>
@@ -86,6 +83,7 @@
     justify-content: right;
     align-items: center;
     gap: 10px;
+    border-top: 1px solid var(--divider-color);
   }
 
   .row-buttons button[disabled] {
@@ -94,11 +92,6 @@
 
   .form {
     flex-grow: 1;
-  }
-
-  .save-message {
-    font-size: 0.8em;
-    color: var(--text-muted);
   }
 
   .preview {
