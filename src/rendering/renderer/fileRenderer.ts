@@ -3,12 +3,11 @@ import { Environment } from 'nunjucks';
 import type { BookHighlight } from '~/models';
 
 import { TrimAllEmptyLinesExtension } from '../nunjucks.extensions';
-import type { ITemplateRenderer } from '../types';
 
 import HighlightRenderer from './highlightRenderer';
 import { fileTemplateVariables } from './templateVariables';
 
-export default class FileRenderer implements ITemplateRenderer {
+export default class FileRenderer {
   private nunjucks: Environment;
   private highlightRenderer: HighlightRenderer;
 

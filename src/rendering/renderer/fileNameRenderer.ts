@@ -3,11 +3,9 @@ import sanitize from 'sanitize-filename';
 
 import type { Book } from '~/models';
 
-import type { ITemplateRenderer } from '../types';
-
 import { fileNameTemplateVariables } from './templateVariables';
 
-export default class FileNameRenderer implements ITemplateRenderer {
+export default class FileNameRenderer {
   private nunjucks: Environment;
 
   constructor(private template: string) {
