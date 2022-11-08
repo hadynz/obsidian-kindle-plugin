@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Writable } from 'svelte/store';
+
   import hashIcon from '~/assets/hashIcon.svg';
 
   export let writableStore: Writable<string>;

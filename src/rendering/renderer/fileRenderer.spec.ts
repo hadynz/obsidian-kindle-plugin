@@ -5,6 +5,13 @@ import type { BookHighlight } from '~/models';
 import FileRenderer from './fileRenderer';
 
 describe('FileRenderer', () => {
+  describe('validate', () => {
+    it.each([null, undefined])('should return true for %s template', (template) => {
+      const renderer = new FileRenderer('', '');
+      expect(renderer.validate(template)).toBe(true);
+    });
+  });
+
   describe('render', () => {
     describe('file template variables', () => {
       const bookHighlight: BookHighlight = {

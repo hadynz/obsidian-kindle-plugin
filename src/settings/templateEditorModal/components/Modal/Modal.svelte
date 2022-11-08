@@ -11,7 +11,7 @@
   export let onClose: () => void;
   export let showTips: (template: TemplateTab) => void;
 
-  const { activeTab, isDirty } = store;
+  const { activeTab, isDirty, hasErrors } = store;
 </script>
 
 <div class="vertical-tabs-container tabs-container">
@@ -53,7 +53,15 @@
       </div>
     </div>
     <div class="row-buttons">
-      <button on:click={onSave} class="mod-cta" disabled={!$isDirty}>Save</button>
+      {#if $hasErrors}
+        <span class="error">Template has a syntax error and cannot be compiled</span>
+      {/if}
+      <button
+        on:click={onSave}
+        class="mod-cta"
+        class:error={$hasErrors}
+        disabled={!$isDirty || $hasErrors}>Save</button
+      >
       <button on:click={onClose}>Cancel</button>
     </div>
   </div>
@@ -99,5 +107,14 @@
   .preview {
     width: 350px;
     padding: 10px;
+  }
+
+  .mod-cta.error {
+    background-color: var(--color-red);
+  }
+
+  span.error {
+    color: var(--color-red);
+    font-size: 0.8em;
   }
 </style>

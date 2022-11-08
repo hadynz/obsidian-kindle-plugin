@@ -3,9 +3,11 @@ import sanitize from 'sanitize-filename';
 
 import type { Book } from '~/models';
 
+import type { ITemplateRenderer } from '../types';
+
 import { fileNameTemplateVariables } from './templateVariables';
 
-export default class FileNameRenderer {
+export default class FileNameRenderer implements ITemplateRenderer {
   private nunjucks: Environment;
 
   constructor(private template: string) {
@@ -14,7 +16,7 @@ export default class FileNameRenderer {
 
   public validate(template: string): boolean {
     try {
-      this.nunjucks.renderString(template, {});
+      this.nunjucks.renderString(template ?? '', {});
       return true;
     } catch (error) {
       return false;

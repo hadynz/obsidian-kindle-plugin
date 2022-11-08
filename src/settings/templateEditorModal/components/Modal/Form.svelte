@@ -8,14 +8,21 @@
   import type { TemplateEditorModalStore } from '../../store';
   import type { TemplateTab } from '../../types';
 
+  import EditControls from './EditControls.svelte';
+  import SettingItem from './SettingItem.svelte';
+
   export let editorStore: TemplateEditorModalStore;
   export let showTips: (template: TemplateTab) => void;
 
-  const { activeTab, fileNameTemplateField, fileTemplateField, highlightTemplateField } =
-    editorStore;
-
-  import EditControls from './EditControls.svelte';
-  import SettingItem from './SettingItem.svelte';
+  const {
+    activeTab,
+    fileNameTemplateField,
+    fileNameTemplateFieldHasError,
+    fileTemplateField,
+    fileTemplateFieldHasError,
+    highlightTemplateField,
+    highlightTemplateFieldHasError,
+  } = editorStore;
 </script>
 
 {#if $activeTab === 'file-name'}
@@ -24,6 +31,7 @@
       <input
         type="text"
         bind:value={$fileNameTemplateField}
+        class:error={$fileNameTemplateFieldHasError}
         placeholder={DefaultFileNameTemplate}
         spellcheck="false"
         disabled={$fileNameTemplateField == null}
@@ -43,6 +51,7 @@
   >
     <textarea
       bind:value={$fileTemplateField}
+      class:error={$fileTemplateFieldHasError}
       placeholder={DefaultFileTemplate}
       spellcheck="false"
       disabled={$fileTemplateField == null}
@@ -57,6 +66,7 @@
   <SettingItem name="Highlight template" description="Template for an individual highlight">
     <textarea
       bind:value={$highlightTemplateField}
+      class:error={$highlightTemplateFieldHasError}
       placeholder={DefaultHighlightTemplate}
       spellcheck="false"
       disabled={$highlightTemplateField == null}
@@ -80,6 +90,12 @@
     font-size: 0.8em;
     font-family: var(--font-monospace);
     resize: vertical;
+  }
+
+  input.error,
+  textarea.error {
+    border: 2px solid var(--color-red);
+    color: var(--color-red);
   }
 
   textarea:focus {

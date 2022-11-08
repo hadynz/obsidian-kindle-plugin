@@ -5,6 +5,7 @@ import type { Book, Highlight } from '~/models';
 import highlightTemplateWrapper from '~/rendering//templates/highlightTemplateWrapper.njk';
 
 import { BlockReferenceExtension } from '../nunjucks.extensions';
+import type { ITemplateRenderer } from '../types';
 
 import { highlightTemplateVariables } from './templateVariables';
 import { trimMultipleLines } from './utils';
@@ -13,7 +14,7 @@ export const HighlightIdBlockRefPrefix = '^ref-';
 
 dateFilter.setDefaultFormat('DD-MM-YYYY');
 
-export default class HighlightRenderer {
+export default class HighlightRenderer implements ITemplateRenderer {
   private nunjucks: Environment;
 
   constructor(private template: string) {
@@ -24,7 +25,7 @@ export default class HighlightRenderer {
 
   public validate(template: string): boolean {
     try {
-      this.nunjucks.renderString(template, { text: '' });
+      this.nunjucks.renderString(template ?? '', { text: '' });
       return true;
     } catch (error) {
       return false;

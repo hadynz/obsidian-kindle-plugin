@@ -5,6 +5,7 @@ import {
   DefaultFileNameTemplate,
   DefaultFileTemplate,
   DefaultHighlightTemplate,
+  getRenderers,
 } from '~/rendering';
 import { FileNameRenderer, FileRenderer } from '~/rendering/renderer';
 import { settingsStore } from '~/store/settingsStore';
@@ -12,38 +13,47 @@ import { settingsStore } from '~/store/settingsStore';
 import data from './data';
 import type { TemplateTab } from './types';
 
+const { fileNameRenderer, fileRenderer, highlightRenderer } = getRenderers();
+
+const InvalidRender = 'not valid';
+
 export type TemplateEditorModalStore = {
   activeTab: Writable<TemplateTab>;
   demoBooks: Readable<BookHighlight[]>;
-  isDirty: Readable<boolean>;
   selectedBook: Writable<BookHighlight>;
+  isDirty: Readable<boolean>;
   fileNameTemplateField: Writable<string>;
+  fileNameTemplateFieldHasError: Writable<boolean>;
   fileTemplateField: Writable<string>;
+  fileTemplateFieldHasError: Writable<boolean>;
   highlightTemplateField: Writable<string>;
+  highlightTemplateFieldHasError: Writable<boolean>;
   renderedFileName: Readable<string>;
   renderedFile: Readable<string>;
+  hasErrors: Readable<boolean>;
 };
 
 export default (): TemplateEditorModalStore => {
-  const activeTab = writable<TemplateTab>('file-name');
-
-  const demoBooks = readable(data);
   const selectedBook = writable(data[0]);
 
   const fileNameTemplateField = writable(get(settingsStore).fileNameTemplate);
+  const fileNameTemplateFieldHasError = writable(false);
+
   const fileTemplateField = writable(get(settingsStore).fileTemplate);
+  const fileTemplateFieldHasError = writable(false);
+
   const highlightTemplateField = writable(get(settingsStore).highlightTemplate);
+  const highlightTemplateFieldHasError = writable(false);
 
   const renderedFileName = derived(
     [selectedBook, fileNameTemplateField],
     ([$selectedBook, $fileNameTemplateField]) => {
       const fileNameTemplate = $fileNameTemplateField || DefaultFileNameTemplate;
-
       try {
         const renderer = new FileNameRenderer(fileNameTemplate);
         return renderer.render($selectedBook.book);
       } catch (error) {
-        return 'not valid';
+        return InvalidRender;
       }
     }
   );
@@ -58,7 +68,7 @@ export default (): TemplateEditorModalStore => {
         const renderer = new FileRenderer(fileTemplate, highlightTemplate);
         return renderer.render($selectedBook);
       } catch (error) {
-        return 'not valid';
+        return InvalidRender;
       }
     }
   );
@@ -80,15 +90,49 @@ export default (): TemplateEditorModalStore => {
     }
   );
 
+  fileNameTemplateField.subscribe((value) => {
+    const isValid = fileNameRenderer.validate(value);
+    fileNameTemplateFieldHasError.set(!isValid);
+  });
+
+  fileTemplateField.subscribe((value) => {
+    const isValid = fileRenderer.validate(value);
+    fileTemplateFieldHasError.set(!isValid);
+  });
+
+  highlightTemplateField.subscribe((value) => {
+    const isValid = highlightRenderer.validate(value);
+    highlightTemplateFieldHasError.set(!isValid);
+  });
+
+  const hasErrors = derived(
+    [fileNameTemplateFieldHasError, fileTemplateFieldHasError, highlightTemplateFieldHasError],
+    ([
+      $fileNameTemplateFieldHasError,
+      $fileTemplateFieldHasError,
+      $highlightTemplateFieldHasError,
+    ]) => {
+      return (
+        $fileNameTemplateFieldHasError ||
+        $fileTemplateFieldHasError ||
+        $highlightTemplateFieldHasError
+      );
+    }
+  );
+
   return {
-    activeTab,
-    demoBooks,
+    activeTab: writable<TemplateTab>('file-name'),
+    demoBooks: readable(data),
     selectedBook,
+    isDirty,
     fileNameTemplateField,
+    fileNameTemplateFieldHasError,
     fileTemplateField,
+    fileTemplateFieldHasError,
     highlightTemplateField,
+    highlightTemplateFieldHasError,
     renderedFileName,
     renderedFile,
-    isDirty,
+    hasErrors,
   };
 };

@@ -3,11 +3,12 @@ import { Environment } from 'nunjucks';
 import type { BookHighlight } from '~/models';
 
 import { TrimAllEmptyLinesExtension } from '../nunjucks.extensions';
+import type { ITemplateRenderer } from '../types';
 
 import HighlightRenderer from './highlightRenderer';
 import { fileTemplateVariables } from './templateVariables';
 
-export default class FileRenderer {
+export default class FileRenderer implements ITemplateRenderer {
   private nunjucks: Environment;
   private highlightRenderer: HighlightRenderer;
 
@@ -20,7 +21,7 @@ export default class FileRenderer {
 
   public validate(template: string): boolean {
     try {
-      this.nunjucks.renderString(template, { text: '' });
+      this.nunjucks.renderString(template ?? '', { text: '' });
       return true;
     } catch (error) {
       return false;
