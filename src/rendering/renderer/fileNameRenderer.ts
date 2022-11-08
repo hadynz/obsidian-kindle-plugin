@@ -14,7 +14,7 @@ export default class FileNameRenderer {
 
   public validate(template: string): boolean {
     try {
-      this.nunjucks.renderString(template, {});
+      this.nunjucks.renderString(template ?? '', {});
       return true;
     } catch (error) {
       return false;

@@ -24,7 +24,7 @@ export default class HighlightRenderer {
 
   public validate(template: string): boolean {
     try {
-      this.nunjucks.renderString(template, { text: '' });
+      this.nunjucks.renderString(template ?? '', { text: '' });
       return true;
     } catch (error) {
       return false;

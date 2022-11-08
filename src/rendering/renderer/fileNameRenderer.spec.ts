@@ -13,6 +13,11 @@ describe('FileNameRenderer', () => {
       const renderer = new FileNameRenderer('');
       expect(renderer.validate('{{shortTitle')).toBe(false);
     });
+
+    it.each([null, undefined])('should return true for %s template', (template) => {
+      const renderer = new FileNameRenderer('');
+      expect(renderer.validate(template)).toBe(true);
+    });
   });
 
   describe('render', () => {

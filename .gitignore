@@ -20,3 +20,6 @@ coverage
 dist
 tsconfig.tsbuildinfo
 .env
+
+# Mac
+.DS_Store

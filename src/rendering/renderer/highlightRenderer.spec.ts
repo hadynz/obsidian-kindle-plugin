@@ -15,6 +15,11 @@ describe('HighlightRenderer', () => {
       const renderer = new HighlightRenderer('');
       expect(renderer.validate('{{note')).toBe(false);
     });
+
+    it.each([null, undefined])('should return true for %s template', (template) => {
+      const renderer = new HighlightRenderer('');
+      expect(renderer.validate(template)).toBe(true);
+    });
   });
 
   describe('render', () => {
