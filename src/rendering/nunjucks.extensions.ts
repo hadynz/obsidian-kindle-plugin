@@ -10,7 +10,7 @@ import { sb } from '~/utils';
 import { HighlightIdBlockRefPrefix } from './renderer';
 
 type SubClass = {
-  children: SubClassValue[];
+  children?: SubClassValue[];
   colno: number;
   lineno: number;
 };
@@ -56,8 +56,20 @@ function TrimAllEmptyLinesExtension(): void {
   };
 }
 
+/**
+ * Recursively iterates through AST of a user template and find the value
+ * of every node. This is made complex by the fact that some AST nodes
+ * do not have values (e.g. if statement, nested blocks)
+ * @param subclass
+ * @returns
+ */
 const getRecursiveValue = (subclass: SubClass): string => {
-  const firstChild = subclass.children[0];
+  const firstChild = subclass.children?.[0];
+
+  if (firstChild == null) {
+    return null;
+  }
+
   return firstChild.args == null ? firstChild.value : getRecursiveValue(firstChild.args);
 };
 
@@ -81,9 +93,10 @@ function BlockReferenceExtension(): void {
     const body: ParsedSignature = parser.parseUntilBlocks('blockref', 'endblockref');
     parser.advanceAfterBlockEnd();
 
-    // Find line number of argument 1 variable in template
+    // Parse the name of the "needle" or template variable name that we will search for (e.g. "text" in `{% blockref "text", "id" %}`)
     const needle = args.children[0].value;
 
+    // Find line number of where our needle is located in template
     const needleSubclass = body.children.find((c) => getRecursiveValue(c) === needle);
 
     this.lineNumber = needleSubclass?.lineno;

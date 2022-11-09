@@ -116,5 +116,21 @@ describe('HighlightRenderer', () => {
         new RegExp('^highlighted text \\^ref-.*\\n\\n110$')
       );
     });
+
+    it('Highlight template starting with if statement renders as expected', () => {
+      const template = `{% if note %}{{note}}{% endif %}
+{{ text }}`;
+
+      const highlight: Highlight = {
+        id: faker.datatype.uuid(),
+        text: 'highlighted text',
+      };
+
+      const renderer = new HighlightRenderer(template);
+
+      expect(renderer.render(highlight, book)).toMatch(
+        new RegExp(/highlighted text \^ref-.*/)
+      );
+    });
   });
 });
