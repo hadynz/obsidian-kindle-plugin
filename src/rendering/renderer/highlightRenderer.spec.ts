@@ -1,6 +1,6 @@
 import faker from 'faker';
 
-import type { Book, Highlight } from '~/models';
+import type { Book, RenderedHighlight } from '~/models';
 
 import HighlightRenderer from './highlightRenderer';
 
@@ -29,14 +29,36 @@ describe('HighlightRenderer', () => {
       author: faker.name.findName(),
     };
 
-    describe('highlight template variables', () => {
-      const highlight: Highlight = {
+    describe('Heading highlights are correctly rendered', () => {
+      it.each([
+        ['heading1', '## My Title'],
+        ['heading2', '### My Title'],
+        ['heading3', '#### My Title'],
+        ['heading4', '##### My Title'],
+      ])(
+        'Highlight type "%s" renders correctly as "%s"',
+        (type: RenderedHighlight['type'], expected: string) => {
+          const highlight: RenderedHighlight = {
+            id: faker.datatype.uuid(),
+            text: 'My Title',
+            type,
+          };
+
+          const renderer = new HighlightRenderer(undefined);
+          expect(renderer.render(highlight, book)).toBe(`${expected}\n`);
+        }
+      );
+    });
+
+    describe('Clipping highlights are correctly rendered', () => {
+      const highlight: RenderedHighlight = {
         id: '123',
         text: 'highlighted text',
         location: '110',
         page: '3',
         note: 'my smart note',
         color: 'pink',
+        type: 'clipping',
       };
 
       it.each([
@@ -63,10 +85,11 @@ describe('HighlightRenderer', () => {
       ])(
         'createdDate template variable is set when highlight creation date is set',
         (createdDate: Date, template: string, expected: string) => {
-          const highlight: Highlight = {
+          const highlight: RenderedHighlight = {
             id: faker.datatype.uuid(),
             text: faker.lorem.sentence(),
             createdDate,
+            type: 'clipping',
           };
 
           const renderer = new HighlightRenderer(template);
@@ -77,9 +100,10 @@ describe('HighlightRenderer', () => {
 
     it('appLink template variable is set when a book has an ASIN value', () => {
       const myBook: Book = { ...book, asin: 'A1234' };
-      const highlight: Highlight = {
+      const highlight: RenderedHighlight = {
         id: faker.datatype.uuid(),
         text: 'highlighted text',
+        type: 'clipping',
       };
 
       const renderer = new HighlightRenderer('{{text}} - {{appLink}}');
@@ -89,9 +113,10 @@ describe('HighlightRenderer', () => {
     });
 
     it('appLink template variable is undefined when a book is missing an ASIN value', () => {
-      const highlight: Highlight = {
+      const highlight: RenderedHighlight = {
         id: faker.datatype.uuid(),
         text: 'highlighted text',
+        type: 'clipping',
       };
 
       const renderer = new HighlightRenderer('{{text}} - {{appLink}}');
@@ -104,10 +129,11 @@ describe('HighlightRenderer', () => {
 
     it('Only leading and trailing lines in a template are always trimmed', () => {
       const templateWithTrailingLines = '\n\n{{text}}\n\n{{location}}\n\n';
-      const highlight: Highlight = {
+      const highlight: RenderedHighlight = {
         id: faker.datatype.uuid(),
         text: 'highlighted text',
         location: '110',
+        type: 'clipping',
       };
 
       const renderer = new HighlightRenderer(templateWithTrailingLines);
@@ -121,9 +147,10 @@ describe('HighlightRenderer', () => {
       const template = `{% if note %}{{note}}{% endif %}
 {{ text }}`;
 
-      const highlight: Highlight = {
+      const highlight: RenderedHighlight = {
         id: faker.datatype.uuid(),
         text: 'highlighted text',
+        type: 'clipping',
       };
 
       const renderer = new HighlightRenderer(template);

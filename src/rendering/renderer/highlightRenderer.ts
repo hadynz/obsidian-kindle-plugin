@@ -1,8 +1,9 @@
 import { Environment } from 'nunjucks';
 import dateFilter from 'nunjucks-date-filter';
 
-import type { Book, Highlight } from '~/models';
-import highlightTemplateWrapper from '~/rendering//templates/highlightTemplateWrapper.njk';
+import type { Book, RenderedHighlight } from '~/models';
+import headingTemplate from '~/rendering/templates/headingTemplate.njk';
+import highlightTemplateWrapper from '~/rendering/templates/highlightTemplateWrapper.njk';
 
 import { BlockReferenceExtension } from '../nunjucks.extensions';
 
@@ -16,7 +17,7 @@ dateFilter.setDefaultFormat('DD-MM-YYYY');
 export default class HighlightRenderer {
   private nunjucks: Environment;
 
-  constructor(private template: string) {
+  constructor(private clippingTemplate: string) {
     this.nunjucks = new Environment(null, { autoescape: false });
     this.nunjucks.addExtension('BlockRef', new BlockReferenceExtension());
     this.nunjucks.addFilter('date', dateFilter);
@@ -31,10 +32,30 @@ export default class HighlightRenderer {
     }
   }
 
-  public render(highlight: Highlight, book: Book): string {
+  public render(highlight: RenderedHighlight, book: Book): string {
+    if (highlight.type === 'clipping') {
+      return this.renderClipping(highlight, book);
+    }
+
+    return this.renderHeading(highlight);
+  }
+
+  private renderHeading(highlight: RenderedHighlight): string {
+    const headingDepth = +highlight.type.replace('heading', '');
+    return this.nunjucks.renderString(headingTemplate, {
+      text: highlight.text,
+      hashes: '#'.repeat(headingDepth + 1),
+    });
+  }
+
+  private renderClipping(highlight: RenderedHighlight, book: Book): string {
     const templateVariables = highlightTemplateVariables(highlight, book);
 
-    const highlightTemplate = highlightTemplateWrapper.replace('{{ content }}', this.template);
+    // Use a special template wrapper with functionality to insert `ref-` block at right place
+    const highlightTemplate = highlightTemplateWrapper.replace(
+      '{{ content }}',
+      this.clippingTemplate
+    );
 
     const renderedHighlight = this.nunjucks.renderString(highlightTemplate, templateVariables);
 

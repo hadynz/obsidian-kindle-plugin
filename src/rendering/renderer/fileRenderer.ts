@@ -1,6 +1,6 @@
 import { Environment } from 'nunjucks';
 
-import type { BookHighlight } from '~/models';
+import type { BookHighlight, RenderedHighlight } from '~/models';
 
 import { TrimAllEmptyLinesExtension } from '../nunjucks.extensions';
 
@@ -31,6 +31,7 @@ export default class FileRenderer {
     const { book, highlights } = entry;
 
     const renderedHighlights = highlights
+      .map((h) => ({ ...h, type: 'clipping' } as RenderedHighlight))
       .map((h) => this.highlightRenderer.render(h, book))
       .join('\n');
 
