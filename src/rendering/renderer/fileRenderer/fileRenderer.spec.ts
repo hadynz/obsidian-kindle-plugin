@@ -1,8 +1,8 @@
 import faker from 'faker';
 
-import type { BookHighlight, Highlight, RenderedHighlight } from '~/models';
+import type { BookHighlight } from '~/models';
 
-import FileRenderer, { mapToRenderedHighlights } from './fileRenderer';
+import FileRenderer from './';
 
 describe('FileRenderer', () => {
   describe('validate', () => {
@@ -34,7 +34,18 @@ describe('FileRenderer', () => {
         highlights: [
           {
             id: faker.random.alphaNumeric(4),
-            text: 'highlighted text',
+            text: 'first highlighted text',
+            note: '.c1',
+          },
+          {
+            id: faker.random.alphaNumeric(4),
+            text: 'second highlighted text',
+            note: '.c2',
+          },
+          {
+            id: faker.random.alphaNumeric(4),
+            text: 'Chapter heading',
+            note: '.h1',
           },
         ],
       };
@@ -52,7 +63,7 @@ describe('FileRenderer', () => {
         ['{{publicationDate}}', bookHighlight.metadata.publicationDate],
         ['{{publisher}}', bookHighlight.metadata.publisher],
         ['{{authorUrl}}', bookHighlight.metadata.authorUrl],
-        ['{{highlightsCount}}', '1'],
+        ['{{highlightsCount}}', '2'],
       ])('template variable "%s" evaluated as "%s"', (template, expected) => {
         const renderer = new FileRenderer(template, '');
         expect(renderer.render(bookHighlight)).toBe(expected);
@@ -191,7 +202,7 @@ describe('FileRenderer', () => {
         },
         highlights: [
           {
-            id: faker.datatype.uuid(),
+            id: '01',
             text: 'An initial highlight',
           },
           {
@@ -200,12 +211,12 @@ describe('FileRenderer', () => {
             note: '.h1',
           },
           {
-            id: faker.datatype.uuid(),
+            id: '02',
             text: 'A long highlight',
             note: '.c1',
           },
           {
-            id: faker.datatype.uuid(),
+            id: '03',
             text: 'Followed by some context',
             note: '.c2',
           },
@@ -240,133 +251,24 @@ describe('FileRenderer', () => {
 ## Metadata
 - Author:: ${bookHighlight.book.author}
 - Publisher:: ${bookHighlight.metadata.publisher}
-- Highlights count:: 2
+- Highlights count:: 5
 
 ## Highlights
-- highlighted text ^ref-H1
-- another piece of text ^ref-H2
+- An initial highlight ^ref-01
+
+### My first chapter
+
+- A long highlight... followed by some context ^ref-03
+
+#### My nested chapter
+
+
+### My second chapter
+
 `;
 
       const renderer = new FileRenderer(fileTemplate, '- {{text}}');
       expect(renderer.render(bookHighlight)).toBe(renderedContent);
-    });
-  });
-
-  describe('mapToRenderedHighlights', () => {
-    it.each([
-      ['.h1', 'heading1'],
-      ['.h2', 'heading2'],
-      ['.h3', 'heading3'],
-      ['.h4', 'heading4'],
-    ])(
-      'A clipping with note "%s" is mapped to a highlight type "%s"',
-      (note: string, highlightType: RenderedHighlight['type']) => {
-        const renderedHighlights = mapToRenderedHighlights([
-          {
-            id: faker.random.alphaNumeric(4),
-            text: faker.lorem.paragraph(),
-            note,
-          },
-        ]);
-
-        expect(renderedHighlights[0].type).toBe(highlightType);
-      }
-    );
-
-    it('Simple note concatenation', () => {
-      const clippings: Highlight[] = [
-        {
-          id: faker.random.alphaNumeric(4),
-          text: 'First sentence.',
-          note: '.c1',
-        },
-        {
-          id: faker.random.alphaNumeric(4),
-          text: 'Second sentence',
-          note: '.c2',
-        },
-      ];
-
-      const renderedHighlights = mapToRenderedHighlights(clippings);
-
-      expect(renderedHighlights).toHaveLength(1);
-      expect(renderedHighlights[0].text).toBe('First sentence... second sentence');
-      expect(renderedHighlights[0].type).toBe('clipping');
-      expect(renderedHighlights[0].note).toBeNull();
-    });
-
-    it('Multiple note concatenations', () => {
-      const clippings: Highlight[] = [
-        {
-          id: faker.random.alphaNumeric(4),
-          text: 'A normal note',
-          note: 'My note',
-        },
-        {
-          id: faker.random.alphaNumeric(4),
-          text: 'Lone concat sentence.',
-          note: '.c1',
-        },
-        {
-          id: faker.random.alphaNumeric(4),
-          text: 'First sentence',
-          note: '.c1',
-        },
-        {
-          id: faker.random.alphaNumeric(4),
-          text: 'Second sentence.',
-          note: '.c2',
-        },
-      ];
-
-      const renderedHighlights = mapToRenderedHighlights(clippings);
-
-      expect(renderedHighlights).toHaveLength(3);
-      expect(renderedHighlights[0].text).toBe('A normal note');
-      expect(renderedHighlights[1].text).toBe('Lone concat sentence.');
-      expect(renderedHighlights[2].text).toBe('First sentence... second sentence');
-    });
-
-    it('Multiple note concatenations - discontinued numbering', () => {
-      const clippings: Highlight[] = [
-        {
-          id: faker.random.alphaNumeric(4),
-          text: 'A normal note',
-        },
-        {
-          id: faker.random.alphaNumeric(4),
-          text: 'Lone concat sentence.',
-          note: '.c1',
-        },
-        {
-          id: faker.random.alphaNumeric(4),
-          text: 'First sentence',
-          note: '.c0',
-        },
-        {
-          id: faker.random.alphaNumeric(4),
-          text: 'Second sentence.',
-          note: '.c3',
-        },
-        {
-          id: faker.random.alphaNumeric(4),
-          text: 'Discontinued sentence',
-          note: '.c2',
-        },
-        {
-          id: faker.random.alphaNumeric(4),
-          text: 'Another normal note',
-        },
-      ];
-
-      const renderedHighlights = mapToRenderedHighlights(clippings);
-
-      expect(renderedHighlights).toHaveLength(5);
-      expect(renderedHighlights[0].text).toBe('A normal note');
-      expect(renderedHighlights[1].text).toBe('Lone concat sentence.');
-      expect(renderedHighlights[2].text).toBe('First sentence... second sentence');
-      expect(renderedHighlights[3].text).toBe('Discontinued sentence');
-      expect(renderedHighlights[4].text).toBe('Another normal note');
     });
   });
 });

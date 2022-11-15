@@ -1,7 +1,7 @@
 import { Environment } from 'nunjucks';
 import dateFilter from 'nunjucks-date-filter';
 
-import type { Book, RenderedHighlight } from '~/models';
+import type { Book, PreRenderedHighlight } from '~/models';
 import headingTemplate from '~/rendering/templates/headingTemplate.njk';
 import highlightTemplateWrapper from '~/rendering/templates/highlightTemplateWrapper.njk';
 
@@ -32,7 +32,7 @@ export default class HighlightRenderer {
     }
   }
 
-  public render(highlight: RenderedHighlight, book: Book): string {
+  public render(highlight: PreRenderedHighlight, book: Book): string {
     if (highlight.type === 'clipping') {
       return this.renderClipping(highlight, book);
     }
@@ -40,7 +40,7 @@ export default class HighlightRenderer {
     return this.renderHeading(highlight);
   }
 
-  private renderHeading(highlight: RenderedHighlight): string {
+  private renderHeading(highlight: PreRenderedHighlight): string {
     const headingDepth = +highlight.type.replace('heading', '');
     return this.nunjucks.renderString(headingTemplate, {
       text: highlight.text,
@@ -48,7 +48,7 @@ export default class HighlightRenderer {
     });
   }
 
-  private renderClipping(highlight: RenderedHighlight, book: Book): string {
+  private renderClipping(highlight: PreRenderedHighlight, book: Book): string {
     const templateVariables = highlightTemplateVariables(highlight, book);
 
     // Use a special template wrapper with functionality to insert `ref-` block at right place

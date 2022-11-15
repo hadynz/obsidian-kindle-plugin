@@ -20,7 +20,7 @@ export type Highlight = {
   createdDate?: Date;
 };
 
-export type RenderedHighlight = Highlight & {
+export type PreRenderedHighlight = Highlight & {
   type: 'clipping' | 'heading1' | 'heading2' | 'heading3' | 'heading4';
 };
 

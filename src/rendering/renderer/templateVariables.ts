@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import type { Book, BookHighlight, Highlight } from '~/models';
+import type { Book, BookMetadata, Highlight, PreRenderedHighlight } from '~/models';
 import { parseAuthors, shortenTitle } from '~/utils';
 
 import { generateAppLink } from './utils';
@@ -95,11 +95,11 @@ export const highlightTemplateVariables = (
 };
 
 export const fileTemplateVariables = (
-  entry: BookHighlight,
+  book: Book,
+  metadata: BookMetadata,
+  preRenderHighlights: PreRenderedHighlight[],
   renderedHighlights: string
 ): FileTemplateVariables => {
-  const { book, highlights, metadata } = entry;
-
   return {
     ...commonTemplateVariables(book),
     asin: book.asin,
@@ -114,7 +114,7 @@ export const fileTemplateVariables = (
     publicationDate: metadata?.publicationDate,
     publisher: metadata?.publisher,
     authorUrl: metadata?.authorUrl,
-    highlightsCount: highlights.length,
+    highlightsCount: preRenderHighlights.length,
     highlights: renderedHighlights,
   };
 };
