@@ -21,7 +21,7 @@ export type Highlight = {
 };
 
 export type RenderedHighlight = Highlight & {
-  type: 'clipping' | 'heading1' | 'heading2 ' | 'heading3' | 'heading4';
+  type: 'clipping' | 'heading1' | 'heading2' | 'heading3' | 'heading4';
 };
 
 export type BookHighlight = {

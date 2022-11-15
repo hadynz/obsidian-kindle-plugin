@@ -31,10 +31,10 @@ describe('HighlightRenderer', () => {
 
     describe('Heading highlights are correctly rendered', () => {
       it.each([
-        ['heading1', '## My Title'],
-        ['heading2', '### My Title'],
-        ['heading3', '#### My Title'],
-        ['heading4', '##### My Title'],
+        ['heading1', '### My Title'],
+        ['heading2', '#### My Title'],
+        ['heading3', '##### My Title'],
+        ['heading4', '###### My Title'],
       ])(
         'Highlight type "%s" renders correctly as "%s"',
         (type: RenderedHighlight['type'], expected: string) => {

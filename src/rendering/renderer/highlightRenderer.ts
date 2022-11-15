@@ -44,7 +44,7 @@ export default class HighlightRenderer {
     const headingDepth = +highlight.type.replace('heading', '');
     return this.nunjucks.renderString(headingTemplate, {
       text: highlight.text,
-      hashes: '#'.repeat(headingDepth + 1),
+      hashes: '#'.repeat(headingDepth + 2),
     });
   }
 
