@@ -48,7 +48,7 @@ describe('FileRenderer', () => {
       expect(renderedHighlights[0].note).toBeNull();
     });
 
-    it('Multiple note concatenations', () => {
+    it('Multiple note concatenations. All user notes are preserved', () => {
       const clippings: Highlight[] = [
         {
           id: faker.random.alphaNumeric(4),
@@ -68,7 +68,7 @@ describe('FileRenderer', () => {
         {
           id: faker.random.alphaNumeric(4),
           text: 'Second sentence.',
-          note: '.c2 Note B',
+          note: '.c2 Note B\n\n',
         },
       ];
 
