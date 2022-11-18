@@ -53,22 +53,22 @@ describe('FileRenderer', () => {
         {
           id: faker.random.alphaNumeric(4),
           text: 'A normal note',
-          note: 'My note',
+          note: ' My note   ',
         },
         {
           id: faker.random.alphaNumeric(4),
           text: 'Lone concat sentence.',
-          note: '.c1',
+          note: '  .c1',
         },
         {
           id: faker.random.alphaNumeric(4),
           text: 'First sentence',
-          note: '.c1',
+          note: '  .c1\n\nNote A',
         },
         {
           id: faker.random.alphaNumeric(4),
           text: 'Second sentence.',
-          note: '.c2',
+          note: '.c2 Note B',
         },
       ];
 
@@ -76,8 +76,11 @@ describe('FileRenderer', () => {
 
       expect(renderedHighlights).toHaveLength(3);
       expect(renderedHighlights[0].text).toBe('A normal note');
+      expect(renderedHighlights[0].note).toBe('My note');
       expect(renderedHighlights[1].text).toBe('Lone concat sentence.');
+      expect(renderedHighlights[1].note).toBeNull();
       expect(renderedHighlights[2].text).toBe('First sentence... second sentence');
+      expect(renderedHighlights[2].note).toBe('Note A\n\nNote B');
     });
 
     it('Multiple note concatenations - discontinued numbering', () => {

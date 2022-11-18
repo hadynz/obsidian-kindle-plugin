@@ -17,24 +17,56 @@ const clippingType = (note: string): PreRenderedHighlight['type'] => {
   }
 };
 
-const concatenate = (highlights: Highlight[]): Highlight[] => {
-  if (highlights.length < 2) {
-    return highlights;
+const mergeClippings = (highlights: Highlight[]): Highlight[] => {
+  if (highlights.length === 0) {
+    return [];
   }
 
   const text = highlights
-    .map((highlight) => highlight.text.replace(/\.$/, ''))
+    .map((highlight) => {
+      return highlights.length > 1 ? highlight.text.replace(/\.$/, '') : highlight.text;
+    })
     .map((text, index) => {
       return index > 0 ? _.lowerFirst(text) : text;
     })
     .join('... ');
 
-  return [{ ...highlights[highlights.length - 1], text, note: null }];
+  const note = highlights
+    .map((highlight) => {
+      const data = noteConcatCount(highlight);
+      return data == null ? highlight.note : data.text;
+    })
+    .filter((h) => h != null)
+    .join('\n\n')
+    .trim();
+
+  return [{ ...highlights[highlights.length - 1], text, note: note === '' ? null : note }];
 };
 
-const noteConcatCount = (highlight: Highlight | null): number => {
-  const matches = /.c(.*)/.exec(highlight?.note);
-  return matches ? +matches[1] : null;
+type ConcatenatedNote = {
+  index: number;
+  text: string;
+};
+
+const noteConcatCount = (highlight: Highlight | null): ConcatenatedNote => {
+  const matches = /^\s*\.c(\d+)\s*(.*?)\s*$/.exec(highlight?.note?.trim());
+
+  if (matches) {
+    return {
+      index: +matches[1],
+      text: matches[2],
+    };
+  }
+
+  return null;
+};
+
+const mapToPreRenderedHighlights = (highlight: Highlight): PreRenderedHighlight => {
+  return {
+    ...highlight,
+    type: clippingType(highlight.note),
+    note: highlight.note != null ? highlight.note.trim() : null,
+  };
 };
 
 export const preRenderHighlights = (entry: Highlight[]): PreRenderedHighlight[] => {
@@ -47,17 +79,20 @@ export const preRenderHighlights = (entry: Highlight[]): PreRenderedHighlight[] 
 
       // Current highlight doesn't have a special concat notation in note
       if (currentConcatCount == null) {
-        accum = accum.concat(concatenate(clippingsCache)); // Flush anything in cache
+        accum = accum.concat(mergeClippings(clippingsCache)); // Flush anything in cache
         clippingsCache = []; // Reset cache
 
         accum.push(currentHighlight); // Add current highlight
       }
 
       // Current highlight is an increment over previous; add to cache
-      if (currentConcatCount > previousConcatCount) {
+      if (
+        currentConcatCount?.index > previousConcatCount?.index ||
+        (currentConcatCount != null && previousConcatCount == null)
+      ) {
         clippingsCache.push(currentHighlight);
       } else if (clippingsCache.length > 0) {
-        accum = accum.concat(concatenate(clippingsCache)); // Flush anything in cache
+        accum = accum.concat(mergeClippings(clippingsCache)); // Flush anything in cache
         clippingsCache = []; // Reset cache
 
         clippingsCache.push(currentHighlight);
@@ -65,7 +100,7 @@ export const preRenderHighlights = (entry: Highlight[]): PreRenderedHighlight[] 
 
       // No more clippings? Then flush!
       if (index === entry.length - 1) {
-        accum = accum.concat(concatenate(clippingsCache)); // Flush anything in cache
+        accum = accum.concat(mergeClippings(clippingsCache)); // Flush anything in cache
         clippingsCache = []; // Reset cache
       }
 
@@ -74,6 +109,5 @@ export const preRenderHighlights = (entry: Highlight[]): PreRenderedHighlight[] 
     [] as Highlight[]
   );
 
-  // TODO: Modify all `text` and add `ref-` as suffix
-  return concatenatedClips.map((e) => ({ ...e, type: clippingType(e.note) }));
+  return concatenatedClips.map(mapToPreRenderedHighlights);
 };
