@@ -33,22 +33,28 @@ export const diffLists = (
   /**
    * Array of remote highlights that have not been rendered
    */
-  const diff = _.differenceWith(remotes, renders, (a, b) => a.id === b.highlightId);
+  const newRemotes = _.differenceWith(remotes, renders, (a, b) => a.id === b.highlightId);
 
   /**
    * Map every remote highlight id to where it exists (in render)
    * Use an ES6 Map to ensure key orders are preserved
    */
-  const syncState = new Map<string, DiffIndex>();
-  remotes.forEach((r) => syncState.set(r.id, { highlight: r, exists: !diff.contains(r) }));
+  const remotesSyncStatusLookup = new Map<string, DiffIndex>();
 
-  return diff.map((remote): DiffResult => {
-    const next = getNextNeighbour(syncState, remote.id);
-    const nextRendered = renders.find((r) => r.highlightId === next?.id);
+  remotes.forEach((highlight) =>
+    remotesSyncStatusLookup.set(highlight.id, {
+      highlight,
+      exists: _.find(newRemotes, (r) => r.id === highlight.id) == null, // Existing highlights won't be in the newRemotes object
+    })
+  );
+
+  return newRemotes.map((remote): DiffResult => {
+    const next = getNextNeighbour(remotesSyncStatusLookup, remote.id);
+    const nextRendered = renders.find((r) => r.highlightId === next?.id) || null;
 
     return {
       remoteHighlight: remote,
-      nextRenderedHighlight: nextRendered,
+      successorSibling: nextRendered,
     };
   });
 };
