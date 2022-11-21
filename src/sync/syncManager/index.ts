@@ -6,7 +6,7 @@ import { getRenderers } from '~/rendering';
 import { scrapeBookMetadata } from '~/scraper';
 import { settingsStore } from '~/store';
 
-import type { DiffResult } from '../diffManager';
+import type { DiffLocation } from '../diffManager';
 import { DiffManager } from '../diffManager';
 
 import { diffBooks } from './diffBooks';
@@ -45,7 +45,7 @@ export default class SyncManager {
     file: KindleFile,
     remoteBook: Book,
     remoteHighlights: Highlight[]
-  ): Promise<DiffResult[]> {
+  ): Promise<DiffLocation[]> {
     const diffManager = await DiffManager.create(this.fileManager, file);
 
     const diffs = diffManager.diff(remoteHighlights);

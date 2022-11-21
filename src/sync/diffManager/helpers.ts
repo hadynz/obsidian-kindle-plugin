@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import type { Highlight } from '~/models';
 
-import type { DiffResult, RenderedHighlight } from './';
+import type { DiffLocation, RenderedHighlight } from './';
 
 type DiffIndex = {
   highlight: Highlight;
@@ -29,7 +29,7 @@ const getNextNeighbour = (state: Map<string, DiffIndex>, needle: string): Highli
 export const diffLists = (
   remotes: Highlight[],
   renders: RenderedHighlight[]
-): DiffResult[] => {
+): DiffLocation[] => {
   /**
    * Array of remote highlights that have not been rendered
    */
@@ -48,12 +48,12 @@ export const diffLists = (
     })
   );
 
-  return newRemotes.map((remote): DiffResult => {
-    const next = getNextNeighbour(remotesSyncStatusLookup, remote.id);
+  return newRemotes.map((highlight): DiffLocation => {
+    const next = getNextNeighbour(remotesSyncStatusLookup, highlight.id);
     const nextRendered = renders.find((r) => r.highlightId === next?.id) || null;
 
     return {
-      remoteHighlight: remote,
+      highlight,
       successorSibling: nextRendered,
     };
   });

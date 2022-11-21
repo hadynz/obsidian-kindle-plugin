@@ -21,7 +21,7 @@ describe('diffLists', () => {
 
     const results = diffLists(remotes, []);
     expect(results).toHaveLength(1);
-    expect(results[0].remoteHighlight).toEqual(remotes[0]);
+    expect(results[0].highlight).toEqual(remotes[0]);
     expect(results[0].successorSibling).toBeNull();
   });
 
@@ -88,16 +88,16 @@ describe('diffLists', () => {
     const results = diffLists(remotes, renders);
     expect(results).toHaveLength(4);
 
-    expect(results[0].remoteHighlight.id).toEqual('A');
+    expect(results[0].highlight.id).toEqual('A');
     expect(results[0].successorSibling.highlightId).toEqual('B');
 
-    expect(results[1].remoteHighlight.id).toEqual('C');
+    expect(results[1].highlight.id).toEqual('C');
     expect(results[1].successorSibling.highlightId).toEqual('E');
 
-    expect(results[2].remoteHighlight.id).toEqual('D');
+    expect(results[2].highlight.id).toEqual('D');
     expect(results[2].successorSibling.highlightId).toEqual('E');
 
-    expect(results[3].remoteHighlight.id).toEqual('F');
+    expect(results[3].highlight.id).toEqual('F');
     expect(results[3].successorSibling).toBeNull();
   });
 });
