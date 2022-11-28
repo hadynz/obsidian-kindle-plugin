@@ -61,7 +61,7 @@ const noteConcatCount = (highlight: Highlight | null): ConcatenatedNote => {
   return null;
 };
 
-const mapToPreRenderedHighlights = (highlight: Highlight): PreRenderedHighlight => {
+export const mapToPreRenderedHighlights = (highlight: Highlight): PreRenderedHighlight => {
   return {
     ...highlight,
     type: clippingType(highlight.note),

@@ -1,18 +1,20 @@
 import moment from 'moment';
 import path from 'path';
-import { get } from 'svelte/store';
 
 import type { Book, KindleFrontmatter } from '~/models';
-import { getRenderers } from '~/rendering';
-import { settingsStore } from '~/store';
+import type { FileNameRenderer } from '~/rendering/renderer';
 
 /**
  * Returns a file path for a given book relative to the current Obsidian
  * vault directory.
  */
-export const bookFilePath = (book: Book): string => {
-  const fileName = getRenderers().fileNameRenderer.render(book);
-  return path.join(get(settingsStore).highlightsFolder, fileName);
+export const bookFilePath = (
+  fileNameRenderer: FileNameRenderer,
+  highlightsFolder: string,
+  book: Book
+): string => {
+  const fileName = fileNameRenderer.render(book);
+  return path.join(highlightsFolder, fileName);
 };
 
 export const bookToFrontMatter = (book: Book, highlightsCount: number): KindleFrontmatter => {

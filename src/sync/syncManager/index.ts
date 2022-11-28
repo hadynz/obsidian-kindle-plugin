@@ -2,7 +2,7 @@ import { get } from 'svelte/store';
 
 import type FileManager from '~/fileManager';
 import type { Book, BookMetadata, Highlight, KindleFile } from '~/models';
-import { getRenderers } from '~/rendering';
+import type { FileRenderer, HighlightRenderer } from '~/rendering/renderer';
 import { scrapeBookMetadata } from '~/scraper';
 import { settingsStore } from '~/store';
 
@@ -12,9 +12,11 @@ import { DiffManager } from '../diffManager';
 import { diffBooks } from './diffBooks';
 
 export default class SyncManager {
-  constructor(private fileManager: FileManager) {
-    this.fileManager = fileManager;
-  }
+  constructor(
+    private fileManager: FileManager,
+    private fileRenderer: FileRenderer,
+    private highlightRenderer: HighlightRenderer
+  ) {}
 
   public filterBooksToSync(remoteBooks: Book[]): Book[] {
     const lastSyncDate = get(settingsStore).lastSyncDate;
@@ -46,7 +48,11 @@ export default class SyncManager {
     remoteBook: Book,
     remoteHighlights: Highlight[]
   ): Promise<DiffLocation[]> {
-    const diffManager = await DiffManager.create(this.fileManager, file);
+    const diffManager = await DiffManager.create(
+      this.highlightRenderer,
+      this.fileManager,
+      file
+    );
 
     const diffs = diffManager.diff(remoteHighlights);
 
@@ -60,7 +66,7 @@ export default class SyncManager {
   private async createBook(book: Book, highlights: Highlight[]): Promise<void> {
     const metadata = await this.syncMetadata(book);
 
-    const content = getRenderers().fileRenderer.render({ book, highlights, metadata });
+    const content = this.fileRenderer.render({ book, highlights, metadata });
 
     await this.fileManager.createFile(book, content, highlights.length);
   }

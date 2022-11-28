@@ -10,4 +10,5 @@ module.exports = {
   testRegex: '(/(tests|src)/.*.(test|spec))\\.(ts|js)x?$',
   coverageDirectory: 'coverage',
   collectCoverageFrom: ['src/**/*.test.{ts,tsx,js,jsx}', '!src/**/*.d.ts'],
+  setupFiles: ['./jest.setupMocks.js'],
 };

@@ -2,6 +2,7 @@ import { writable } from 'svelte/store';
 
 import type KindlePlugin from '~/.';
 import { ee } from '~/eventEmitter';
+import globalConfig from '~/globalConfig';
 import type { AmazonAccountRegion, SyncMode } from '~/models';
 
 type Settings = {
@@ -22,9 +23,9 @@ type Settings = {
 };
 
 const DEFAULT_SETTINGS: Settings = {
-  amazonRegion: 'global',
-  highlightsFolder: '/',
-  lastSyncMode: 'amazon',
+  amazonRegion: globalConfig.amazonRegion,
+  highlightsFolder: globalConfig.highlightsFolder,
+  lastSyncMode: globalConfig.lastSyncMode,
   isLoggedIn: false,
   syncOnBoot: false,
   downloadBookMetadata: true,

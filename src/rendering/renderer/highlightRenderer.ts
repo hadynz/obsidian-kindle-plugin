@@ -1,9 +1,8 @@
 import { Environment } from 'nunjucks';
 import dateFilter from 'nunjucks-date-filter';
 
+import globalConfig from '~/globalConfig';
 import type { Book, PreRenderedHighlight } from '~/models';
-import headingTemplate from '~/rendering/templates/headingTemplate.njk';
-import highlightTemplateWrapper from '~/rendering/templates/highlightTemplateWrapper.njk';
 
 import { BlockReferenceExtension } from '../nunjucks.extensions';
 
@@ -42,7 +41,7 @@ export default class HighlightRenderer {
 
   private renderHeading(highlight: PreRenderedHighlight): string {
     const headingDepth = +highlight.type.replace('heading', '');
-    return this.nunjucks.renderString(headingTemplate, {
+    return this.nunjucks.renderString(globalConfig.defaultTemplates.header, {
       text: highlight.text,
       hashes: '#'.repeat(headingDepth + 2),
     });
@@ -52,7 +51,7 @@ export default class HighlightRenderer {
     const templateVariables = highlightTemplateVariables(highlight, book);
 
     // Use a special template wrapper with functionality to insert `ref-` block at right place
-    const highlightTemplate = highlightTemplateWrapper.replace(
+    const highlightTemplate = globalConfig.defaultTemplates.highlightWrapper.replace(
       '{{ content }}',
       this.clippingTemplate
     );

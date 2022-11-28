@@ -1,12 +1,8 @@
 import { derived, get, Readable, readable, Writable, writable } from 'svelte/store';
 
+import globalConfig from '~/globalConfig';
 import type { BookHighlight } from '~/models';
-import {
-  DefaultFileNameTemplate,
-  DefaultFileTemplate,
-  DefaultHighlightTemplate,
-  getRenderers,
-} from '~/rendering';
+import { getRenderers } from '~/rendering';
 import { FileNameRenderer, FileRenderer } from '~/rendering/renderer';
 import { settingsStore } from '~/store/settingsStore';
 
@@ -48,7 +44,8 @@ export default (): TemplateEditorModalStore => {
   const renderedFileName = derived(
     [selectedBook, fileNameTemplateField],
     ([$selectedBook, $fileNameTemplateField]) => {
-      const fileNameTemplate = $fileNameTemplateField || DefaultFileNameTemplate;
+      const fileNameTemplate =
+        $fileNameTemplateField || globalConfig.defaultTemplates.fileName;
       try {
         const renderer = new FileNameRenderer(fileNameTemplate);
         return renderer.render($selectedBook.book);
@@ -61,8 +58,9 @@ export default (): TemplateEditorModalStore => {
   const renderedFile = derived(
     [selectedBook, fileTemplateField, highlightTemplateField],
     ([$selectedBook, $fileTemplateField, $highlightTemplateField]) => {
-      const fileTemplate = $fileTemplateField || DefaultFileTemplate;
-      const highlightTemplate = $highlightTemplateField || DefaultHighlightTemplate;
+      const fileTemplate = $fileTemplateField || globalConfig.defaultTemplates.file;
+      const highlightTemplate =
+        $highlightTemplateField || globalConfig.defaultTemplates.highlight;
 
       try {
         const renderer = new FileRenderer(fileTemplate, highlightTemplate);

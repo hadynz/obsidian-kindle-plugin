@@ -1,9 +1,5 @@
 <script lang="ts">
-  import {
-    DefaultFileNameTemplate,
-    DefaultFileTemplate,
-    DefaultHighlightTemplate,
-  } from '~/rendering';
+  import globalConfig from '~/globalConfig';
 
   import type { TemplateEditorModalStore } from '../../store';
   import type { TemplateTab } from '../../types';
@@ -32,7 +28,7 @@
         type="text"
         bind:value={$fileNameTemplateField}
         class:error={$fileNameTemplateFieldHasError}
-        placeholder={DefaultFileNameTemplate}
+        placeholder={globalConfig.defaultTemplates.fileName}
         spellcheck="false"
         disabled={$fileNameTemplateField == null}
       />
@@ -40,7 +36,7 @@
     </div>
     <EditControls
       writableStore={fileNameTemplateField}
-      defaultValue={DefaultFileNameTemplate}
+      defaultValue={globalConfig.defaultTemplates.fileName}
       showTipsModal={() => showTips('file-name')}
     />
   </SettingItem>
@@ -52,13 +48,13 @@
     <textarea
       bind:value={$fileTemplateField}
       class:error={$fileTemplateFieldHasError}
-      placeholder={DefaultFileTemplate}
+      placeholder={globalConfig.defaultTemplates.file}
       spellcheck="false"
       disabled={$fileTemplateField == null}
     />
     <EditControls
       writableStore={fileTemplateField}
-      defaultValue={DefaultFileTemplate}
+      defaultValue={globalConfig.defaultTemplates.file}
       showTipsModal={() => showTips('file')}
     />
   </SettingItem>
@@ -67,13 +63,13 @@
     <textarea
       bind:value={$highlightTemplateField}
       class:error={$highlightTemplateFieldHasError}
-      placeholder={DefaultHighlightTemplate}
+      placeholder={globalConfig.defaultTemplates.highlight}
       spellcheck="false"
       disabled={$highlightTemplateField == null}
     />
     <EditControls
       writableStore={highlightTemplateField}
-      defaultValue={DefaultHighlightTemplate}
+      defaultValue={globalConfig.defaultTemplates.highlight}
       showTipsModal={() => showTips('highlight')}
     />
   </SettingItem>

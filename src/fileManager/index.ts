@@ -1,6 +1,9 @@
 import { MetadataCache, normalizePath, TAbstractFile, TFile, TFolder, Vault } from 'obsidian';
+import { get } from 'svelte/store';
 
 import type { Book, KindleFile, KindleFrontmatter } from '~/models';
+import type { FileNameRenderer } from '~/rendering/renderer';
+import { settingsStore } from '~/store';
 import { mergeFrontmatter } from '~/utils';
 
 import { bookFilePath, bookToFrontMatter, frontMatterToBook } from './mappers';
@@ -8,7 +11,11 @@ import { bookFilePath, bookToFrontMatter, frontMatterToBook } from './mappers';
 const SyncingStateKey = 'kindle-sync';
 
 export default class FileManager {
-  constructor(private vault: Vault, private metadataCache: MetadataCache) {}
+  constructor(
+    private vault: Vault,
+    private metadataCache: MetadataCache,
+    private fileNameRenderer: FileNameRenderer
+  ) {}
 
   public async readFile(file: KindleFile): Promise<string> {
     return await this.vault.cachedRead(file.file);
@@ -93,7 +100,11 @@ export default class FileManager {
   }
 
   private generateUniqueFilePath(book: Book): string {
-    const filePath = bookFilePath(book);
+    const filePath = bookFilePath(
+      this.fileNameRenderer,
+      get(settingsStore).highlightsFolder,
+      book
+    );
 
     const isDuplicate = this.vault
       .getMarkdownFiles()
