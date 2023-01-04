@@ -12,8 +12,8 @@ const toBookHighlight = (HTMLContent: string): BookHighlight => {
     
   const root = parse(HTMLString);
 
-  const bookAuthors = root.querySelector(".authors").text;
-  const bookTitle = root.querySelector(".bookTitle").text.replace(`- ${bookAuthors}`, '');
+  const bookAuthors = root.querySelector(".authors").text.toString().trim();
+  const bookTitle = root.querySelector(".bookTitle").text;
   const noteHeadings = root.querySelectorAll(".noteHeading").map(elem => elem.text.trim());
   const noteText = root.querySelectorAll(".noteText").map(elem => elem.text.trim());
 
@@ -58,9 +58,9 @@ const toBookHighlight = (HTMLContent: string): BookHighlight => {
 
   return {
     book: {
-        id: hash(bookTitle.trim()),
-        title: bookTitle.trim(),
-        author: bookAuthors.toString().trim(),
+        id: hash(bookTitle),
+        title: bookTitle,
+        author: bookAuthors,
       },
     highlights: highlights,
   };
