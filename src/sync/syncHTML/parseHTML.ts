@@ -29,10 +29,6 @@ const toBookHighlight = (HTMLContent: string): BookHighlight => {
       const currHeading = noteHeadings[i];
       const currText = noteText[i];
 
-      console.log(currHeading)
-      console.log(currText)
-      console.log('\n')
-
       const highlightType = (/(.*) (\(|\-)/.exec(currHeading))[1].trim(); //Note | Highlight
 
       if (highlightType === 'Note')
@@ -60,7 +56,6 @@ const toBookHighlight = (HTMLContent: string): BookHighlight => {
       }
   }
 
-  console.log(bookAuthors);
   return {
     book: {
         id: hash(bookTitle),

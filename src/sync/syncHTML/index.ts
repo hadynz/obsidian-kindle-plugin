@@ -19,19 +19,14 @@ export default class SyncExportedHTML {
 
       const bookHighlights = parseHTML(HTMLFile);
       
-
       for (const { book, highlights } of bookHighlights) {
-        console.log(book);
-        console.log(highlights);
         await this.syncManager.syncBook(book, highlights);
       }
       
-
       ee.emit('syncSessionSuccess');
     } catch (error) {
       const message = `Error parsing ${HTMLFile}.\n\n${String(error)}`;
       ee.emit('syncSessionFailure', message);
-      console.error(message);
     }
   }
 }
