@@ -58,7 +58,7 @@ const toBookHighlight = (HTMLContent: string): BookHighlight => {
 
   return {
     book: {
-        id: hash(bookTitle),
+        id: hash(bookTitle.trim()),
         title: bookTitle.trim(),
         author: bookAuthors.toString().trim(),
       },
