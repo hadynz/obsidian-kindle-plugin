@@ -6,7 +6,7 @@ type DialogResponse = [file: string, canceled: boolean];
 
 export const openDialog = async (): Promise<DialogResponse> => {
   const result = await dialog.showOpenDialog(remote.getCurrentWindow(), {
-    filters: [{ name: 'HTML file', extensions: ['html', 'htm', 'txt'] }], //todo remove txt
+    filters: [{ name: 'HTML file', extensions: ['html', 'htm'] }], //todo remove txt
     
     properties: ['openFile'],
   });

@@ -33,6 +33,7 @@
     "fletcher": "0.0.3",
     "gray-matter": "^4.0.3",
     "lodash": "^4.17.21",
+    "node-html-parser": "^6.1.4",
     "nunjucks": "^3.2.3",
     "nunjucks-date-filter": "^0.1.1",
     "sanitize-filename": "^1.6.3",

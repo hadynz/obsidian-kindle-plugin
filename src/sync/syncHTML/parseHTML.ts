@@ -1,36 +1,79 @@
-import { Book, groupToBooks, readMyClippingsFile } from '@hadynz/kindle-clippings';
 import fs from 'fs';
+import { parse } from 'node-html-parser';
 
+import { ee } from '~/eventEmitter';
 import type { BookHighlight, Highlight } from '~/models';
 import { hash } from '~/utils';
 
-const toBookHighlight = (book: Book): BookHighlight => {
+
+
+const toBookHighlight = (HTMLContent: string): BookHighlight => {
+  const HTMLString = HTMLContent.toString();
+    
+  const root = parse(HTMLString);
+
+  const bookTitle = root.querySelector(".bookTitle").text;
+  const bookAuthors = root.querySelector(".authors").text;
+  const noteHeadings = root.querySelectorAll(".noteHeading").map(elem => elem.text.trim());
+  const noteText = root.querySelectorAll(".noteText").map(elem => elem.text.trim());
+
+  if (noteHeadings.length !== noteText.length)
+  {
+    ee.emit('syncSessionFailure', 'Invalid HTML file (noteHeadings & noteText not of equal length)');
+  }
+
+  const highlights : Highlight[] = [];
+
+  for (let i = 0; i < noteHeadings.length; i++)
+  {
+      const currHeading = noteHeadings[i];
+      const currText = noteText[i];
+
+      console.log(currHeading)
+      console.log(currText)
+      console.log('\n')
+
+      const highlightType = (/(.*) (\(|\-)/.exec(currHeading))[1].trim(); //Note | Highlight
+
+      if (highlightType === 'Note')
+      {
+          highlights[highlights.length - 1].note = currText;
+      }
+      else // Highlight
+      {
+          //let highlightColor = currHeading.match(/.* \((.*)\)/)[1].trim(); 
+          //maybe useful one day
+          const highlightLocation = ((/.* >  Location (.*)/.exec(currHeading)) !== null) ? (/.* >  Location (.*)/.exec(currHeading))[1].trim() : null //123 todo test if contains
+          const highlightPage = ((/.* >  Page (.*)/.exec(currHeading)) !== null) ? (/.* >  Page (.*)/.exec(currHeading))[1].trim() : null;
+          
+          const highlight : Highlight = 
+          {
+            id: hash(noteText[i]),
+            text: noteText[i],
+            note: null,
+            location: highlightLocation,
+            page: highlightPage || null,
+            createdDate: null,
+          }
+
+          highlights.push(highlight);
+      }
+  }
+
   return {
     book: {
-      id: hash(book.title),
-      title: book.title,
-      author: book.author,
-    },
-    highlights: book.annotations
-      .filter((entry) => entry.type === 'HIGHLIGHT' || entry.type === 'UNKNOWN')
-      .map(
-        (entry): Highlight => ({
-          id: hash(entry.content),
-          text: entry.content,
-          note: entry.note,
-          location: entry.location?.display,
-          page: entry.page?.display,
-          createdDate: entry.createdDate,
-        })
-      ),
+        id: hash(bookTitle),
+        title: bookTitle,
+        author: bookAuthors,
+      },
+    highlights: highlights,
   };
 };
 
 export const parseHTML = (file: string): BookHighlight[] => {
-  const clippingsFileContent = fs.readFileSync(file, 'utf8');
+  const HTMLContent = fs.readFileSync(file, 'utf8');
 
-  const parsedRows = readMyClippingsFile(clippingsFileContent);
-  const books = groupToBooks(parsedRows);
+  const book = toBookHighlight(HTMLContent);
 
-  return books.map(toBookHighlight);
+  return [book];
 };

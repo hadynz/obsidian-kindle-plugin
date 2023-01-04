@@ -37,7 +37,6 @@
     <div class="kp-syncbuttons-text">Upload "My Clippings" file</div>
   </div>
   <div class="kp-syncbuttons--option">
-    <!-- todo new icon -->
     <a
       href="#sync"
       class="kp-syncbuttons--icon"
@@ -73,7 +72,7 @@
     width: 120px;
   }
 
-  .kp-syncbuttons--option:first-child {
+  .kp-syncbuttons--option:nth-last-child(2) {
     margin-right: 20px;
   }
 
