@@ -60,11 +60,12 @@ const toBookHighlight = (HTMLContent: string): BookHighlight => {
       }
   }
 
+  console.log(bookAuthors);
   return {
     book: {
         id: hash(bookTitle),
-        title: bookTitle,
-        author: bookAuthors,
+        title: bookTitle.trim(),
+        author: bookAuthors.toString().trim(),
       },
     highlights: highlights,
   };
