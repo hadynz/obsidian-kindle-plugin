@@ -72,7 +72,7 @@
     width: 120px;
   }
 
-  .kp-syncbuttons--option:nth-last-child(2) {
+  .kp-syncbuttons--option:not(:last-child) {
     margin-right: 20px;
   }
 
