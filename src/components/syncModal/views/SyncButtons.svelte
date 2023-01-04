@@ -36,6 +36,20 @@
     </a>
     <div class="kp-syncbuttons-text">Upload "My Clippings" file</div>
   </div>
+  <div class="kp-syncbuttons--option">
+    <!-- todo new icon -->
+    <a
+      href="#sync"
+      class="kp-syncbuttons--icon"
+      class:kp-syncbuttons--icon-selected={selectedSyncType === 'exported-html'}
+      on:click={() => {
+        selectedSyncType = 'exported-html';
+      }}
+    >
+      {@html clippingsIcon}
+    </a>
+    <div class="kp-syncbuttons-text">Upload exported HTML file</div>
+  </div>
 </div>
 
 <div class="setting-item-control">

@@ -8,7 +8,7 @@ import FileManager from '~/fileManager';
 import { registerNotifications } from '~/notifications';
 import { SettingsTab } from '~/settings';
 import { initializeStores, settingsStore } from '~/store';
-import { SyncAmazon, SyncClippings, SyncManager } from '~/sync';
+import { SyncAmazon, SyncClippings, SyncHTML, SyncManager } from '~/sync';
 
 import '~/sentry';
 
@@ -18,6 +18,7 @@ export default class KindlePlugin extends Plugin {
   private fileManager!: FileManager;
   private syncAmazon!: SyncAmazon;
   private syncClippings!: SyncClippings;
+  private syncHTML!: SyncHTML;
 
   public async onload(): Promise<void> {
     console.log('Kindle Highlights plugin: loading plugin', new Date().toLocaleString());
@@ -29,6 +30,7 @@ export default class KindlePlugin extends Plugin {
 
     this.syncAmazon = new SyncAmazon(syncManager);
     this.syncClippings = new SyncClippings(syncManager);
+    this.syncHTML = new SyncHTML(syncManager);
 
     this.addRibbonIcon('kindle', 'Sync your Kindle highlights', async () => {
       await this.showSyncModal();
@@ -81,6 +83,7 @@ export default class KindlePlugin extends Plugin {
     await new SyncModal(this.app, {
       onOnlineSync: () => this.startAmazonSync(),
       onMyClippingsSync: () => this.syncClippings.startSync(),
+      onExportedHTMLSync: () => this.syncHTML.startSync(),
     }).show();
   }
 

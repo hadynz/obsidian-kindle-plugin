@@ -4,7 +4,6 @@ import fs from 'fs';
 import type { BookHighlight, Highlight } from '~/models';
 import { hash } from '~/utils';
 
-
 const toBookHighlight = (book: Book): BookHighlight => {
   return {
     book: {
@@ -27,7 +26,7 @@ const toBookHighlight = (book: Book): BookHighlight => {
   };
 };
 
-export const parseBooks = (file: string): BookHighlight[] => {
+export const parseHTML = (file: string): BookHighlight[] => {
   const clippingsFileContent = fs.readFileSync(file, 'utf8');
 
   const parsedRows = readMyClippingsFile(clippingsFileContent);

@@ -34,7 +34,7 @@ export type BookMetadata = {
   authorUrl?: string;
 };
 
-export type SyncMode = 'amazon' | 'my-clippings';
+export type SyncMode = 'amazon' | 'my-clippings' | 'exported-html';
 
 export type AmazonAccountRegion =
   | 'global'

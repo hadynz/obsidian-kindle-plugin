@@ -19,6 +19,7 @@ const SyncModalTitle: Record<SyncModalState['status'], string> = {
 type SyncModalProps = {
   onOnlineSync: () => void;
   onMyClippingsSync: () => void;
+  onExportedHTMLSync: () => void;
 };
 
 export default class SyncModal extends Modal {
@@ -43,8 +44,12 @@ export default class SyncModal extends Modal {
         onClick: (mode: SyncMode) => {
           if (mode === 'amazon') {
             this.props.onOnlineSync();
-          } else {
+          } else if (mode === 'my-clippings') {
             this.props.onMyClippingsSync();
+          }
+          else if (mode === 'exported-html')
+          {
+            this.props.onExportedHTMLSync();
           }
         },
         onUpgrade: async () => {
