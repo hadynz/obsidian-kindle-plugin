@@ -12,8 +12,8 @@ const toBookHighlight = (HTMLContent: string): BookHighlight => {
     
   const root = parse(HTMLString);
 
-  const bookTitle = root.querySelector(".bookTitle").text;
   const bookAuthors = root.querySelector(".authors").text;
+  const bookTitle = root.querySelector(".bookTitle").text.replace(`- ${bookAuthors}`, '');
   const noteHeadings = root.querySelectorAll(".noteHeading").map(elem => elem.text.trim());
   const noteText = root.querySelectorAll(".noteText").map(elem => elem.text.trim());
 
