@@ -39,6 +39,8 @@ describe('diffLists', () => {
       {
         line: faker.datatype.number(),
         highlightId,
+        text: faker.lorem.sentence(),
+        type: 'clipping',
       },
     ];
 
@@ -78,10 +80,14 @@ describe('diffLists', () => {
       {
         line: 2,
         highlightId: 'B',
+        text: faker.lorem.sentence(),
+        type: 'clipping',
       },
       {
         line: 3,
         highlightId: 'E',
+        text: faker.lorem.sentence(),
+        type: 'clipping',
       },
     ];
 

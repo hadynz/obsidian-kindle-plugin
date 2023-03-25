@@ -11,7 +11,9 @@ import { diffLists } from './helpers';
 
 export type RenderedHighlight = {
   line: number;
-  highlightId: string;
+  highlightId?: string;
+  text: string;
+  type: 'clipping' | 'heading';
 };
 
 export type DiffLocation = {
@@ -50,15 +52,23 @@ export class DiffManager {
 
   private parseRenderedHighlights(): RenderedHighlight[] {
     const needle = _.escapeRegExp(HighlightIdBlockRefPrefix);
+
     const endsWithRegex = new RegExp(`.*(${needle}.*)$`);
+    const headerThreePlusRegex = /#{3} (.*)/;
 
     return this.fileBuffer
-      .match(endsWithRegex)
+      .match([endsWithRegex, headerThreePlusRegex])
       .filter((lem) => lem.match != null)
       .map((lem) => {
+        const type = lem.matchIndex === 0 ? 'clipping' : 'heading';
         return {
           line: lem.line,
-          highlightId: lem.match[1].replace(HighlightIdBlockRefPrefix, ''),
+          text: type === 'clipping' ? lem.content : lem.match[1],
+          highlightId:
+            type === 'clipping'
+              ? lem.match[1].replace(HighlightIdBlockRefPrefix, '')
+              : undefined,
+          type,
         };
       });
   }

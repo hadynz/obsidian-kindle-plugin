@@ -5,6 +5,7 @@ type LineEntry = {
 
 type LineEntryMatch = LineEntry & {
   match: RegExpMatchArray;
+  matchIndex: number;
 };
 
 export class StringBuffer {
@@ -28,10 +29,18 @@ export class StringBuffer {
       .filter(predicate);
   }
 
-  public match(regex: RegExp): LineEntryMatch[] {
+  public match(regexList: RegExp[]): LineEntryMatch[] {
     return this.lines.map((content, index) => {
-      const match = content.match(regex);
-      return { line: index + 1, content, match };
+      for (let matchIndex = 0; matchIndex < regexList.length; matchIndex++) {
+        const regex = regexList[matchIndex];
+        const match = content.match(regex);
+
+        if (match) {
+          return { line: index + 1, content, match, matchIndex };
+        }
+      }
+
+      return { line: index + 1, content, match: null, matchIndex: regexList.length };
     });
   }
 

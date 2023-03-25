@@ -127,4 +127,37 @@ Line 3`;
       }).toThrow('Line numbers must start from 1');
     });
   });
+
+  describe('match', () => {
+    it('Matches a simple example', () => {
+      const content = `Line 1
+Line 2
+Line 3`;
+
+      const results = sb(content).match([/Line 1/]);
+
+      expect(results).toHaveLength(3);
+      expect(results[0].match).toBeTruthy();
+      expect(results[0].matchIndex).toEqual(0);
+      expect(results[1].match).toBeNull();
+      expect(results[2].match).toBeNull();
+    });
+
+    it('Multiple matches', () => {
+      const content = `Line 1
+Line 2
+Line 3`;
+
+      const results = sb(content).match([/Line 2/, /Line 4/, /Line 3/]);
+
+      expect(results).toHaveLength(3);
+      expect(results[0].match).toBeNull();
+
+      expect(results[1].match).toBeTruthy();
+      expect(results[1].matchIndex).toEqual(0);
+
+      expect(results[2].match).toBeTruthy();
+      expect(results[2].matchIndex).toEqual(2);
+    });
+  });
 });
