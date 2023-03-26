@@ -10,8 +10,6 @@ import { SettingsTab } from '~/settings';
 import { initializeStores, settingsStore } from '~/store';
 import { SyncAmazon, SyncClippings, SyncManager } from '~/sync';
 
-import '~/sentry';
-
 addIcon('kindle', kindleIcon);
 
 export default class KindlePlugin extends Plugin {

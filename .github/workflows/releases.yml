@@ -19,8 +19,6 @@ jobs:
 
       - name: Build
         id: build
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: |
           npm install
           npm run lint

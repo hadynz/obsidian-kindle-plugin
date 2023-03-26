@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import SentryWebpackPlugin from '@sentry/webpack-plugin';
 import CopyPlugin from 'copy-webpack-plugin';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -14,15 +11,6 @@ dotenv.config();
 
 const isProduction = process.env.NODE_ENV === 'production';
 const releaseVersion = pack.version;
-
-const sentryPlugin = new SentryWebpackPlugin({
-  authToken: process.env.SENTRY_AUTH_TOKEN,
-  org: 'hadynz',
-  project: 'kindle-highlights',
-  release: releaseVersion,
-  ignore: ['node_modules', 'webpack.config.js'],
-  include: 'dist',
-});
 
 const config: Configuration = {
   entry: './src/index.ts',
@@ -85,7 +73,6 @@ const config: Configuration = {
       VERSION: JSON.stringify(releaseVersion),
       PRODUCTION: JSON.stringify(isProduction),
     }),
-    ...(isProduction ? [sentryPlugin] : []),
   ],
   resolve: {
     alias: {

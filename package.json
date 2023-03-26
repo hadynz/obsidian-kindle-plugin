@@ -1,6 +1,6 @@
 {
   "name": "obsidian-kindle-plugin",
-  "version": "1.8.1",
+  "version": "1.9.0",
   "description": "Sync your Kindle book highlights using your Amazon login or uploading your My Clippings file",
   "main": "src/index.ts",
   "repository": {
@@ -27,8 +27,6 @@
   },
   "dependencies": {
     "@hadynz/kindle-clippings": "^2.0.0",
-    "@sentry/browser": "^6.15.0",
-    "@sentry/tracing": "^6.15.0",
     "cheerio": "1.0.0-rc.6",
     "fletcher": "0.0.3",
     "gray-matter": "^4.0.3",
@@ -40,7 +38,6 @@
     "typed-emitter": "^1.4.0"
   },
   "devDependencies": {
-    "@sentry/webpack-plugin": "^1.18.3",
     "@tsconfig/svelte": "^1.0.10",
     "@types/faker": "^5.5.8",
     "@types/jest": "^26.0.22",
