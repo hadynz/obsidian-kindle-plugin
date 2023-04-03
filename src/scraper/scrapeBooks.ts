@@ -33,6 +33,11 @@ export const parseAuthor = (scrapedAuthor: string): string => {
   return scrapedAuthor.replace(/.*: /, '')?.trim();
 };
 
+export const parseImageUrl = (scrapedImageUrl: string): string => {
+  return scrapedImageUrl.replace(/\._SY\d+\./, '._SX1024.')?.trim();
+};
+
+
 export const parseBooks = ($: Root): Book[] => {
   const booksEl = $('.kp-notebook-library-each-book').toArray();
 
@@ -41,6 +46,7 @@ export const parseBooks = ($: Root): Book[] => {
 
     const scrapedLastAnnotatedDate = $('[id^="kp-notebook-annotated-date"]', bookEl).val();
     const scrapedAuthor = $('p.kp-notebook-searchable', bookEl).text();
+    const scrapedImageUrl = $('.kp-notebook-cover-image', bookEl).attr('src');
 
     return {
       id: hash(title),
@@ -48,7 +54,7 @@ export const parseBooks = ($: Root): Book[] => {
       title,
       author: parseAuthor(scrapedAuthor),
       url: `https://www.amazon.com/dp/${$(bookEl).attr('id')}`,
-      imageUrl: $('.kp-notebook-cover-image', bookEl).attr('src'),
+      imageUrl: parseImageUrl(scrapedImageUrl),
       lastAnnotatedDate: parseToDateString(
         scrapedLastAnnotatedDate,
         get(settingsStore).amazonRegion
