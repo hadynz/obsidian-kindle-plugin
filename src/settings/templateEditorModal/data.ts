@@ -7,6 +7,9 @@ const data: BookHighlight[] = [
       title: 'Animal Farm (Classics To Go)',
       author: 'George Orwell',
     },
+    metadata: {
+      publicationDate: '1945',
+    },
     highlights: [
       {
         id: '1-A',
@@ -23,6 +26,9 @@ const data: BookHighlight[] = [
       id: '2',
       title: 'An Everyone Culture',
       author: 'Robert Kegan and Lisa Laskow Lahey',
+    },
+    metadata: {
+      publicationDate: '2016',
     },
     highlights: [
       {
@@ -44,6 +50,9 @@ const data: BookHighlight[] = [
       id: '3',
       title: 'The Girl on the Train: A Novel',
       author: 'Paula Hawkins',
+    },
+    metadata: {
+      publicationDate: '2015',
     },
     highlights: [
       {

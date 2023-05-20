@@ -51,7 +51,7 @@ export default (): TemplateEditorModalStore => {
       const fileNameTemplate = $fileNameTemplateField || DefaultFileNameTemplate;
       try {
         const renderer = new FileNameRenderer(fileNameTemplate);
-        return renderer.render($selectedBook.book);
+        return renderer.render($selectedBook.book, $selectedBook.metadata);
       } catch (error) {
         return InvalidRender;
       }

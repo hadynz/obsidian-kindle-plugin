@@ -12,6 +12,10 @@
     <table>
       <tbody>
         <CommonVariables />
+        <tr>
+          <td><Chip title={'publicationDate'} /></td>
+          <td>Publication date</td>
+        </tr>
       </tbody>
     </table>
   {:else if template === 'file'}
