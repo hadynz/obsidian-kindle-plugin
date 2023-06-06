@@ -1,7 +1,7 @@
 import nunjucks, { Environment } from 'nunjucks';
 import sanitize from 'sanitize-filename';
 
-import type { Book } from '~/models';
+import type { Book, BookMetadata } from '~/models';
 
 import { fileNameTemplateVariables } from './templateVariables';
 
@@ -21,8 +21,8 @@ export default class FileNameRenderer {
     }
   }
 
-  public render(book: Partial<Book>): string {
-    const templateVariables = fileNameTemplateVariables(book);
+  public render(book: Partial<Book>, metadata: Partial<BookMetadata>): string {
+    const templateVariables = fileNameTemplateVariables(book, metadata);
 
     const fileName = this.nunjucks.renderString(this.template, templateVariables);
 

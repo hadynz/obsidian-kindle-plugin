@@ -1,4 +1,4 @@
-import type { Book } from '~/models';
+import type { Book, BookMetadata } from '~/models';
 
 import FileNameRenderer from './fileNameRenderer';
 
@@ -25,18 +25,24 @@ describe('FileNameRenderer', () => {
       const book: Partial<Book> = {
         title: 'Immunity to change: How to overcome it',
       };
+      const metadata: Partial<BookMetadata> = {
+        publicationDate: '2010'
+      };
 
       const renderer = new FileNameRenderer('{{shortTitle}}');
-      expect(renderer.render(book)).toBe('Immunity to change.md');
+      expect(renderer.render(book, metadata)).toBe('Immunity to change.md');
     });
 
     it('File name with book title as is', () => {
       const book: Partial<Book> = {
         title: 'Immunity to change: How to overcome it',
       };
+      const metadata: Partial<BookMetadata> = {
+        publicationDate: '2010'
+      };
 
       const renderer = new FileNameRenderer('{{longTitle}}');
-      expect(renderer.render(book)).toBe('Immunity to change How to overcome it.md');
+      expect(renderer.render(book, metadata)).toBe('Immunity to change How to overcome it.md');
     });
 
     it('File name with author', () => {
@@ -44,9 +50,25 @@ describe('FileNameRenderer', () => {
         title: 'Immunity to change: How to overcome it',
         author: 'John Doe',
       };
+      const metadata: Partial<BookMetadata> = {
+        publicationDate: '2010'
+      };
 
       const renderer = new FileNameRenderer('{{author}}');
-      expect(renderer.render(book)).toBe('John Doe.md');
+      expect(renderer.render(book, metadata)).toBe('John Doe.md');
+    });
+
+    it('File name with publication date', () => {
+      const book: Partial<Book> = {
+        title: 'Immunity to change: How to overcome it',
+        author: 'John Doe',
+      };
+      const metadata: Partial<BookMetadata> = {
+        publicationDate: '2010'
+      };
+
+      const renderer = new FileNameRenderer('{{publicationDate}} - {{author}}');
+      expect(renderer.render(book, metadata)).toBe('2010 - John Doe.md');
     });
   });
 });

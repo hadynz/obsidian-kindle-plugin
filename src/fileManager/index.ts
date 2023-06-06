@@ -1,6 +1,6 @@
 import { MetadataCache, normalizePath, TAbstractFile, TFile, TFolder, Vault } from 'obsidian';
 
-import type { Book, KindleFile, KindleFrontmatter } from '~/models';
+import type { Book, BookMetadata, KindleFile, KindleFrontmatter } from '~/models';
 import { mergeFrontmatter } from '~/utils';
 
 import { bookFilePath, bookToFrontMatter, frontMatterToBook } from './mappers';
@@ -52,10 +52,11 @@ export default class FileManager {
 
   public async createFile(
     book: Book,
+    metadata: BookMetadata,
     content: string,
     highlightsCount: number
   ): Promise<void> {
-    const filePath = this.generateUniqueFilePath(book);
+    const filePath = this.generateUniqueFilePath(book, metadata);
     const frontmatterContent = this.generateBookContent(book, content, highlightsCount);
 
     try {
@@ -92,8 +93,8 @@ export default class FileManager {
     });
   }
 
-  private generateUniqueFilePath(book: Book): string {
-    const filePath = bookFilePath(book);
+  private generateUniqueFilePath(book: Book, metadata: BookMetadata): string {
+    const filePath = bookFilePath(book, metadata);
 
     const isDuplicate = this.vault
       .getMarkdownFiles()
