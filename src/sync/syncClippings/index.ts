@@ -7,8 +7,11 @@ import { parseBooks } from './parseBooks';
 export default class SyncKindleClippings {
   constructor(private syncManager: SyncManager) {}
 
-  public async startSync(): Promise<void> {
-    const [clippingsFile, canceled] = await openDialog();
+  public async startSync(clippingsFile? : string): Promise<void> {
+    let canceled = false;
+    if (typeof clippingsFile === 'undefined') {
+      [clippingsFile, canceled] = await openDialog();
+    }
 
     if (canceled) {
       return; // Do nothing...
