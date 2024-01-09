@@ -2,7 +2,7 @@ import { Book, groupToBooks, readMyClippingsFile } from '@hadynz/kindle-clipping
 import fs from 'fs';
 
 import type { BookHighlight, Highlight } from '~/models';
-import { hash } from '~/utils';
+import { hash, hash_short } from '~/utils';
 
 const toBookHighlight = (book: Book): BookHighlight => {
   return {
@@ -15,7 +15,7 @@ const toBookHighlight = (book: Book): BookHighlight => {
       .filter((entry) => entry.type === 'HIGHLIGHT' || entry.type === 'UNKNOWN')
       .map(
         (entry): Highlight => ({
-          id: hash(entry.content),
+          id: hash_short(entry.content),
           text: entry.content,
           note: entry.note,
           location: entry.location?.display,
