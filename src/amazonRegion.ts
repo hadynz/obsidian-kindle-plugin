@@ -53,6 +53,12 @@ export const AmazonRegions: Record<AmazonAccountRegion, AmazonAccount> = {
     kindleReaderUrl: 'https://lire.amazon.fr',
     notebookUrl: 'https://lire.amazon.fr/notebook',
   },
+  netherlands: {
+    name: 'The Netherlands',
+    hostname: 'amazon.nl',
+    kindleReaderUrl: 'https://lezen.amazon.nl',
+    notebookUrl: 'https://lezen.amazon.nl/notebook',
+  },
 };
 
 export const currentAmazonRegion = (): AmazonAccount => {
