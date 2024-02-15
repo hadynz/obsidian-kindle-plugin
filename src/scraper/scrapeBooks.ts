@@ -34,6 +34,8 @@ export const parseAuthor = (scrapedAuthor: string): string => {
 };
 
 export const parseBooks = ($: Root): Book[] => {
+  const region = currentAmazonRegion();
+  const domainURL = `https://${region.hostname}`;
   const booksEl = $('.kp-notebook-library-each-book').toArray();
 
   return booksEl.map((bookEl): Book => {
@@ -47,7 +49,7 @@ export const parseBooks = ($: Root): Book[] => {
       asin: $(bookEl).attr('id'),
       title,
       author: parseAuthor(scrapedAuthor),
-      url: `https://www.amazon.com/dp/${$(bookEl).attr('id')}`,
+      url: `${domainURL}/dp/${$(bookEl).attr('id')}`,
       imageUrl: $('.kp-notebook-cover-image', bookEl).attr('src'),
       lastAnnotatedDate: parseToDateString(
         scrapedLastAnnotatedDate,
