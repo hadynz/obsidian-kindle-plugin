@@ -40,6 +40,14 @@ export default class KindlePlugin extends Plugin {
       },
     });
 
+    this.addCommand({
+      id: 'kindle-sync-amazon',
+      name: 'Sync highlights from Amazon',
+      callback: async () => {
+        await this.startAmazonSync();
+      },
+    });
+
     this.addSettingTab(new SettingsTab(this.app, this, this.fileManager));
 
     registerNotifications();
