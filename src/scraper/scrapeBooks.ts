@@ -63,7 +63,7 @@ export const parseBooks = ($: Root): Book[] => {
   });
 };
 
-const scrapeBooks = async (): Promise<Book[]> => {
+export const scrapeBooks = async (): Promise<Book[]> => {
   const region = currentAmazonRegion();
   const { dom } = await loadRemoteDom(region.notebookUrl, 1000);
   return parseBooks(dom);
