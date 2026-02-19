@@ -20,6 +20,7 @@
       0 0 8px color-mix(in srgb, var(--interactive-accent) 55%, transparent)
     );
   }
+
   50% {
     opacity: 0.65;
     box-shadow: 0 0 0 6px color-mix(in srgb, var(--interactive-accent) 0%, transparent);
@@ -29,13 +30,13 @@
   }
 }
 
-.bracket-settings {
+.parentheses-settings {
   margin: 0.5em 0 1em 0;
   padding: 0 0 0 1em;
   border-left: 2px solid var(--background-modifier-border);
 }
 
-.bracket-settings summary {
+.parentheses-settings summary {
   cursor: pointer;
   color: var(--text-muted);
   font-size: 0.9em;

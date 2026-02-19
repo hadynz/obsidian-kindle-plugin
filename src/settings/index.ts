@@ -187,9 +187,9 @@ export class SettingsTab extends PluginSettingTab {
 
   private removeParentheses(): void {
     new Setting(this.containerEl)
-      .setName('Remove bracket content from book info')
+      .setName('Remove parentheses content from book info')
       .setDesc(
-        'Automatically remove content within brackets from book titles and/or author names when generating file names'
+        'Automatically remove content within parentheses from book titles and/or author names when generating file names'
       )
       .addToggle((toggle) =>
         toggle.setValue(get(settingsStore).removeParens).onChange((value) => {
@@ -200,14 +200,14 @@ export class SettingsTab extends PluginSettingTab {
 
     // Only show sub-settings when removeParens is enabled
     if (get(settingsStore).removeParens) {
-      // Create a collapsible details section for bracket settings
-      const detailsEl = this.containerEl.createEl('details', { cls: 'bracket-settings' });
-      detailsEl.createEl('summary', { text: 'Bracket removal settings' });
+      // Create a collapsible details section for parentheses settings
+      const detailsEl = this.containerEl.createEl('details', { cls: 'parentheses-settings' });
+      detailsEl.createEl('summary', { text: 'Parentheses removal settings' });
 
       // Title toggle
       new Setting(detailsEl)
         .setName('Remove from title')
-        .setDesc('Remove bracket content from book titles')
+        .setDesc('Remove parentheses content from book titles')
         .addToggle((toggle) =>
           toggle.setValue(get(settingsStore).removeParensFromTitle).onChange((value) => {
             settingsStore.actions.setRemoveParensFromTitle(value);
@@ -217,22 +217,22 @@ export class SettingsTab extends PluginSettingTab {
       // Author toggle
       new Setting(detailsEl)
         .setName('Remove from author')
-        .setDesc('Remove bracket content from author names')
+        .setDesc('Remove parentheses content from author names')
         .addToggle((toggle) =>
           toggle.setValue(get(settingsStore).removeParensFromAuthor).onChange((value) => {
             settingsStore.actions.setRemoveParensFromAuthor(value);
           })
         );
 
-      // Bracket type dropdown
+      // Parentheses type dropdown
       new Setting(detailsEl)
-        .setName('Bracket type')
-        .setDesc('Choose which types of brackets to remove')
+        .setName('Parentheses type')
+        .setDesc('Choose which types of parentheses to remove')
         .addDropdown((dropdown) => {
           dropdown
-            .addOption('all', 'All types (\uFF08\uFF09 + ())')
-            .addOption('chinese', 'Chinese brackets only (\uFF08\uFF09)')
-            .addOption('english', 'English brackets only (())')
+            .addOption('all', 'All types (（） + ())')
+            .addOption('chinese', 'Chinese parentheses only (（）)')
+            .addOption('english', 'English parentheses only (())')
             .setValue(get(settingsStore).removeParensType)
             .onChange((value: 'all' | 'chinese' | 'english') => {
               settingsStore.actions.setRemoveParensType(value);
@@ -244,9 +244,9 @@ export class SettingsTab extends PluginSettingTab {
       const parensType = get(settingsStore).removeParensType;
       if (parensType === 'english' || parensType === 'all') {
         new Setting(detailsEl)
-          .setName('Remove spaces around English brackets')
+          .setName('Remove spaces around English parentheses')
           .setDesc(
-            'Clean up extra spaces when removing English brackets (e.g. "Tom Mitchell (CMU)" → "Tom Mitchell")'
+            'Clean up extra spaces when removing English parentheses (e.g. "Tom Mitchell (CMU)" → "Tom Mitchell")'
           )
           .addToggle((toggle) =>
             toggle.setValue(get(settingsStore).removeParensSpaces).onChange((value) => {
@@ -257,9 +257,9 @@ export class SettingsTab extends PluginSettingTab {
 
       // Whitelist
       new Setting(detailsEl)
-        .setName('Bracket removal whitelist')
+        .setName('Parentheses removal whitelist')
         .setDesc(
-          'Books with titles containing any of these keywords will skip bracket removal. One keyword per line.'
+          'Books with titles containing any of these keywords will skip parentheses removal. One keyword per line.'
         )
         .addTextArea((textArea) => {
           textArea

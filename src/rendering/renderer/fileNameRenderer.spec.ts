@@ -1,6 +1,6 @@
 import type { Book, BookMetadata } from '~/models';
 
-import FileNameRenderer from './fileNameRenderer';
+import FileNameRenderer, { removeParenthesesFromText } from './fileNameRenderer';
 
 describe('FileNameRenderer', () => {
   describe('validate', () => {
@@ -205,5 +205,63 @@ describe('FileNameRenderer', () => {
       const result = renderer.render(book, metadata);
       expect(result).not.toContain('?');
     });
+  });
+});
+
+describe('removeParenthesesFromText', () => {
+  it('removes English parentheses', () => {
+    expect(removeParenthesesFromText('Title (Subtitle)', 'english', true)).toBe('Title');
+    expect(removeParenthesesFromText('Title (Subtitle)', 'all', true)).toBe('Title');
+  });
+
+  it('removes Chinese parentheses', () => {
+    expect(removeParenthesesFromText('Title（Subtitle）', 'chinese', true)).toBe('Title');
+    expect(removeParenthesesFromText('Title（Subtitle）', 'all', true)).toBe('Title');
+  });
+
+  it('handles spaces correctly when removing English parentheses', () => {
+    // With space removal
+    expect(removeParenthesesFromText('Title (Subtitle)', 'english', true)).toBe('Title');
+    expect(removeParenthesesFromText('Title  (Subtitle)', 'english', true)).toBe('Title');
+
+    // Without space removal
+    expect(removeParenthesesFromText('Title (Subtitle)', 'english', false)).toBe('Title');
+  });
+
+  it('removes nested parentheses', () => {
+    // Nested English
+    expect(removeParenthesesFromText('Title (Subtitle (Extra))', 'english', true)).toBe('Title');
+
+    // Nested Chinese
+    expect(removeParenthesesFromText('Title（Subtitle（Extra））', 'chinese', true)).toBe('Title');
+
+    // Mixed nested
+    expect(removeParenthesesFromText('Title (Subtitle（Extra）)', 'all', true)).toBe('Title');
+    expect(removeParenthesesFromText('Title（Subtitle (Extra)）', 'all', true)).toBe('Title');
+  });
+
+  it('respects parenthesis type setting', () => {
+    const text = 'Title (English)（Chinese）';
+
+    // Remove only English
+    expect(removeParenthesesFromText(text, 'english', true)).toBe('Title （Chinese）');
+
+    // Remove only Chinese
+    expect(removeParenthesesFromText(text, 'chinese', true)).toBe('Title (English)');
+
+    // Remove all
+    expect(removeParenthesesFromText(text, 'all', true)).toBe('Title');
+  });
+
+  it('handles edge cases', () => {
+    // Empty string result -> returns original
+    expect(removeParenthesesFromText('(Parens Only)', 'english', true)).toBe('(Parens Only)');
+    expect(removeParenthesesFromText('（Parens Only）', 'chinese', true)).toBe('（Parens Only）');
+
+    // No parentheses
+    expect(removeParenthesesFromText('Title', 'all', true)).toBe('Title');
+
+    // Multiple separate parentheses
+    expect(removeParenthesesFromText('Title (One) (Two)', 'english', true)).toBe('Title');
   });
 });
