@@ -43,6 +43,9 @@ export const convertChineseDateToEnglish = (content: string): string => {
     hour: string | undefined, minute: string | undefined, second: string | undefined
   ) => {
     const monthName = MONTH_MAP[Number(month)];
+    if (!monthName) {
+      return _match; // Invalid month, return original string
+    }
     const datePart = `${monthName} ${Number(day)}, ${year}`;
 
     let result = '';
@@ -87,7 +90,7 @@ const toBookHighlight = (book: Book): BookHighlight => {
 
 export const parseBooks = (file: string): BookHighlight[] => {
   let clippingsFileContent = fs.readFileSync(file, 'utf8');
-  clippingsFileContent = convertChineseDateToEnglish(clippingsFileContent); // 预处理中文日期
+  clippingsFileContent = convertChineseDateToEnglish(clippingsFileContent); // Preprocess Chinese dates
 
   const parsedRows = readMyClippingsFile(clippingsFileContent);
   const books = groupToBooks(parsedRows);
