@@ -38,6 +38,7 @@ export class SettingsTab extends PluginSettingTab {
     this.amazonRegion();
     this.downloadBookMetadata();
     this.syncOnBoot();
+    this.restoreChineseLineBreaks();
     this.ignoredBooks();
     this.sponsorMe();
   }
@@ -182,6 +183,19 @@ export class SettingsTab extends PluginSettingTab {
         textArea.inputEl.rows = 6;
         textArea.inputEl.cols = 50;
       });
+  }
+
+  private restoreChineseLineBreaks(): void {
+    new Setting(this.containerEl)
+      .setName('Restore Chinese line breaks')
+      .setDesc(
+        'Restore original line breaks in Chinese highlight text. Kindle replaces line breaks with spaces; this option detects and restores them based on Chinese sentence-ending punctuation.'
+      )
+      .addToggle((toggle) =>
+        toggle.setValue(get(settingsStore).restoreChineseLineBreaks).onChange((value) => {
+          settingsStore.actions.setRestoreChineseLineBreaks(value);
+        })
+      );
   }
 
   private sponsorMe(): void {
