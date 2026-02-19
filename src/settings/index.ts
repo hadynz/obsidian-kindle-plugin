@@ -38,6 +38,7 @@ export class SettingsTab extends PluginSettingTab {
     this.amazonRegion();
     this.downloadBookMetadata();
     this.syncOnBoot();
+    this.removeParentheses();
     this.ignoredBooks();
     this.sponsorMe();
   }
@@ -182,6 +183,39 @@ export class SettingsTab extends PluginSettingTab {
         textArea.inputEl.rows = 6;
         textArea.inputEl.cols = 50;
       });
+  }
+
+  private removeParentheses(): void {
+    new Setting(this.containerEl)
+      .setName('Remove parenthetical content from book info')
+      .setDesc(
+        'Automatically remove content within parentheses from book titles when generating file names'
+      )
+      .addToggle((toggle) =>
+        toggle.setValue(get(settingsStore).removeParens).onChange((value) => {
+          settingsStore.actions.setRemoveParens(value);
+          this.display(); // Re-render to show/hide whitelist
+        })
+      );
+
+    // Only show whitelist when removeParens is enabled
+    if (get(settingsStore).removeParens) {
+      new Setting(this.containerEl)
+        .setName('Parentheses removal whitelist')
+        .setDesc(
+          'Books with titles containing any of these keywords will skip parentheses removal. One keyword per line.'
+        )
+        .addTextArea((textArea) => {
+          textArea
+            .setPlaceholder('e.g.\n魔法禁书目录')
+            .setValue(get(settingsStore).removeParensWhitelist)
+            .onChange((value) => {
+              settingsStore.actions.setRemoveParensWhitelist(value);
+            });
+          textArea.inputEl.rows = 4;
+          textArea.inputEl.cols = 50;
+        });
+    }
   }
 
   private sponsorMe(): void {
