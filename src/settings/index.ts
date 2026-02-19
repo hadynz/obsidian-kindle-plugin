@@ -187,27 +187,83 @@ export class SettingsTab extends PluginSettingTab {
 
   private removeParentheses(): void {
     new Setting(this.containerEl)
-      .setName('Remove parenthetical content from book info')
+      .setName('Remove bracket content from book info')
       .setDesc(
-        'Automatically remove content within parentheses from book titles when generating file names'
+        'Automatically remove content within brackets from book titles and/or author names when generating file names'
       )
       .addToggle((toggle) =>
         toggle.setValue(get(settingsStore).removeParens).onChange((value) => {
           settingsStore.actions.setRemoveParens(value);
-          this.display(); // Re-render to show/hide whitelist
+          this.display(); // Re-render to show/hide sub-settings
         })
       );
 
-    // Only show whitelist when removeParens is enabled
+    // Only show sub-settings when removeParens is enabled
     if (get(settingsStore).removeParens) {
-      new Setting(this.containerEl)
-        .setName('Parentheses removal whitelist')
+      // Create a collapsible details section for bracket settings
+      const detailsEl = this.containerEl.createEl('details', { cls: 'bracket-settings' });
+      detailsEl.createEl('summary', { text: 'Bracket removal settings' });
+
+      // Title toggle
+      new Setting(detailsEl)
+        .setName('Remove from title')
+        .setDesc('Remove bracket content from book titles')
+        .addToggle((toggle) =>
+          toggle.setValue(get(settingsStore).removeParensFromTitle).onChange((value) => {
+            settingsStore.actions.setRemoveParensFromTitle(value);
+          })
+        );
+
+      // Author toggle
+      new Setting(detailsEl)
+        .setName('Remove from author')
+        .setDesc('Remove bracket content from author names')
+        .addToggle((toggle) =>
+          toggle.setValue(get(settingsStore).removeParensFromAuthor).onChange((value) => {
+            settingsStore.actions.setRemoveParensFromAuthor(value);
+          })
+        );
+
+      // Bracket type dropdown
+      new Setting(detailsEl)
+        .setName('Bracket type')
+        .setDesc('Choose which types of brackets to remove')
+        .addDropdown((dropdown) => {
+          dropdown
+            .addOption('all', 'All types (\uFF08\uFF09 + ())')
+            .addOption('chinese', 'Chinese brackets only (\uFF08\uFF09)')
+            .addOption('english', 'English brackets only (())')
+            .setValue(get(settingsStore).removeParensType)
+            .onChange((value: 'all' | 'chinese' | 'english') => {
+              settingsStore.actions.setRemoveParensType(value);
+              this.display(); // Re-render to show/hide space option
+            });
+        });
+
+      // Space handling toggle (only for english or all modes)
+      const parensType = get(settingsStore).removeParensType;
+      if (parensType === 'english' || parensType === 'all') {
+        new Setting(detailsEl)
+          .setName('Remove spaces around English brackets')
+          .setDesc(
+            'Clean up extra spaces when removing English brackets (e.g. "Tom Mitchell (CMU)" → "Tom Mitchell")'
+          )
+          .addToggle((toggle) =>
+            toggle.setValue(get(settingsStore).removeParensSpaces).onChange((value) => {
+              settingsStore.actions.setRemoveParensSpaces(value);
+            })
+          );
+      }
+
+      // Whitelist
+      new Setting(detailsEl)
+        .setName('Bracket removal whitelist')
         .setDesc(
-          'Books with titles containing any of these keywords will skip parentheses removal. One keyword per line.'
+          'Books with titles containing any of these keywords will skip bracket removal. One keyword per line.'
         )
         .addTextArea((textArea) => {
           textArea
-            .setPlaceholder('e.g.\n魔法禁书目录')
+            .setPlaceholder('e.g.\n\u9B54\u6CD5\u7981\u4E66\u76EE\u5F55')
             .setValue(get(settingsStore).removeParensWhitelist)
             .onChange((value) => {
               settingsStore.actions.setRemoveParensWhitelist(value);

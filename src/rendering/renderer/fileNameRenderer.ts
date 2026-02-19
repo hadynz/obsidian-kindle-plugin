@@ -52,7 +52,7 @@ export default class FileNameRenderer {
   public render(book: Partial<Book>, metadata: Partial<BookMetadata>): string {
     const settings = get(settingsStore);
 
-    // Apply bracket removal to title if enabled
+    // Apply bracket removal to title and/or author if enabled
     const processedBook = { ...book };
     if (settings.removeParens) {
       const whitelist = settings.removeParensWhitelist
@@ -60,7 +60,22 @@ export default class FileNameRenderer {
         .map((line: string) => line.trim())
         .filter((line: string) => line !== '');
 
-      processedBook.title = this.removeParentheses(processedBook.title ?? '', whitelist);
+      if (settings.removeParensFromTitle) {
+        processedBook.title = this.removeParenthesesFromText(
+          processedBook.title ?? '',
+          whitelist,
+          settings.removeParensType,
+          settings.removeParensSpaces
+        );
+      }
+      if (settings.removeParensFromAuthor) {
+        processedBook.author = this.removeParenthesesFromText(
+          processedBook.author ?? '',
+          whitelist,
+          settings.removeParensType,
+          settings.removeParensSpaces
+        );
+      }
     }
 
     const templateVariables = fileNameTemplateVariables(processedBook, metadata);
@@ -73,10 +88,15 @@ export default class FileNameRenderer {
   }
 
   /**
-   * Remove parenthetical content (both Chinese and English brackets) from text.
+   * Remove parenthetical content from text based on bracket type settings.
    * Handles nested brackets by running multiple passes.
    */
-  private removeParentheses(text: string, whitelist: string[]): string {
+  private removeParenthesesFromText(
+    text: string,
+    whitelist: string[],
+    removeParensType: 'all' | 'chinese' | 'english',
+    removeParensSpaces: boolean
+  ): string {
     // Skip if text matches any whitelist keyword
     if (whitelist.some((keyword) => text.includes(keyword))) {
       return text;
@@ -84,13 +104,23 @@ export default class FileNameRenderer {
 
     let result = text;
 
-    // Remove all types of brackets (Chinese （） and English ()) with content
     // Loop to handle nested brackets
     let prev = '';
     while (prev !== result) {
       prev = result;
-      result = result.replace(/（[^（）]*）/g, '');
-      result = result.replace(/\([^()]*\)/g, '');
+
+      if (removeParensType === 'chinese' || removeParensType === 'all') {
+        result = result.replace(/（[^（）]*）/g, '');
+      }
+
+      if (removeParensType === 'english' || removeParensType === 'all') {
+        if (removeParensSpaces) {
+          // Remove English brackets and surrounding spaces, avoiding double spaces
+          result = result.replace(/\s*\([^()]*\)\s*/g, ' ');
+        } else {
+          result = result.replace(/\([^()]*\)/g, '');
+        }
+      }
     }
 
     // Collapse multiple spaces and trim
