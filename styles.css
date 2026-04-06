@@ -30,13 +30,13 @@
   }
 }
 
-.parentheses-settings {
+.bracket-settings {
   margin: 0.5em 0 1em 0;
   padding: 0 0 0 1em;
   border-left: 2px solid var(--background-modifier-border);
 }
 
-.parentheses-settings summary {
+.bracket-settings summary {
   cursor: pointer;
   color: var(--text-muted);
   font-size: 0.9em;

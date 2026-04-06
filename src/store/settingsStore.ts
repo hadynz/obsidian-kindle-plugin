@@ -20,9 +20,6 @@ type Settings = {
   removeParens: boolean;
   removeParensWhitelist: string;
   removeParensType: 'all' | 'chinese' | 'english';
-  removeParensSpaces: boolean;
-  removeParensFromTitle: boolean;
-  removeParensFromAuthor: boolean;
 
   // Deprecated - delete eventually
   noteTemplate?: string;
@@ -41,9 +38,6 @@ const DEFAULT_SETTINGS: Settings = {
   removeParens: false,
   removeParensWhitelist: '',
   removeParensType: 'all',
-  removeParensSpaces: true,
-  removeParensFromTitle: true,
-  removeParensFromAuthor: false,
 };
 
 const createSettingsStore = () => {
@@ -187,27 +181,6 @@ const createSettingsStore = () => {
     });
   };
 
-  const setRemoveParensSpaces = (value: boolean) => {
-    store.update((state) => {
-      state.removeParensSpaces = value;
-      return state;
-    });
-  };
-
-  const setRemoveParensFromTitle = (value: boolean) => {
-    store.update((state) => {
-      state.removeParensFromTitle = value;
-      return state;
-    });
-  };
-
-  const setRemoveParensFromAuthor = (value: boolean) => {
-    store.update((state) => {
-      state.removeParensFromAuthor = value;
-      return state;
-    });
-  };
-
   return {
     store,
     subscribe: store.subscribe,
@@ -226,9 +199,6 @@ const createSettingsStore = () => {
       setRemoveParens,
       setRemoveParensWhitelist,
       setRemoveParensType,
-      setRemoveParensSpaces,
-      setRemoveParensFromTitle,
-      setRemoveParensFromAuthor,
     },
   };
 };

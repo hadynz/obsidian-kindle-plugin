@@ -52,7 +52,7 @@ export default class FileNameRenderer {
   public render(book: Partial<Book>, metadata: Partial<BookMetadata>): string {
     const settings = get(settingsStore);
 
-    // Apply bracket removal to title and/or author if enabled
+    // Apply bracket removal to filename-relevant book fields if enabled.
     const processedBook = { ...book };
     if (settings.removeParens) {
       const whitelist = settings.removeParensWhitelist
@@ -65,20 +65,14 @@ export default class FileNameRenderer {
       const isWhitelisted = whitelist.some((keyword) => titleLower.includes(keyword));
 
       if (!isWhitelisted) {
-        if (settings.removeParensFromTitle) {
-          processedBook.title = removeParenthesesFromText(
-            processedBook.title ?? '',
-            settings.removeParensType,
-            settings.removeParensSpaces
-          );
-        }
-        if (settings.removeParensFromAuthor) {
-          processedBook.author = removeParenthesesFromText(
-            processedBook.author ?? '',
-            settings.removeParensType,
-            settings.removeParensSpaces
-          );
-        }
+        processedBook.title = removeParenthesesFromText(
+          processedBook.title ?? '',
+          settings.removeParensType
+        );
+        processedBook.author = removeParenthesesFromText(
+          processedBook.author ?? '',
+          settings.removeParensType
+        );
       }
     }
 
@@ -90,48 +84,6 @@ export default class FileNameRenderer {
 
     return `${fileName}.md`;
   }
-
-  /**
-   * Remove parenthetical content from text based on bracket type settings.
-   * Handles nested brackets by running multiple passes.
-   */
-  private removeParenthesesFromText(
-    text: string,
-    whitelist: string[],
-    removeParensType: 'all' | 'chinese' | 'english',
-    removeParensSpaces: boolean
-  ): string {
-    // Skip if text matches any whitelist keyword
-    if (whitelist.some((keyword) => text.includes(keyword))) {
-      return text;
-    }
-
-    let result = text;
-
-    // Loop to handle nested brackets
-    let prev = '';
-    while (prev !== result) {
-      prev = result;
-
-      if (removeParensType === 'chinese' || removeParensType === 'all') {
-        result = result.replace(/（[^（）]*）/g, '');
-      }
-
-      if (removeParensType === 'english' || removeParensType === 'all') {
-        if (removeParensSpaces) {
-          // Remove English brackets and surrounding spaces, avoiding double spaces
-          result = result.replace(/\s*\([^()]*\)\s*/g, ' ');
-        } else {
-          result = result.replace(/\([^()]*\)/g, '');
-        }
-      }
-    }
-
-    // Collapse multiple spaces and trim
-    result = result.replace(/ {2,}/g, ' ').trim();
-
-    return result;
-  }
 }
 
 /**
@@ -141,8 +93,7 @@ export default class FileNameRenderer {
  */
 export const removeParenthesesFromText = (
   text: string,
-  removeParensType: 'all' | 'chinese' | 'english',
-  removeParensSpaces: boolean
+  removeParensType: 'all' | 'chinese' | 'english'
 ): string => {
   let result = text;
 
@@ -156,12 +107,8 @@ export const removeParenthesesFromText = (
     }
 
     if (removeParensType === 'english' || removeParensType === 'all') {
-      if (removeParensSpaces) {
-        // Remove English brackets and surrounding spaces, avoiding double spaces
-        result = result.replace(/\s*\([^()]*\)\s*/g, ' ');
-      } else {
-        result = result.replace(/\([^()]*\)/g, '');
-      }
+      // Remove English brackets and surrounding spaces, avoiding double spaces.
+      result = result.replace(/\s*\([^()]*\)\s*/g, ' ');
     }
   }
 

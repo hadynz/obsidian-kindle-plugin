@@ -187,9 +187,9 @@ export class SettingsTab extends PluginSettingTab {
 
   private removeParentheses(): void {
     new Setting(this.containerEl)
-      .setName('Remove parentheses content from book info')
+      .setName('Remove bracket content from filename metadata')
       .setDesc(
-        'Automatically remove content within parentheses from book titles and/or author names when generating file names'
+        'Automatically remove bracketed content from book titles and authors before rendering file names'
       )
       .addToggle((toggle) =>
         toggle.setValue(get(settingsStore).removeParens).onChange((value) => {
@@ -200,70 +200,31 @@ export class SettingsTab extends PluginSettingTab {
 
     // Only show sub-settings when removeParens is enabled
     if (get(settingsStore).removeParens) {
-      // Create a collapsible details section for parentheses settings
-      const detailsEl = this.containerEl.createEl('details', { cls: 'parentheses-settings' });
-      detailsEl.createEl('summary', { text: 'Parentheses removal settings' });
+      const detailsEl = this.containerEl.createEl('details', { cls: 'bracket-settings' });
+      detailsEl.createEl('summary', { text: 'Bracket cleanup settings' });
 
-      // Title toggle
       new Setting(detailsEl)
-        .setName('Remove from title')
-        .setDesc('Remove parentheses content from book titles')
-        .addToggle((toggle) =>
-          toggle.setValue(get(settingsStore).removeParensFromTitle).onChange((value) => {
-            settingsStore.actions.setRemoveParensFromTitle(value);
-          })
-        );
-
-      // Author toggle
-      new Setting(detailsEl)
-        .setName('Remove from author')
-        .setDesc('Remove parentheses content from author names')
-        .addToggle((toggle) =>
-          toggle.setValue(get(settingsStore).removeParensFromAuthor).onChange((value) => {
-            settingsStore.actions.setRemoveParensFromAuthor(value);
-          })
-        );
-
-      // Parentheses type dropdown
-      new Setting(detailsEl)
-        .setName('Parentheses type')
-        .setDesc('Choose which types of parentheses to remove')
+        .setName('Bracket type')
+        .setDesc('Choose which bracket styles to remove from titles and authors')
         .addDropdown((dropdown) => {
           dropdown
-            .addOption('all', 'All types (（） + ())')
-            .addOption('chinese', 'Chinese parentheses only (（）)')
-            .addOption('english', 'English parentheses only (())')
+            .addOption('all', 'All brackets (（） + ())')
+            .addOption('chinese', 'Full-width brackets only (（）)')
+            .addOption('english', 'Half-width brackets only (())')
             .setValue(get(settingsStore).removeParensType)
             .onChange((value: 'all' | 'chinese' | 'english') => {
               settingsStore.actions.setRemoveParensType(value);
-              this.display(); // Re-render to show/hide space option
             });
         });
 
-      // Space handling toggle (only for english or all modes)
-      const parensType = get(settingsStore).removeParensType;
-      if (parensType === 'english' || parensType === 'all') {
-        new Setting(detailsEl)
-          .setName('Remove spaces around English parentheses')
-          .setDesc(
-            'Clean up extra spaces when removing English parentheses (e.g. "Tom Mitchell (CMU)" → "Tom Mitchell")'
-          )
-          .addToggle((toggle) =>
-            toggle.setValue(get(settingsStore).removeParensSpaces).onChange((value) => {
-              settingsStore.actions.setRemoveParensSpaces(value);
-            })
-          );
-      }
-
-      // Whitelist
       new Setting(detailsEl)
-        .setName('Parentheses removal whitelist')
+        .setName('Bracket cleanup whitelist')
         .setDesc(
-          'Books with titles containing any of these keywords will skip parentheses removal. One keyword per line.'
+          'Books with titles containing any of these keywords will skip bracket cleanup for both title and author. One keyword per line, case-insensitive.'
         )
         .addTextArea((textArea) => {
           textArea
-            .setPlaceholder('e.g.\n\u9B54\u6CD5\u7981\u4E66\u76EE\u5F55')
+            .setPlaceholder('e.g.\nWords of Radiance\nThe Pragmatic Programmer')
             .setValue(get(settingsStore).removeParensWhitelist)
             .onChange((value) => {
               settingsStore.actions.setRemoveParensWhitelist(value);
