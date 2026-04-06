@@ -38,7 +38,7 @@ export class SettingsTab extends PluginSettingTab {
     this.amazonRegion();
     this.downloadBookMetadata();
     this.syncOnBoot();
-    this.restoreChineseLineBreaks();
+    this.restoreCjkLineBreaks();
     this.ignoredBooks();
     this.sponsorMe();
   }
@@ -185,15 +185,15 @@ export class SettingsTab extends PluginSettingTab {
       });
   }
 
-  private restoreChineseLineBreaks(): void {
+  private restoreCjkLineBreaks(): void {
     new Setting(this.containerEl)
-      .setName('Restore Chinese line breaks')
+      .setName('Restore CJK line breaks')
       .setDesc(
-        'Restore likely original line breaks in Chinese/CJK highlight text. This opt-in heuristic looks for sentence-ending punctuation followed by spaces and may also affect Japanese or other CJK text using the same pattern.'
+        'Restore likely original line breaks in CJK highlight text. This opt-in heuristic looks for CJK sentence-ending punctuation followed by spaces and may affect any CJK language using the same pattern.'
       )
       .addToggle((toggle) =>
-        toggle.setValue(get(settingsStore).restoreChineseLineBreaks).onChange((value) => {
-          settingsStore.actions.setRestoreChineseLineBreaks(value);
+        toggle.setValue(get(settingsStore).restoreCjkLineBreaks).onChange((value) => {
+          settingsStore.actions.setRestoreCjkLineBreaks(value);
         })
       );
   }

@@ -4,7 +4,7 @@ import { get } from 'svelte/store';
 
 import type { BookHighlight, Highlight } from '~/models';
 import { settingsStore } from '~/store';
-import { hash, restoreChineseLineBreaks } from '~/utils';
+import { hash, restoreCjkLineBreaks } from '~/utils';
 
 const toBookHighlight = (book: Book, shouldRestoreLineBreaks: boolean): BookHighlight => {
   return {
@@ -19,7 +19,7 @@ const toBookHighlight = (book: Book, shouldRestoreLineBreaks: boolean): BookHigh
         (entry): Highlight => ({
           id: hash(entry.content),
           text: shouldRestoreLineBreaks
-            ? restoreChineseLineBreaks(entry.content)
+            ? restoreCjkLineBreaks(entry.content)
             : entry.content,
           note: entry.note,
           location: entry.location?.display,
@@ -36,7 +36,7 @@ export const parseBooks = (file: string): BookHighlight[] => {
   const parsedRows = readMyClippingsFile(clippingsFileContent);
   const books = groupToBooks(parsedRows);
 
-  const shouldRestoreLineBreaks = get(settingsStore).restoreChineseLineBreaks;
+  const shouldRestoreLineBreaks = get(settingsStore).restoreCjkLineBreaks;
 
   return books.map((book) => toBookHighlight(book, shouldRestoreLineBreaks));
 };

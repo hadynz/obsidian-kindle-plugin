@@ -4,4 +4,4 @@ export * from './br2ln';
 export * from './hash';
 export * from './stringBuffer';
 export * from './parseAuthor';
-export * from './restoreChineseLineBreaks';
+export * from './restoreCjkLineBreaks';

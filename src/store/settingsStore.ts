@@ -17,7 +17,7 @@ type Settings = {
   syncOnBoot: boolean;
   downloadBookMetadata: boolean;
   ignoredBooks: string[];
-  restoreChineseLineBreaks: boolean;
+  restoreCjkLineBreaks: boolean;
 
   // Deprecated - delete eventually
   noteTemplate?: string;
@@ -33,7 +33,7 @@ const DEFAULT_SETTINGS: Settings = {
   syncOnBoot: false,
   downloadBookMetadata: true,
   ignoredBooks: [],
-  restoreChineseLineBreaks: false,
+  restoreCjkLineBreaks: false,
 };
 
 const createSettingsStore = () => {
@@ -156,9 +156,9 @@ const createSettingsStore = () => {
     });
   };
 
-  const setRestoreChineseLineBreaks = (value: boolean) => {
+  const setRestoreCjkLineBreaks = (value: boolean) => {
     store.update((state) => {
-      state.restoreChineseLineBreaks = value;
+      state.restoreCjkLineBreaks = value;
       return state;
     });
   };
@@ -178,7 +178,7 @@ const createSettingsStore = () => {
       setDownloadBookMetadata,
       setAmazonRegion,
       setIgnoredBooks,
-      setRestoreChineseLineBreaks,
+      setRestoreCjkLineBreaks,
     },
   };
 };
