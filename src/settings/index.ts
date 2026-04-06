@@ -198,26 +198,8 @@ export class SettingsTab extends PluginSettingTab {
         })
       );
 
-    // Only show sub-settings when removeParens is enabled
     if (get(settingsStore).removeParens) {
-      const detailsEl = this.containerEl.createEl('details', { cls: 'bracket-settings' });
-      detailsEl.createEl('summary', { text: 'Bracket cleanup settings' });
-
-      new Setting(detailsEl)
-        .setName('Bracket type')
-        .setDesc('Choose which bracket styles to remove from titles and authors')
-        .addDropdown((dropdown) => {
-          dropdown
-            .addOption('all', 'All brackets (（） + ())')
-            .addOption('chinese', 'Full-width brackets only (（）)')
-            .addOption('english', 'Half-width brackets only (())')
-            .setValue(get(settingsStore).removeParensType)
-            .onChange((value: 'all' | 'chinese' | 'english') => {
-              settingsStore.actions.setRemoveParensType(value);
-            });
-        });
-
-      new Setting(detailsEl)
+      new Setting(this.containerEl)
         .setName('Bracket cleanup whitelist')
         .setDesc(
           'Books with titles containing any of these keywords will skip bracket cleanup for both title and author. One keyword per line, case-insensitive.'

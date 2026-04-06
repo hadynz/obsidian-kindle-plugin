@@ -19,7 +19,6 @@ type Settings = {
   ignoredBooks: string[];
   removeParens: boolean;
   removeParensWhitelist: string;
-  removeParensType: 'all' | 'chinese' | 'english';
 
   // Deprecated - delete eventually
   noteTemplate?: string;
@@ -37,7 +36,6 @@ const DEFAULT_SETTINGS: Settings = {
   ignoredBooks: [],
   removeParens: false,
   removeParensWhitelist: '',
-  removeParensType: 'all',
 };
 
 const createSettingsStore = () => {
@@ -174,13 +172,6 @@ const createSettingsStore = () => {
     });
   };
 
-  const setRemoveParensType = (value: 'all' | 'chinese' | 'english') => {
-    store.update((state) => {
-      state.removeParensType = value;
-      return state;
-    });
-  };
-
   return {
     store,
     subscribe: store.subscribe,
@@ -198,7 +189,6 @@ const createSettingsStore = () => {
       setIgnoredBooks,
       setRemoveParens,
       setRemoveParensWhitelist,
-      setRemoveParensType,
     },
   };
 };

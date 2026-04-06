@@ -16,7 +16,6 @@ describe('FileNameRenderer', () => {
       ignoredBooks: [],
       removeParens: false,
       removeParensWhitelist: '',
-      removeParensType: 'all',
     });
   });
 
@@ -225,7 +224,6 @@ describe('FileNameRenderer', () => {
 
     it('removes bracket content from both title and author when enabled', () => {
       settingsStore.actions.setRemoveParens(true);
-      settingsStore.actions.setRemoveParensType('all');
 
       const book: Partial<Book> = {
         title: 'Deep Work (Updated Edition)',
@@ -273,59 +271,48 @@ describe('FileNameRenderer', () => {
 
 describe('removeParenthesesFromText', () => {
   it('removes English parentheses', () => {
-    expect(removeParenthesesFromText('Title (Subtitle)', 'english')).toBe('Title');
-    expect(removeParenthesesFromText('Title (Subtitle)', 'all')).toBe('Title');
+    expect(removeParenthesesFromText('Title (Subtitle)')).toBe('Title');
   });
 
   it('removes Chinese parentheses', () => {
-    expect(removeParenthesesFromText('Title（Subtitle）', 'chinese')).toBe('Title');
-    expect(removeParenthesesFromText('Title（Subtitle）', 'all')).toBe('Title');
+    expect(removeParenthesesFromText('Title（Subtitle）')).toBe('Title');
   });
 
   it('always cleans up spaces around removed English brackets', () => {
-    expect(removeParenthesesFromText('Title (Subtitle)', 'english')).toBe('Title');
-    expect(removeParenthesesFromText('Title  (Subtitle)', 'english')).toBe('Title');
+    expect(removeParenthesesFromText('Title (Subtitle)')).toBe('Title');
+    expect(removeParenthesesFromText('Title  (Subtitle)')).toBe('Title');
   });
 
   it('removes nested parentheses', () => {
     // Nested English
-    expect(removeParenthesesFromText('Title (Subtitle (Extra))', 'english')).toBe('Title');
+    expect(removeParenthesesFromText('Title (Subtitle (Extra))')).toBe('Title');
 
     // Nested Chinese
-    expect(removeParenthesesFromText('Title（Subtitle（Extra））', 'chinese')).toBe('Title');
+    expect(removeParenthesesFromText('Title（Subtitle（Extra））')).toBe('Title');
 
     // Mixed nested
-    expect(removeParenthesesFromText('Title (Subtitle（Extra）)', 'all')).toBe('Title');
-    expect(removeParenthesesFromText('Title（Subtitle (Extra)）', 'all')).toBe('Title');
+    expect(removeParenthesesFromText('Title (Subtitle（Extra）)')).toBe('Title');
+    expect(removeParenthesesFromText('Title（Subtitle (Extra)）')).toBe('Title');
   });
 
-  it('respects parenthesis type setting', () => {
-    const text = 'Title (English)（Chinese）';
-
-    // Remove only English
-    expect(removeParenthesesFromText(text, 'english')).toBe('Title （Chinese）');
-
-    // Remove only Chinese
-    expect(removeParenthesesFromText(text, 'chinese')).toBe('Title (English)');
-
-    // Remove all
-    expect(removeParenthesesFromText(text, 'all')).toBe('Title');
+  it('removes English and Chinese brackets together', () => {
+    expect(removeParenthesesFromText('Title (English)（Chinese）')).toBe('Title');
   });
 
   it('handles edge cases', () => {
     // Empty string result -> returns original
-    expect(removeParenthesesFromText('(Parens Only)', 'english')).toBe('(Parens Only)');
-    expect(removeParenthesesFromText('（Parens Only）', 'chinese')).toBe('（Parens Only）');
+    expect(removeParenthesesFromText('(Parens Only)')).toBe('(Parens Only)');
+    expect(removeParenthesesFromText('（Parens Only）')).toBe('（Parens Only）');
 
     // No parentheses
-    expect(removeParenthesesFromText('Title', 'all')).toBe('Title');
+    expect(removeParenthesesFromText('Title')).toBe('Title');
 
     // Multiple separate parentheses
-    expect(removeParenthesesFromText('Title (One) (Two)', 'english')).toBe('Title');
+    expect(removeParenthesesFromText('Title (One) (Two)')).toBe('Title');
   });
 
   it('returns original text when removal would produce an empty string', () => {
-    expect(removeParenthesesFromText('()', 'english')).toBe('()');
-    expect(removeParenthesesFromText('（ ）', 'chinese')).toBe('（ ）');
+    expect(removeParenthesesFromText('()')).toBe('()');
+    expect(removeParenthesesFromText('（ ）')).toBe('（ ）');
   });
 });
