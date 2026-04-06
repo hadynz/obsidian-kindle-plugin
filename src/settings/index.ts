@@ -189,7 +189,7 @@ export class SettingsTab extends PluginSettingTab {
     new Setting(this.containerEl)
       .setName('Restore Chinese line breaks')
       .setDesc(
-        'Restore original line breaks in Chinese highlight text. Kindle replaces line breaks with spaces; this option detects and restores them based on Chinese sentence-ending punctuation.'
+        'Restore likely original line breaks in Chinese/CJK highlight text. This opt-in heuristic looks for sentence-ending punctuation followed by spaces and may also affect Japanese or other CJK text using the same pattern.'
       )
       .addToggle((toggle) =>
         toggle.setValue(get(settingsStore).restoreChineseLineBreaks).onChange((value) => {
