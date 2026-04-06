@@ -20,6 +20,7 @@
       0 0 8px color-mix(in srgb, var(--interactive-accent) 55%, transparent)
     );
   }
+
   50% {
     opacity: 0.65;
     box-shadow: 0 0 0 6px color-mix(in srgb, var(--interactive-accent) 0%, transparent);

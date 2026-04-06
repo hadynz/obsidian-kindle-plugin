@@ -17,6 +17,8 @@ type Settings = {
   syncOnBoot: boolean;
   downloadBookMetadata: boolean;
   ignoredBooks: string[];
+  removeParens: boolean;
+  removeParensWhitelist: string;
 
   // Deprecated - delete eventually
   noteTemplate?: string;
@@ -32,6 +34,8 @@ const DEFAULT_SETTINGS: Settings = {
   syncOnBoot: false,
   downloadBookMetadata: true,
   ignoredBooks: [],
+  removeParens: false,
+  removeParensWhitelist: '',
 };
 
 const createSettingsStore = () => {
@@ -154,6 +158,20 @@ const createSettingsStore = () => {
     });
   };
 
+  const setRemoveParens = (value: boolean) => {
+    store.update((state) => {
+      state.removeParens = value;
+      return state;
+    });
+  };
+
+  const setRemoveParensWhitelist = (value: string) => {
+    store.update((state) => {
+      state.removeParensWhitelist = value;
+      return state;
+    });
+  };
+
   return {
     store,
     subscribe: store.subscribe,
@@ -169,6 +187,8 @@ const createSettingsStore = () => {
       setDownloadBookMetadata,
       setAmazonRegion,
       setIgnoredBooks,
+      setRemoveParens,
+      setRemoveParensWhitelist,
     },
   };
 };

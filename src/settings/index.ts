@@ -38,6 +38,7 @@ export class SettingsTab extends PluginSettingTab {
     this.amazonRegion();
     this.downloadBookMetadata();
     this.syncOnBoot();
+    this.removeParentheses();
     this.ignoredBooks();
     this.sponsorMe();
   }
@@ -182,6 +183,38 @@ export class SettingsTab extends PluginSettingTab {
         textArea.inputEl.rows = 6;
         textArea.inputEl.cols = 50;
       });
+  }
+
+  private removeParentheses(): void {
+    new Setting(this.containerEl)
+      .setName('Remove bracket content from filename metadata')
+      .setDesc(
+        'Automatically remove bracketed content from book titles and authors before rendering file names'
+      )
+      .addToggle((toggle) =>
+        toggle.setValue(get(settingsStore).removeParens).onChange((value) => {
+          settingsStore.actions.setRemoveParens(value);
+          this.display(); // Re-render to show/hide sub-settings
+        })
+      );
+
+    if (get(settingsStore).removeParens) {
+      new Setting(this.containerEl)
+        .setName('Bracket cleanup whitelist')
+        .setDesc(
+          'Books with titles containing any of these keywords will skip bracket cleanup for both title and author. One keyword per line, case-insensitive.'
+        )
+        .addTextArea((textArea) => {
+          textArea
+            .setPlaceholder('e.g.\nWords of Radiance\nThe Pragmatic Programmer')
+            .setValue(get(settingsStore).removeParensWhitelist)
+            .onChange((value) => {
+              settingsStore.actions.setRemoveParensWhitelist(value);
+            });
+          textArea.inputEl.rows = 4;
+          textArea.inputEl.cols = 50;
+        });
+    }
   }
 
   private sponsorMe(): void {

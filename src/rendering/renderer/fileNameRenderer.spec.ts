@@ -1,8 +1,24 @@
 import type { Book, BookMetadata } from '~/models';
+import { settingsStore } from '~/store';
 
-import FileNameRenderer from './fileNameRenderer';
+import FileNameRenderer, { removeParenthesesFromText } from './fileNameRenderer';
 
 describe('FileNameRenderer', () => {
+  beforeEach(() => {
+    settingsStore.store.set({
+      amazonRegion: 'global',
+      highlightsFolder: '/',
+      lastSyncMode: 'amazon',
+      hasStartedSync: false,
+      isLoggedIn: false,
+      syncOnBoot: false,
+      downloadBookMetadata: true,
+      ignoredBooks: [],
+      removeParens: false,
+      removeParensWhitelist: '',
+    });
+  });
+
   describe('validate', () => {
     it('should return true for valid template', () => {
       const renderer = new FileNameRenderer('');
@@ -205,5 +221,98 @@ describe('FileNameRenderer', () => {
       const result = renderer.render(book, metadata);
       expect(result).not.toContain('?');
     });
+
+    it('removes bracket content from both title and author when enabled', () => {
+      settingsStore.actions.setRemoveParens(true);
+
+      const book: Partial<Book> = {
+        title: 'Deep Work (Updated Edition)',
+        author: 'Cal Newport（Author）',
+      };
+      const metadata: Partial<BookMetadata> = {};
+
+      const renderer = new FileNameRenderer('{{author}} - {{longTitle}}');
+      expect(renderer.render(book, metadata)).toBe('Cal Newport - Deep Work.md');
+    });
+
+    it('skips bracket cleanup for whitelisted book titles', () => {
+      settingsStore.actions.setRemoveParens(true);
+      settingsStore.actions.setRemoveParensWhitelist('Deep Work');
+
+      const book: Partial<Book> = {
+        title: 'Deep Work (Updated Edition)',
+        author: 'Cal Newport (Author)',
+      };
+      const metadata: Partial<BookMetadata> = {};
+
+      const renderer = new FileNameRenderer('{{author}} - {{longTitle}}');
+      expect(renderer.render(book, metadata)).toBe(
+        'Cal Newport (Author) - Deep Work (Updated Edition).md'
+      );
+    });
+
+    it('matches whitelist entries case-insensitively and skips title and author cleanup together', () => {
+      settingsStore.actions.setRemoveParens(true);
+      settingsStore.actions.setRemoveParensWhitelist('deep work');
+
+      const book: Partial<Book> = {
+        title: 'Deep Work (Updated Edition)',
+        author: 'Cal Newport (Author)',
+      };
+      const metadata: Partial<BookMetadata> = {};
+
+      const renderer = new FileNameRenderer('{{author}} - {{longTitle}}');
+      expect(renderer.render(book, metadata)).toBe(
+        'Cal Newport (Author) - Deep Work (Updated Edition).md'
+      );
+    });
+  });
+});
+
+describe('removeParenthesesFromText', () => {
+  it('removes English parentheses', () => {
+    expect(removeParenthesesFromText('Title (Subtitle)')).toBe('Title');
+  });
+
+  it('removes Chinese parentheses', () => {
+    expect(removeParenthesesFromText('Title（Subtitle）')).toBe('Title');
+  });
+
+  it('always cleans up spaces around removed English brackets', () => {
+    expect(removeParenthesesFromText('Title (Subtitle)')).toBe('Title');
+    expect(removeParenthesesFromText('Title  (Subtitle)')).toBe('Title');
+  });
+
+  it('removes nested parentheses', () => {
+    // Nested English
+    expect(removeParenthesesFromText('Title (Subtitle (Extra))')).toBe('Title');
+
+    // Nested Chinese
+    expect(removeParenthesesFromText('Title（Subtitle（Extra））')).toBe('Title');
+
+    // Mixed nested
+    expect(removeParenthesesFromText('Title (Subtitle（Extra）)')).toBe('Title');
+    expect(removeParenthesesFromText('Title（Subtitle (Extra)）')).toBe('Title');
+  });
+
+  it('removes English and Chinese brackets together', () => {
+    expect(removeParenthesesFromText('Title (English)（Chinese）')).toBe('Title');
+  });
+
+  it('handles edge cases', () => {
+    // Empty string result -> returns original
+    expect(removeParenthesesFromText('(Parens Only)')).toBe('(Parens Only)');
+    expect(removeParenthesesFromText('（Parens Only）')).toBe('（Parens Only）');
+
+    // No parentheses
+    expect(removeParenthesesFromText('Title')).toBe('Title');
+
+    // Multiple separate parentheses
+    expect(removeParenthesesFromText('Title (One) (Two)')).toBe('Title');
+  });
+
+  it('returns original text when removal would produce an empty string', () => {
+    expect(removeParenthesesFromText('()')).toBe('()');
+    expect(removeParenthesesFromText('（ ）')).toBe('（ ）');
   });
 });

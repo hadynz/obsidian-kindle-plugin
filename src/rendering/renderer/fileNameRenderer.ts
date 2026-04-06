@@ -1,7 +1,9 @@
 import nunjucks, { Environment } from 'nunjucks';
 import sanitize from 'sanitize-filename';
+import { get } from 'svelte/store';
 
 import type { Book, BookMetadata } from '~/models';
+import { settingsStore } from '~/store';
 
 import { fileNameTemplateVariables } from './templateVariables';
 
@@ -48,7 +50,27 @@ export default class FileNameRenderer {
   }
 
   public render(book: Partial<Book>, metadata: Partial<BookMetadata>): string {
-    const templateVariables = fileNameTemplateVariables(book, metadata);
+    const settings = get(settingsStore);
+
+    // Apply bracket removal to filename-relevant book fields if enabled.
+    const processedBook = { ...book };
+    if (settings.removeParens) {
+      const whitelist = settings.removeParensWhitelist
+        .split('\n')
+        .map((line: string) => line.trim().toLowerCase())
+        .filter((line: string) => line !== '');
+
+      // Check whitelist against book title once — skip all processing if matched
+      const titleLower = (processedBook.title ?? '').toLowerCase();
+      const isWhitelisted = whitelist.some((keyword) => titleLower.includes(keyword));
+
+      if (!isWhitelisted) {
+        processedBook.title = removeParenthesesFromText(processedBook.title ?? '');
+        processedBook.author = removeParenthesesFromText(processedBook.author ?? '');
+      }
+    }
+
+    const templateVariables = fileNameTemplateVariables(processedBook, metadata);
 
     const rendered = this.nunjucks.renderString(this.template, templateVariables);
 
@@ -57,3 +79,29 @@ export default class FileNameRenderer {
     return `${fileName}.md`;
   }
 }
+
+/**
+ * Remove English and Chinese bracketed content from text.
+ * Handles nested brackets by running multiple passes.
+ * Returns original text if removal would result in an empty string.
+ */
+export const removeParenthesesFromText = (text: string): string => {
+  let result = text;
+
+  // Loop to handle nested brackets
+  let prev = '';
+  while (prev !== result) {
+    prev = result;
+
+    result = result.replace(/（[^（）]*）/g, '');
+
+    // Remove English brackets and surrounding spaces, avoiding double spaces.
+    result = result.replace(/\s*\([^()]*\)\s*/g, ' ');
+  }
+
+  // Collapse multiple spaces and trim
+  result = result.replace(/ {2,}/g, ' ').trim();
+
+  // Return original text if removal resulted in empty string
+  return result || text;
+};
