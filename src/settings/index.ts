@@ -38,6 +38,7 @@ export class SettingsTab extends PluginSettingTab {
     this.amazonRegion();
     this.downloadBookMetadata();
     this.syncOnBoot();
+    this.restoreCjkLineBreaks();
     this.ignoredBooks();
     this.sponsorMe();
   }
@@ -182,6 +183,19 @@ export class SettingsTab extends PluginSettingTab {
         textArea.inputEl.rows = 6;
         textArea.inputEl.cols = 50;
       });
+  }
+
+  private restoreCjkLineBreaks(): void {
+    new Setting(this.containerEl)
+      .setName('Restore CJK line breaks')
+      .setDesc(
+        'Restore likely original line breaks in CJK highlight text. This opt-in heuristic looks for CJK sentence-ending punctuation followed by spaces and may affect any CJK language using the same pattern.'
+      )
+      .addToggle((toggle) =>
+        toggle.setValue(get(settingsStore).restoreCjkLineBreaks).onChange((value) => {
+          settingsStore.actions.setRestoreCjkLineBreaks(value);
+        })
+      );
   }
 
   private sponsorMe(): void {

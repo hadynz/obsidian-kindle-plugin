@@ -1,10 +1,12 @@
 import { Book, groupToBooks, readMyClippingsFile } from '@hadynz/kindle-clippings';
 import fs from 'fs';
+import { get } from 'svelte/store';
 
 import type { BookHighlight, Highlight } from '~/models';
-import { hash } from '~/utils';
+import { settingsStore } from '~/store';
+import { hash, restoreCjkLineBreaks } from '~/utils';
 
-const toBookHighlight = (book: Book): BookHighlight => {
+const toBookHighlight = (book: Book, shouldRestoreLineBreaks: boolean): BookHighlight => {
   return {
     book: {
       id: hash(book.title),
@@ -16,7 +18,9 @@ const toBookHighlight = (book: Book): BookHighlight => {
       .map(
         (entry): Highlight => ({
           id: hash(entry.content),
-          text: entry.content,
+          text: shouldRestoreLineBreaks
+            ? restoreCjkLineBreaks(entry.content)
+            : entry.content,
           note: entry.note,
           location: entry.location?.display,
           page: entry.page?.display,
@@ -32,5 +36,7 @@ export const parseBooks = (file: string): BookHighlight[] => {
   const parsedRows = readMyClippingsFile(clippingsFileContent);
   const books = groupToBooks(parsedRows);
 
-  return books.map(toBookHighlight);
+  const shouldRestoreLineBreaks = get(settingsStore).restoreCjkLineBreaks;
+
+  return books.map((book) => toBookHighlight(book, shouldRestoreLineBreaks));
 };
