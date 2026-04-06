@@ -37,33 +37,42 @@ export const convertChineseDateToEnglish = (content: string): string => {
   const chineseDateRegex =
     /(\d{4})年(\d{1,2})月(\d{1,2})日\s*(?:(?:星期|周)([一二三四五六日天]))?\s*(?:(上午|下午)(\d{1,2}):(\d{2}):(\d{2}))?/g;
 
-  return content.replace(chineseDateRegex, (
-    _match: string, year: string, month: string, day: string,
-    weekday: string | undefined, period: string | undefined,
-    hour: string | undefined, minute: string | undefined, second: string | undefined
-  ) => {
-    const monthName = MONTH_MAP[Number(month)];
+  return content.replace(
+    chineseDateRegex,
+    (
+      match: string,
+      year: string,
+      month: string,
+      day: string,
+      weekday: string | undefined,
+      period: string | undefined,
+      hour: string | undefined,
+      minute: string | undefined,
+      second: string | undefined
+    ) => {
+      const monthNum = Number(month);
+      const monthName = MONTH_MAP[monthNum];
+
     if (!monthName) {
-      return _match; // Invalid month, return original string
+        return match;
     }
-    const datePart = `${monthName} ${Number(day)}, ${year}`;
+      const datePart = `${monthName} ${Number(day)}, ${year}`;
 
-    let result = '';
+      let result = '';
 
-    // Prepend weekday if present
-    if (weekday) {
-      result = `${WEEKDAY_MAP[weekday]}, ${datePart}`;
-    } else {
-      result = datePart;
-    }
+      if (weekday) {
+        result = `${WEEKDAY_MAP[weekday]}, ${datePart}`;
+      } else {
+        result = datePart;
+      }
 
-    // Append time if present
-    if (period && hour && minute && second) {
-      result += ` ${Number(hour)}:${minute}:${second} ${PERIOD_MAP[period]}`;
+      if (period && hour && minute && second) {
+        result += ` ${Number(hour)}:${minute}:${second} ${PERIOD_MAP[period]}`;
     }
 
-    return result;
-  });
+      return result;
+    }
+  );
 };
 
 const toBookHighlight = (book: Book): BookHighlight => {
@@ -90,7 +99,7 @@ const toBookHighlight = (book: Book): BookHighlight => {
 
 export const parseBooks = (file: string): BookHighlight[] => {
   let clippingsFileContent = fs.readFileSync(file, 'utf8');
-  clippingsFileContent = convertChineseDateToEnglish(clippingsFileContent); // Preprocess Chinese dates
+  clippingsFileContent = convertChineseDateToEnglish(clippingsFileContent);
 
   const parsedRows = readMyClippingsFile(clippingsFileContent);
   const books = groupToBooks(parsedRows);
