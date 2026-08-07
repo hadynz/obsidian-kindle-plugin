@@ -30,6 +30,10 @@ export default class AmazonLoginModal {
       show: false,
     });
 
+    // Obsidian cancels http(s) navigations in every window it creates and reopens them in the
+    // system browser, ejecting the Amazon login flow. Drop that listener on the window we own.
+    this.modal.webContents.removeAllListeners('will-navigate');
+
     // We can only change title after page is loaded since HTML page has its own title
     this.modal.once('ready-to-show', () => {
       this.modal.setTitle('Connect your Amazon account to Obsidian');
