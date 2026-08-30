@@ -16,10 +16,10 @@ export default class SyncManager {
     this.fileManager = fileManager;
   }
 
-  public filterBooksToSync(remoteBooks: Book[]): Book[] {
+  public async filterBooksToSync(remoteBooks: Book[]): Promise<Book[]> {
     const lastSyncDate = get(settingsStore).lastSyncDate;
     const ignoredBooks = get(settingsStore).ignoredBooks ?? [];
-    const vaultBooks = this.fileManager.getKindleFiles();
+    const vaultBooks = await this.fileManager.getKindleFilesAsync();
 
     const booksToSync = diffBooks(
       remoteBooks,
@@ -43,7 +43,7 @@ export default class SyncManager {
       return; // No highlights for book. Skip sync
     }
 
-    const file = this.fileManager.getKindleFile(book);
+    const file = await this.fileManager.getKindleFile(book);
 
     if (file == null) {
       await this.createBook(book, highlights);

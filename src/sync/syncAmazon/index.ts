@@ -39,7 +39,7 @@ export default class SyncAmazon {
         return;
       }
 
-      const booksToSync = this.syncManager.filterBooksToSync(remoteBooks);
+      const booksToSync = await this.syncManager.filterBooksToSync(remoteBooks);
       syncCancellation.setTotalCount(booksToSync.length);
 
       ee.emit('fetchingBooksSuccess', booksToSync, remoteBooks);
