@@ -64,4 +64,20 @@ describe('diffBooks', () => {
     const actualBooks = diffBooks(remoteBooks, vaultBooks, new Date());
     expect(actualBooks.map((a) => a.id)).toEqual(['1']);
   });
+
+  it('Books with matching ASIN are not treated as new even when the id differs', () => {
+    const remoteBooks = [{ ...book('new-id'), asin: 'B0000ASIN1' }];
+    const vaultBooks = [{ ...book('old-id'), asin: 'B0000ASIN1' }];
+
+    const actualBooks = diffBooks(remoteBooks, vaultBooks, new Date());
+    expect(actualBooks).toHaveLength(0);
+  });
+
+  it('Books with no ASIN are still matched by id alone', () => {
+    const remoteBooks = [book('1')];
+    const vaultBooks = [book('2')];
+
+    const actualBooks = diffBooks(remoteBooks, vaultBooks, new Date());
+    expect(actualBooks.map((a) => a.id)).toEqual(['1']);
+  });
 });

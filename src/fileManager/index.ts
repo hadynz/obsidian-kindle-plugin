@@ -11,6 +11,40 @@ import { bookFilePath, bookToFrontMatter, frontMatterToBook } from './mappers';
 const SyncingStateKey = 'kindle-sync';
 const PropertyPrefix = 'kindle-';
 
+/**
+ * Normalize a raw frontmatter object (from either the metadata cache or a
+ * direct file read) into KindleFrontmatter, supporting both the legacy nested
+ * `kindle-sync:` format and the current flat `kindle-*` properties format.
+ */
+const toKindleFrontmatter = (frontmatter: unknown): KindleFrontmatter | undefined => {
+  if (frontmatter == null) {
+    return undefined;
+  }
+
+  const properties = frontmatter as Record<string, unknown>;
+
+  // Try nested format first (legacy support)
+  const nested = properties[SyncingStateKey] as KindleFrontmatter | undefined;
+  if (nested != null) {
+    return nested;
+  }
+
+  // If not found, try flat format (new Obsidian properties format)
+  if (properties[`${PropertyPrefix}bookId`] != null) {
+    return {
+      bookId: properties[`${PropertyPrefix}bookId`] as string,
+      title: properties[`${PropertyPrefix}title`] as string,
+      author: properties[`${PropertyPrefix}author`] as string,
+      asin: properties[`${PropertyPrefix}asin`] as string | undefined,
+      lastAnnotatedDate: properties[`${PropertyPrefix}lastAnnotatedDate`] as string | undefined,
+      bookImageUrl: properties[`${PropertyPrefix}bookImageUrl`] as string | undefined,
+      highlightsCount: properties[`${PropertyPrefix}highlightsCount`] as number | undefined,
+    };
+  }
+
+  return undefined;
+};
+
 export default class FileManager {
   constructor(private vault: Vault, private metadataCache: MetadataCache) {}
 
@@ -18,10 +52,19 @@ export default class FileManager {
     return await this.vault.cachedRead(file.file);
   }
 
-  public getKindleFile(book: Book): KindleFile | undefined {
-    const allSyncedFiles = this.getKindleFiles();
+  public async getKindleFile(book: Book): Promise<KindleFile | undefined> {
+    const allSyncedFiles = await this.getKindleFilesAsync();
 
-    const kindleFile = allSyncedFiles.find((file) => file.frontmatter.bookId === book.id);
+    // Primary match: stable title hash (backwards compatible; only option when
+    // ASIN is absent, e.g. "My Clippings" uploads).
+    const kindleFile =
+      allSyncedFiles.find((file) => file.frontmatter.bookId === book.id) ??
+      // Fallback match: ASIN is stable even when Amazon changes a book's title
+      // (subtitle / edition / author-credential drift), which otherwise changes
+      // the title hash and makes the existing file miss -> duplicate.
+      (book.asin != null
+        ? allSyncedFiles.find((file) => file.frontmatter.asin === book.asin)
+        : undefined);
 
     return kindleFile == null ? undefined : { ...kindleFile, book };
   }
@@ -42,26 +85,7 @@ export default class FileManager {
       const fileCache = this.metadataCache.getFileCache(file);
 
       // File cache can be undefined if this file was just created and not yet cached by Obsidian
-      // Try both nested format (legacy) and flat format (new)
-      let kindleFrontmatter: KindleFrontmatter | undefined;
-      
-      if (fileCache?.frontmatter) {
-        // Try nested format first (legacy support)
-        kindleFrontmatter = fileCache.frontmatter[SyncingStateKey] as KindleFrontmatter | undefined;
-        
-        // If not found, try flat format (new Obsidian properties format)
-        if (!kindleFrontmatter && fileCache.frontmatter[`${PropertyPrefix}bookId`]) {
-          kindleFrontmatter = {
-            bookId: fileCache.frontmatter[`${PropertyPrefix}bookId`] as string,
-            title: fileCache.frontmatter[`${PropertyPrefix}title`] as string,
-            author: fileCache.frontmatter[`${PropertyPrefix}author`] as string,
-            asin: fileCache.frontmatter[`${PropertyPrefix}asin`] as string | undefined,
-            lastAnnotatedDate: fileCache.frontmatter[`${PropertyPrefix}lastAnnotatedDate`] as string | undefined,
-            bookImageUrl: fileCache.frontmatter[`${PropertyPrefix}bookImageUrl`] as string | undefined,
-            highlightsCount: fileCache.frontmatter[`${PropertyPrefix}highlightsCount`] as number | undefined,
-          };
-        }
-      }
+      const kindleFrontmatter = toKindleFrontmatter(fileCache?.frontmatter);
 
       if (kindleFrontmatter == null) {
         return undefined;
@@ -77,6 +101,67 @@ export default class FileManager {
   }
 
   public getKindleFiles(): KindleFile[] {
+    if (!this.metadataCache) {
+      return [];
+    }
+
+    const filesToProcess = this.getFilesInHighlightsFolder().slice(0, 1000);
+
+    return filesToProcess
+      .map((file) => {
+        try {
+          return this.mapToKindleFile(file);
+        } catch (error) {
+          // Silently skip files that can't be parsed to prevent blocking
+          return undefined;
+        }
+      })
+      .filter((file) => file != null) ;
+  }
+
+  /**
+   * Same as getKindleFiles but resilient to a stale/missing metadata cache:
+   * files whose frontmatter isn't in the cache are read directly from disk so
+   * they are not silently dropped from the sync list (which would cause the
+   * book to be re-created as a duplicate).
+   */
+  public async getKindleFilesAsync(): Promise<KindleFile[]> {
+    const filesToProcess = this.getFilesInHighlightsFolder().slice(0, 1000);
+
+    if (filesToProcess.length === 0) {
+      return [];
+    }
+
+    const kindleFiles: KindleFile[] = [];
+    for (const file of filesToProcess) {
+      try {
+        const cached = this.mapToKindleFile(file);
+        if (cached != null) {
+          kindleFiles.push(cached);
+          continue;
+        }
+
+        // Cache miss: read the frontmatter directly from the file content.
+        const raw = await this.vault.cachedRead(file);
+        const { data } = matter(raw);
+        const kindleFrontmatter = toKindleFrontmatter(data);
+        if (kindleFrontmatter == null) {
+          continue;
+        }
+        kindleFiles.push({
+          file,
+          frontmatter: kindleFrontmatter,
+          book: frontMatterToBook(kindleFrontmatter),
+        });
+      } catch (error) {
+        // Silently skip files that can't be parsed to prevent blocking
+      }
+    }
+
+    return kindleFiles;
+  }
+
+  private getFilesInHighlightsFolder(): TFile[] {
     try {
       // Safety check: if settings store isn't ready, return empty array
       // This prevents blocking during plugin initialization
@@ -88,17 +173,17 @@ export default class FileManager {
         console.warn('Settings store not ready, skipping file scan');
         return [];
       }
-      
+
       // Safety check: if vault isn't ready, return empty array
-      if (!this.vault || !this.metadataCache) {
+      if (!this.vault) {
         return [];
       }
-      
+
       // Get files directly from the highlights folder if possible
       const folderPath = normalizePath(highlightsFolder === '/' ? '' : highlightsFolder);
-      
+
       let filesInFolder: TFile[] = [];
-      
+
       try {
         // Try to get the folder directly and its files
         if (folderPath !== '') {
@@ -149,27 +234,8 @@ export default class FileManager {
           return [];
         }
       }
-      
-      // If no files, return early
-      if (filesInFolder.length === 0) {
-        return [];
-      }
-      
-      // Limit the number of files we process to prevent blocking
-      // Process files in smaller batches
-      const maxFilesToProcess = 1000;
-      const filesToProcess = filesInFolder.slice(0, maxFilesToProcess);
-      
-      return filesToProcess
-        .map((file) => {
-          try {
-            return this.mapToKindleFile(file);
-          } catch (error) {
-            // Silently skip files that can't be parsed to prevent blocking
-            return undefined;
-          }
-        })
-        .filter((file) => file != null) ;
+
+      return filesInFolder;
     } catch (error) {
       console.error('Error getting Kindle files:', error);
       return [];
