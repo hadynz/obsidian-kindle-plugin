@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 
 import { ee } from '~/eventEmitter';
 import type { Book, Highlight, KindleFile, SyncMode } from '~/models';
@@ -169,7 +169,10 @@ const createSyncModalStore = () => {
   });
 
   ee.on('syncSessionSuccess', () => {
-    addRootLog('Sync complete');
+    const erroredCount = get(store).erroredJobs.length;
+    addRootLog(
+      erroredCount > 0 ? `Sync complete with ${erroredCount} error${erroredCount === 1 ? '' : 's'}` : 'Sync complete'
+    );
     store.update((state) => ({
       ...InitialState,
       status: 'sync:complete' as const,
@@ -178,6 +181,9 @@ const createSyncModalStore = () => {
       highlightsSynced: state.highlightsSynced,
       syncDurationMs: state.syncStartedAt ? Date.now() - state.syncStartedAt : undefined,
       activityLog: state.activityLog,
+      // Carried over rather than reset - a session can complete overall while individual books
+      // failed along the way, and that's otherwise invisible outside the console.
+      erroredJobs: state.erroredJobs,
     }));
   });
 

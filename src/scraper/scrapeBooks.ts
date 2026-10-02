@@ -65,23 +65,26 @@ export const parseBooks = ($: Root): Book[] => {
   });
 };
 
+// Amazon's Kindle notebook page lazily renders books into the DOM as the page is scrolled,
+// so a single unscrolled read only ever sees the first batch (regardless of library size).
+const NotebookBookSelector = '.kp-notebook-library-each-book';
+
 const scrapeBooks = async (): Promise<Book[]> => {
   const region = currentAmazonRegion();
   ee.emit('syncLog', `Loading Kindle notebook from ${region.hostname}…`);
-  const { dom } = await loadRemoteDom(region.notebookUrl, 30000);
+  const { dom } = await loadRemoteDom(region.notebookUrl, 0, {
+    scrollToLoadAll: {
+      itemSelector: NotebookBookSelector,
+      // Large libraries (hundreds+ of books) need more, and slower-loading, scrolls than the
+      // defaults tuned for a typical page
+      scrollDelayMs: 1500,
+      maxIterations: 150,
+      stableIterations: 3,
+    },
+  });
   const books = parseBooks(dom);
 
-  // Amazon's Kindle notebook page typically shows up to 54 books per page
-  // If we get exactly 54, there may be more books on additional pages
-  // However, pagination requires complex interaction with Amazon's interface
-  // Users with more than 54 books may need to sync multiple times
-  // The sync process is intelligent and will only sync new/changed books
-  if (books.length === 54) {
-    console.log(
-      'Found 54 books. If you have more books, you may need to sync multiple times to get them all.'
-    );
-    ee.emit('syncLog', 'Note: Kindle notebook may show only 54 books per page');
-  }
+  ee.emit('syncLog', `Found ${books.length} book(s) in Kindle notebook`);
 
   return books;
 };

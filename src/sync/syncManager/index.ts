@@ -17,14 +17,12 @@ export default class SyncManager {
   }
 
   public filterBooksToSync(remoteBooks: Book[]): Book[] {
-    const lastSyncDate = get(settingsStore).lastSyncDate;
     const ignoredBooks = get(settingsStore).ignoredBooks ?? [];
     const vaultBooks = this.fileManager.getKindleFiles();
 
     const booksToSync = diffBooks(
       remoteBooks,
-      vaultBooks.map((v) => v.book),
-      lastSyncDate
+      vaultBooks.map((v) => v.book)
     );
 
     if (ignoredBooks.length === 0) {
@@ -39,13 +37,13 @@ export default class SyncManager {
   }
 
   public async syncBook(book: Book, highlights: Highlight[]): Promise<void> {
-    if (highlights.length === 0) {
-      return; // No highlights for book. Skip sync
-    }
-
     const file = this.fileManager.getKindleFile(book);
 
     if (file == null) {
+      // Still create a file even with zero highlights - a book with no note has no lastChecked
+      // to compare against, so it looks "new" again on every single sync, forever, exactly like
+      // the bugs fixed elsewhere in this codebase. Recording that we checked it (even if there's
+      // nothing to show yet) is what lets it drop out of the diff once confirmed empty.
       await this.createBook(book, highlights);
     } else {
       await this.resyncBook(file, book, highlights);
@@ -61,9 +59,9 @@ export default class SyncManager {
 
     const diffs = diffManager.diff(remoteHighlights);
 
-    if (diffs.length > 0) {
-      await diffManager.applyDiffs(remoteBook, remoteHighlights, diffs);
-    }
+    // Always write, even with zero diffs - this is what stamps lastChecked with today's date, so
+    // a book we just confirmed is unchanged doesn't look perpetually stale to diffBooks
+    await diffManager.applyDiffs(remoteBook, remoteHighlights, diffs);
 
     return diffs;
   }

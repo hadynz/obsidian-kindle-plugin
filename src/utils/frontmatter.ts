@@ -16,12 +16,19 @@ const sanitize = (obj: any): any => {
 export const mergeFrontmatter = (
   textWithFrontMatter: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  newFrontMatter: Record<string, any>
+  newFrontMatter: Record<string, any>,
+  keysToRemove: string[] = []
 ): string => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const cleanFrontmatter = sanitize(newFrontMatter);
   const { data, content } = matter(textWithFrontMatter);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const mergedFrontMatter = Object.assign({}, data, cleanFrontmatter);
+
+  for (const key of keysToRemove) {
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete, @typescript-eslint/no-unsafe-member-access
+    delete mergedFrontMatter[key];
+  }
+
   return matter.stringify(content, mergedFrontMatter);
 };

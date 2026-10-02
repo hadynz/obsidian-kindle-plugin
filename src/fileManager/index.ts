@@ -4,9 +4,11 @@ import { get } from 'svelte/store';
 
 import type { Book, BookMetadata, KindleFile, KindleFrontmatter } from '~/models';
 import { settingsStore } from '~/store';
-import { mergeFrontmatter } from '~/utils';
+import { mergeFrontmatter, withRetry } from '~/utils';
 
 import { bookFilePath, bookToFrontMatter, frontMatterToBook } from './mappers';
+import type { DuplicateCandidate } from './selectCanonicalDuplicate';
+import { pickBetterDuplicate } from './selectCanonicalDuplicate';
 
 const SyncingStateKey = 'kindle-sync';
 const PropertyPrefix = 'kindle-';
@@ -15,15 +17,76 @@ export default class FileManager {
   constructor(private vault: Vault, private metadataCache: MetadataCache) {}
 
   public async readFile(file: KindleFile): Promise<string> {
-    return await this.vault.cachedRead(file.file);
+    // Reading from a cloud-synced vault (iCloud Drive, Dropbox, ...) can transiently time out if
+    // the file was evicted locally and needs to be fetched on demand, especially under the heavy,
+    // rapid I/O of syncing a large library. Retry a few times before giving up on this book.
+    return await withRetry(() => this.vault.cachedRead(file.file));
+  }
+
+  /**
+   * Waits for Obsidian's metadataCache to actually reprocess a file we just wrote, instead of
+   * guessing with a fixed delay. Every read in this file (getKindleFiles/mapToKindleFile) goes
+   * through that same cache, so a fixed delay that's too short leaves a window where the very
+   * next sync reads pre-write frontmatter - which looks identical to "we never checked this book"
+   * and makes it look permanently stale no matter how many times it's actually corrected on disk.
+   * Falls back to a timeout so a write that Obsidian never reports as changed (e.g. no actual
+   * byte difference) can't hang the sync.
+   */
+  private waitForMetadataCache(file: TFile, timeoutMs = 5000): Promise<void> {
+    return new Promise((resolve) => {
+      let settled = false;
+
+      const finish = (): void => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        clearTimeout(timeoutHandle);
+        this.metadataCache.off('changed', onChanged);
+        resolve();
+      };
+
+      const onChanged = (changedFile: TFile): void => {
+        if (changedFile.path === file.path) {
+          finish();
+        }
+      };
+
+      this.metadataCache.on('changed', onChanged);
+      const timeoutHandle = setTimeout(finish, timeoutMs);
+    });
   }
 
   public getKindleFile(book: Book): KindleFile | undefined {
     const allSyncedFiles = this.getKindleFiles();
 
-    const kindleFile = allSyncedFiles.find((file) => file.frontmatter.bookId === book.id);
+    const matches = allSyncedFiles.filter((file) => file.frontmatter.bookId === book.id);
 
-    return kindleFile == null ? undefined : { ...kindleFile, book };
+    if (matches.length === 0) {
+      return undefined;
+    }
+
+    // Under normal operation there's exactly one match. If a duplicate ever exists anyway (a
+    // leftover from a bug, a sync interrupted mid-write), pick deterministically instead of
+    // depending on vault enumeration order - otherwise different syncs can read and write
+    // different copies of "the same" book, which never converges.
+    const asDuplicateCandidate = (kindleFile: KindleFile): DuplicateCandidate => ({
+      path: kindleFile.file.path,
+      highlightsCount: kindleFile.frontmatter.highlightsCount,
+      createdAt: kindleFile.file.stat.ctime,
+    });
+
+    const kindleFile =
+      matches.length === 1
+        ? matches[0]
+        : matches.reduce((best, candidate) =>
+            pickBetterDuplicate(asDuplicateCandidate(best), asDuplicateCandidate(candidate)).path ===
+            best.file.path
+              ? best
+              : candidate
+          );
+
+    return { ...kindleFile, book };
   }
 
   public mapToKindleFile(fileOrFolder: TAbstractFile): KindleFile | undefined {
@@ -42,24 +105,27 @@ export default class FileManager {
       const fileCache = this.metadataCache.getFileCache(file);
 
       // File cache can be undefined if this file was just created and not yet cached by Obsidian
-      // Try both nested format (legacy) and flat format (new)
+      // Every sync writes the flat format and is supposed to strip the legacy nested block, but
+      // older files may still carry a stale nested block alongside now-current flat properties
+      // (e.g. if they were written by a version of the plugin that merged forward without
+      // removing it). Prefer the flat format - the one the plugin actively keeps up to date -
+      // and only fall back to the nested one for files that predate the flat format entirely.
       let kindleFrontmatter: KindleFrontmatter | undefined;
-      
+
       if (fileCache?.frontmatter) {
-        // Try nested format first (legacy support)
-        kindleFrontmatter = fileCache.frontmatter[SyncingStateKey] as KindleFrontmatter | undefined;
-        
-        // If not found, try flat format (new Obsidian properties format)
-        if (!kindleFrontmatter && fileCache.frontmatter[`${PropertyPrefix}bookId`]) {
+        if (fileCache.frontmatter[`${PropertyPrefix}bookId`]) {
           kindleFrontmatter = {
             bookId: fileCache.frontmatter[`${PropertyPrefix}bookId`] as string,
             title: fileCache.frontmatter[`${PropertyPrefix}title`] as string,
             author: fileCache.frontmatter[`${PropertyPrefix}author`] as string,
             asin: fileCache.frontmatter[`${PropertyPrefix}asin`] as string | undefined,
             lastAnnotatedDate: fileCache.frontmatter[`${PropertyPrefix}lastAnnotatedDate`] as string | undefined,
+            lastChecked: fileCache.frontmatter[`${PropertyPrefix}lastChecked`] as string | undefined,
             bookImageUrl: fileCache.frontmatter[`${PropertyPrefix}bookImageUrl`] as string | undefined,
             highlightsCount: fileCache.frontmatter[`${PropertyPrefix}highlightsCount`] as number | undefined,
           };
+        } else {
+          kindleFrontmatter = fileCache.frontmatter[SyncingStateKey] as KindleFrontmatter | undefined;
         }
       }
 
@@ -96,9 +162,28 @@ export default class FileManager {
       
       // Get files directly from the highlights folder if possible
       const folderPath = normalizePath(highlightsFolder === '/' ? '' : highlightsFolder);
-      
+
+      // Scans every markdown file in the vault and filters by path prefix. Used for the root
+      // folder case, and as a fallback whenever direct folder resolution below doesn't pan out
+      // (wrong case, a stray slash, or the folder not being resolvable yet) so that a lookup
+      // hiccup can't make every book in the folder look "missing" and get duplicated.
+      const scanAllFilesFallback = (): TFile[] => {
+        const allMarkdownFiles = this.vault.getMarkdownFiles();
+        return allMarkdownFiles.filter((file) => {
+          try {
+            const filePath = normalizePath(file.path);
+            if (folderPath === '') {
+              return !filePath.includes('/');
+            }
+            return filePath === folderPath || filePath.startsWith(folderPath + '/');
+          } catch {
+            return false;
+          }
+        });
+      };
+
       let filesInFolder: TFile[] = [];
-      
+
       try {
         // Try to get the folder directly and its files
         if (folderPath !== '') {
@@ -117,50 +202,31 @@ export default class FileManager {
               return files;
             };
             filesInFolder = getAllFilesInFolder(folder);
+          } else {
+            // Configured folder didn't resolve to a folder (case/slash mismatch, or it hasn't
+            // been indexed yet) - fall back rather than silently treating the vault as empty
+            filesInFolder = scanAllFilesFallback();
           }
         } else {
-          // For root folder, we need to scan all files but filter for root only
-          // This is less efficient but necessary for root folder
-          const allMarkdownFiles = this.vault.getMarkdownFiles();
-          filesInFolder = allMarkdownFiles.filter((file) => {
-            const filePath = normalizePath(file.path);
-            // File is in root if it has no '/' separator (just filename)
-            return !filePath.includes('/');
-          });
+          filesInFolder = scanAllFilesFallback();
         }
       } catch (error) {
         // Fallback: if direct folder access fails, use filtered approach
         console.warn('Error accessing folder directly, using fallback method:', error);
         try {
-          const allMarkdownFiles = this.vault.getMarkdownFiles();
-          filesInFolder = allMarkdownFiles.filter((file) => {
-            try {
-              const filePath = normalizePath(file.path);
-              if (folderPath === '') {
-                return !filePath.includes('/');
-              }
-              return filePath.startsWith(folderPath + '/') || filePath === folderPath;
-            } catch {
-              return false;
-            }
-          });
+          filesInFolder = scanAllFilesFallback();
         } catch (fallbackError) {
           console.warn('Fallback method also failed:', fallbackError);
           return [];
         }
       }
-      
+
       // If no files, return early
       if (filesInFolder.length === 0) {
         return [];
       }
-      
-      // Limit the number of files we process to prevent blocking
-      // Process files in smaller batches
-      const maxFilesToProcess = 1000;
-      const filesToProcess = filesInFolder.slice(0, maxFilesToProcess);
-      
-      return filesToProcess
+
+      return filesInFolder
         .map((file) => {
           try {
             return this.mapToKindleFile(file);
@@ -182,14 +248,36 @@ export default class FileManager {
     content: string,
     highlightsCount: number
   ): Promise<void> {
-    const filePath = this.generateUniqueFilePath(book, metadata);
-    const frontmatterContent = this.generateBookContent(book, content, highlightsCount);
+    const filePath = normalizePath(bookFilePath(book, metadata));
+
+    // A file can already exist at this book's canonical path even though it wasn't found by its
+    // stored bookId (e.g. Obsidian's metadata cache hasn't caught up with a recent write yet, or
+    // the configured highlights folder briefly failed to resolve). Update that file in place
+    // instead of creating a timestamp-suffixed duplicate alongside it.
+    const existingFile = this.vault.getAbstractFileByPath(filePath);
+
+    if (existingFile instanceof TFile) {
+      try {
+        const existingContent = await withRetry(() => this.vault.cachedRead(existingFile));
+        const frontmatterContent = this.generateBookContent(
+          book,
+          content,
+          highlightsCount,
+          existingContent
+        );
+        await this.vault.modify(existingFile, frontmatterContent);
+        await this.waitForMetadataCache(existingFile);
+      } catch (error) {
+        console.error(`Error updating existing file (path="${filePath})"`);
+        throw error;
+      }
+      return;
+    }
 
     try {
-      await this.vault.create(filePath, frontmatterContent);
-      // Give Obsidian time to process the new file and update metadata cache
-      // This helps prevent performance issues when syncing many books
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      const frontmatterContent = this.generateBookContent(book, content, highlightsCount);
+      const createdFile = await this.vault.create(filePath, frontmatterContent);
+      await this.waitForMetadataCache(createdFile);
     } catch (error) {
       console.error(`Error writing new file (path="${filePath})"`);
       throw error;
@@ -206,9 +294,7 @@ export default class FileManager {
 
     try {
       await this.vault.modify(kindleFile.file, frontmatterContent);
-      // Give Obsidian time to process the file update and update metadata cache
-      // This helps prevent performance issues when syncing many books
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await this.waitForMetadataCache(kindleFile.file);
     } catch (error) {
       console.error(`Error modifying e file (path="${kindleFile.file.path})"`);
       throw error;
@@ -220,17 +306,35 @@ export default class FileManager {
    * (b) rendered book highlights
    * Uses flat properties format compatible with Obsidian's properties system
    */
-  private generateBookContent(book: Book, content: string, highlightsCount: number): string {
-    const frontmatter = bookToFrontMatter(book, highlightsCount);
-    
+  private generateBookContent(
+    book: Book,
+    content: string,
+    highlightsCount: number,
+    preserveFrontmatterFrom?: string
+  ): string {
+    // lastChecked always means "the plugin wrote this file just now" - it's our own bookkeeping,
+    // not something scraped from Amazon, so it's stamped fresh on every write rather than carried
+    // over from whatever was on the book object passed in.
+    const frontmatter = bookToFrontMatter({ ...book, lastChecked: new Date() }, highlightsCount);
+
+    // When rewriting a file we found by path rather than by id (see createFile), `content` is a
+    // freshly rendered body with no frontmatter of its own. Carrying over any frontmatter that
+    // already existed on disk - including fields the plugin knows nothing about, like a user's
+    // own rating or genre - before merging in the plugin's own fields, so a lookup miss can't
+    // silently discard someone's own data along with fixing the duplicate.
+    const baseContent = preserveFrontmatterFrom
+      ? matter.stringify(content, matter(preserveFrontmatterFrom).data)
+      : content;
+
     // Use flat properties format for better Obsidian compatibility
     const flatProperties: Record<string, any> = {
       [`${PropertyPrefix}bookId`]: frontmatter.bookId,
       [`${PropertyPrefix}title`]: frontmatter.title,
       [`${PropertyPrefix}author`]: frontmatter.author,
       [`${PropertyPrefix}highlightsCount`]: frontmatter.highlightsCount,
+      [`${PropertyPrefix}lastChecked`]: frontmatter.lastChecked,
     };
-    
+
     // Only add optional fields if they exist
     if (frontmatter.asin) {
       flatProperties[`${PropertyPrefix}asin`] = frontmatter.asin;
@@ -242,22 +346,9 @@ export default class FileManager {
       flatProperties[`${PropertyPrefix}bookImageUrl`] = frontmatter.bookImageUrl;
     }
     
-    return mergeFrontmatter(content, flatProperties);
-  }
-
-  private generateUniqueFilePath(book: Book, metadata: BookMetadata): string {
-    const filePath = bookFilePath(book, metadata);
-
-    const isDuplicate = this.vault
-      .getMarkdownFiles()
-      .some((v) => v.path === normalizePath(filePath));
-
-    if (isDuplicate) {
-      const currentTime = new Date().getTime().toString();
-      return filePath.replace('.md', `-${currentTime}.md`);
-    }
-
-    return filePath;
+    // Strip any stale legacy nested block so it can't keep shadowing these freshly-written flat
+    // properties on a future read (see the priority comment in mapToKindleFile)
+    return mergeFrontmatter(baseContent, flatProperties, [SyncingStateKey]);
   }
 
   /**

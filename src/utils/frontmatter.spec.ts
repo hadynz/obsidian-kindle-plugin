@@ -104,4 +104,25 @@ bookName: New Book
       });
     }).not.toThrow();
   });
+
+  it('Removes stale legacy keys instead of leaving them to shadow the new values', () => {
+    const originalYamlContent = `---
+kindle-sync:
+  bookId: OldId123
+  lastAnnotatedDate: Jan 01, 2020
+kindle-bookId: OldId123
+---
+
+# Content
+`;
+
+    const actual = mergeFrontmatter(
+      originalYamlContent,
+      { 'kindle-bookId': 'OldId123', 'kindle-lastAnnotatedDate': '2024-05-01' },
+      ['kindle-sync']
+    );
+
+    expect(actual).not.toContain('kindle-sync');
+    expect(actual).toContain("kindle-lastAnnotatedDate: '2024-05-01'");
+  });
 });

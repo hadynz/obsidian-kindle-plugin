@@ -8,6 +8,13 @@ export type Book = {
   url?: string;
   imageUrl?: string;
   lastAnnotatedDate?: Date;
+  /**
+   * When the plugin itself last checked this book's highlights. Plugin-owned bookkeeping (not
+   * something Amazon provides) - used to decide whether Amazon's own "last accessed" date
+   * reflects new activity since we last looked, without being fooled by the fact that checking
+   * a book is itself an access.
+   */
+  lastChecked?: Date;
 };
 
 export type Highlight = {
@@ -61,6 +68,7 @@ export type KindleFrontmatter = {
   author: string;
   asin: string;
   lastAnnotatedDate?: string; // Not set for My Clipping annotations
+  lastChecked?: string;
   bookImageUrl: string;
   highlightsCount: number;
 };

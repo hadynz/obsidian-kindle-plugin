@@ -119,6 +119,7 @@
 
   $: highlights = $store.highlightsSynced ?? 0;
   $: duration = $store.syncDurationMs;
+  $: errorCount = $store.erroredJobs.length;
 
   $: details = $store.activityLog;
 
@@ -198,6 +199,13 @@
         {/if}
       {:else}
         <span class="kp-syncmodal--progress-message">All books up to date</span>
+      {/if}
+      {#if errorCount > 0}
+        <div class="kp-syncmodal--complete-errors">
+          {errorCount} {errorCount === 1 ? 'book' : 'books'} could not be synced due to errors.
+          Open Developer Tools (Cmd+Option+I, or View → Toggle Developer Tools) and check the
+          Console tab for details, or see "Details" below.
+        </div>
       {/if}
     </div>
   </div>
@@ -575,5 +583,13 @@
     color: var(--text-faint);
     font-size: 0.85em;
     margin-top: 6px;
+  }
+
+  .kp-syncmodal--complete-errors {
+    color: var(--text-error);
+    font-size: 0.85em;
+    margin-top: 14px;
+    max-width: 420px;
+    text-align: center;
   }
 </style>
